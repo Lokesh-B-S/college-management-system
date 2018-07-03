@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Student</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Student</h1>
+
+    <p>
+        <a href="/studentEdit" th:href="@{/studentEdit}">Create</a>
+    </p>
+
+    <table class="table" border="10">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Father Name</th>
+            <th>Gender</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${studentList}">
+            <td th:text="${student.id}">1</td>
+            <td th:text="${student.name}">Test</td>
+            <td th:text="${student.fatherName}">F-Test</td>
+            <td th:text="${student.gender}">Gender</td>
+
+            <td>
+                <a href="/studentEdit/1" th:href="@{/studentEdit/__${student.id}__}">Edit</a>
+                <a href="/studentDelete/1" th:href="@{/studentDelete/__${student.id}__}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
