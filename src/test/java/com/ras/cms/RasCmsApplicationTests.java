@@ -12,5 +12,4 @@ public class RasCmsApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }

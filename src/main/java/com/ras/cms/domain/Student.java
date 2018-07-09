@@ -21,6 +21,7 @@ public class Student {
     private String fatherName;
     private String motherName;
     private String gender;
+    private String state;
 //    private Address address;
     private Boolean indianNational;
     private String religion;
@@ -212,5 +213,13 @@ public class Student {
 
     public void setChallanNo(String challanNo) {
         this.challanNo = challanNo;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

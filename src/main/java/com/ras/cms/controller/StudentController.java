@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Surya on 12-Jun-18.
@@ -22,12 +26,26 @@ public class StudentController {
         return "studentList";
     }
 
+    private Object getStates() {
+        List<String> stateList = new ArrayList<>(26);
+        stateList.add("Karnataka");
+        stateList.add("J & K");
+        stateList.add("Tamil Nadu");
+        stateList.add("Andra Pradesh");
+        stateList.add("Telangana");
+        return stateList;
+    }
+
     @GetMapping(value={"/studentEdit","/studentEdit/{id}"})
     public String studentEditForm(Model model, @PathVariable(required = false, name = "id") Long id) {
         if (null != id) {
             model.addAttribute("student", studentService.findOne(id));
+            model.addAttribute("states",getStates());
+//            model.addObject("states", getStates());
         } else {
             model.addAttribute("student", new Student());
+            model.addAttribute("states",getStates());
+//            model.addObject("states", getStates());
         }
         return "studentEdit";
     }
