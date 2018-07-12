@@ -1,12 +1,30 @@
 package com.ras.cms.domain;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 /**
  * Created by Surya on 12-Jun-18.
  */
-//@Entity
+@Entity
 public class Address {
+
+    Integer id;
+    String name;
+    String address;
+    String city;
+    String state;
+    long pincode;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Integer getId(){
+        return this.id;
+    }
+
+    public void setId(Integer id){
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -15,20 +33,12 @@ public class Address {
         this.name = name;
     }
 
-    public String getAddress1() {
-        return address1;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAddress1(String address1) {
-        this.address1 = address1;
-    }
-
-    public String getAddress2() {
-        return address2;
-    }
-
-    public void setAddress2(String address2) {
-        this.address2 = address2;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCity() {
@@ -40,37 +50,18 @@ public class Address {
     }
 
     public String getState() {
-        return State;
+        return state;
     }
 
     public void setState(String state) {
-        State = state;
+        this.state = state;
     }
 
-    public long getPinCode() {
-        return pinCode;
+    public long getPincode() {
+        return pincode;
     }
 
-    public void setPinCode(long pinCode) {
-        this.pinCode = pinCode;
+    public void setPincode(long pincode) {
+        this.pincode = pincode;
     }
-
-    private String name;
-    private String address1;
-
-    public Address(String name, String address1, String address2, String city, String state, long pinCode) {
-        this.name = name;
-        this.address1 = address1;
-        this.address2 = address2;
-        this.city = city;
-        State = state;
-        this.pinCode = pinCode;
-    }
-
-    private String address2;
-    private String city;
-    private String State;
-    private long pinCode;
-
-
 }

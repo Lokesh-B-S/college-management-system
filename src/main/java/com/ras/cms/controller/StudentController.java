@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class StudentController {
     @GetMapping(value="/listStudent")
     public String studentList(Model model) {
         model.addAttribute("studentList", studentService.findAll());
-        return "studentList";
+        return "/studentList";
     }
 
     private Object getStates() {
@@ -47,20 +46,20 @@ public class StudentController {
             model.addAttribute("states",getStates());
 //            model.addObject("states", getStates());
         }
-        return "studentEdit";
+        return "/studentEdit";
     }
 
     @PostMapping(value="/studentEdit")
     public String studentEdit(Model model, Student student) {
         studentService.saveStudent(student);
         model.addAttribute("studentList", studentService.findAll());
-        return "studentList";
+        return "/studentList";
     }
 
     @GetMapping(value="/studentDelete/{id}")
     public String studentDelete(Model model, @PathVariable(required = true, name = "id") Long id) {
         studentService.deleteStudent(id);
         model.addAttribute("studentList", studentService.findAll());
-        return "studentList";
+        return "/studentList";
     }
 }

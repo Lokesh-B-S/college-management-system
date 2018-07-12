@@ -2,10 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Student</title>
 
-    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
 
     <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
@@ -13,35 +14,163 @@
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container">
-    <h1>Student</h1>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#basic">Basic Details</a></li>
+        <li><a data-toggle="tab" href="#education"> Additional Info </a></li>
+        <!--<li><a data-toggle="tab" href="#category">Category Information</a></li>
+        <li><a data-toggle="tab" href="#other">Others</a></li>-->
+    </ul>
+    <table width="100%">
+        <tr>
+            <td align="right">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+            </td>
+        </tr>
+    </table>
+    <form action="/studentEdit" th:action="@{/studentEdit}" method="post">
+        <div class="tab-content">
+            <div id="basic" class="tab-pane fade in active">
+                <table border="0" width="80%">
+                    <tr>
+                        <td><input th:type="hidden" name="id" th:field="${student.id}"/>
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" th:field="${student.name}"
+                                       placeholder="Student Name"/>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td>
+                            <div class="form-group">
+                                <label for="fatherName">Father Name</label>
+                                <input type="text" class="form-control" id="fatherName" th:field="${student.fatherName}"
+                                       placeholder="Father Name"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="gender">Gender : </label>
+                                <input type="radio" th:field="*{student.gender}" name="gender" value="M" id="gender"/><label
+                                    th:text="Male">M</label>
+                                <input type="radio" th:field="*{student.gender}" name="gender" value="F"/><label
+                                    th:text="Female">F</label>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td>
+                            <div class="form-group">
+                                <label for="motherName">Mother Name</label>
+                                <input type="text" class="form-control" id="motherName" th:field="${student.motherName}"
+                                       placeholder="Father Name"/>
+                            </div>
+                        </td>
+                    </tr>
 
-    <form class="form-group" action="/studentEdit" th:action="@{/studentEdit}" method="post">
-        <input th:type="hidden" name="id" th:field="${student.id}" />
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" th:field="${student.name}" />
-        </div>
-        <div class="form-group">
-            <label for="fatherName">Father Name</label>
-            <input type="text" class="form-control" id="fatherName" th:field="${student.fatherName}"/>
-        </div>
-        <div class="form-group">
-            <label for="gender">Gender</label><br>
-            <input  type="radio" th:field="*{student.gender}" value="Male" id="gender"/><label th:text="Male">M</label>
-            <input  type="radio" th:field="*{student.gender}" value="Female"/><label th:text="Female">F</label>
-        </div>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="dob">Date Of Birth </label>
+                                <input type="date" class="form-control" id="dob" th:field="${student.dob}"
+                                       placeholder="DOB" dataformatas=""/>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td>
+                            <div class="form-group">
+                                <label for="aadhar">Aadhar No </label>
+                                <input type="text" class="form-control" id="aadhar" th:field="${student.aadhar}"
+                                       placeholder="Aadhar Number"/>
+                            </div>
+                        </td>
+                    </tr>
 
-        <div class="form-group">
-            <label for="state"> State </label> <br>
-            <select th:field="*{student.state}">
-                <option th:each="state : ${states}" th:value="${state}" th:text="${state}" id="state">State</option>
-            </select>
-        </div>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="primaryContactNumber">Phone Numbers (s) </label>
+                                <input type="text" class="form-control" id="primaryContactNumber" th:field="${student.primaryContactNumber}"
+                                       placeholder="Pimary Contact No."/><br>
+                                <input type="text" class="form-control" id="secondaryContactNumber" th:field="${student.secondaryContactNumber}"
+                                       placeholder="Secondary Contact No."/>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td>
+                            <div class="form-group">
+                                <label for="primaryEmailAddress">Phone Numbers (s) </label>
+                                <input type="email" class="form-control" id="primaryEmailAddress" th:field="${student.primaryEmailAddress}"
+                                       placeholder="Pimary EMail Address"/><br>
+                                <input type="email" class="form-control" id="secondaryEmailAddress" th:field="${student.secondaryEmailAddress}"
+                                       placeholder="Secondary EMail Address"/>
+                            </div>
+                        </td>
+                    </tr>
 
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="#" th:href="@{/}" class="btn btn-danger" role="button">Cancel</a>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" th:field="${student.address}"
+                                       placeholder="Address" />
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td>
+                            <div class="form-group">
+                                <label for="state"> State </label> <br>
+                                <select class="form-control" th:field="*{student.state}">
+                                    <option th:each="state : ${states}" th:value="${state}" th:text="${state}"
+                                            id="state"> State </option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="pin"> Pin Code </label>
+                                <input type="text" class="form-control" id="pin" th:field="${student.pin}"
+                                       placeholder="Pin Code" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="education" class="tab-pane fade">
+                <table border="0" width="80%">
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="religion"> Religion </label>
+                                <input type="text" class="form-control" id="religion" th:field="${student.religion}"
+                                       placeholder="Religion"/>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td>
+                            <div class="form-group">
+                                <label>Indian National ? </label> <br>
+                                <input type="radio" th:field="*{student.indianNational}" name="indianNational" value="Indian"/><label
+                                    th:text="Indian">Indian</label>
+                                <input type="radio" th:field="*{student.indianNational}" name="indianNational" value="Foreigner"/><label
+                                    th:text="Foreigner">Foreigner</label>
+                            </div>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <!--<div id="category" class="tab-pane fade">
+                Category Details
+            </div>
+            <div id="others" class="tab-pane fade">
+                Other Details
+            </div>-->
+        </div>
     </form>
-
 </div>
 <div th:replace="fragments/footer :: footer"/>
 </body>

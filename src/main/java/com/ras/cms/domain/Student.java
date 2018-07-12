@@ -1,10 +1,6 @@
 package com.ras.cms.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -16,16 +12,32 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String name;
-    private Date dob;
+    private String dob;
+    private String address;
+    private String aadhar;
     private String fatherName;
-    private String motherName;
     private String gender;
+    private String motherName;
     private String state;
-//    private Address address;
-    private Boolean indianNational;
+    private int pin;
+    private String primaryContactNumber;
+    private String secondaryContactNumber;
+    private String primaryEmailAddress;
+    private String secondaryEmailAddress;
+
+    public String getIndianNational() {
+        return indianNational;
+    }
+
+    public void setIndianNational(String indianNational) {
+        this.indianNational = indianNational;
+    }
+
+    private String indianNational;
     private String religion;
-//    private ArrayList<Qualification> qualifications;
+    //    private ArrayList<Qualification> qualifications;
     private int yearsStudiedInState;
     private Boolean ruralStudent;
     private Boolean SNQCliming;
@@ -36,8 +48,65 @@ public class Student {
     private String nameOfCaste;
     private String specialCategoryCode;
     private long amoutPaid;
+//    private Address address;
     private Date amoutPaidDate;
     private String challanNo;
+
+    public int getPin() {
+        return pin;
+    }
+
+    public void setPin(int pin) {
+        this.pin = pin;
+    }
+
+    public String getAadhar() {
+        return aadhar;
+    }
+
+    public void setAadhar(String aadhar) {
+        this.aadhar = aadhar;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPrimaryContactNumber() {
+        return primaryContactNumber;
+    }
+
+    public void setPrimaryContactNumber(String primaryContactNumber) {
+        this.primaryContactNumber = primaryContactNumber;
+    }
+
+    public String getSecondaryContactNumber() {
+        return secondaryContactNumber;
+    }
+
+    public void setSecondaryContactNumber(String secondaryContactNumber) {
+        this.secondaryContactNumber = secondaryContactNumber;
+    }
+
+    public String getPrimaryEmailAddress() {
+        return primaryEmailAddress;
+    }
+
+    public void setPrimaryEmailAddress(String primaryEmailAddress) {
+        this.primaryEmailAddress = primaryEmailAddress;
+    }
+
+    public String getSecondaryEmailAddress() {
+        return secondaryEmailAddress;
+    }
+
+    public void setSecondaryEmailAddress(String secondaryEmailAddress) {
+        this.secondaryEmailAddress = secondaryEmailAddress;
+    }
 
     public Long getId() {
         return id;
@@ -55,11 +124,11 @@ public class Student {
         this.name = name;
     }
 
-    public Date getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 
@@ -87,22 +156,6 @@ public class Student {
         this.gender = gender;
     }
 
-   /* public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }*/
-
-    public Boolean isIndianNational() {
-        return indianNational;
-    }
-
-    public void setIndianNational(Boolean indianNational) {
-        this.indianNational = indianNational;
-    }
-
     public String getReligion() {
         return religion;
     }
@@ -111,14 +164,14 @@ public class Student {
         this.religion = religion;
     }
 
-   /* public ArrayList<Qualification> getQualifications() {
-        return qualifications;
-    }
+    /* public ArrayList<Qualification> getQualifications() {
+         return qualifications;
+     }
 
-    public void setQualifications(ArrayList<Qualification> qualifications) {
-        this.qualifications = qualifications;
-    }
-*/
+     public void setQualifications(ArrayList<Qualification> qualifications) {
+         this.qualifications = qualifications;
+     }
+ */
     public int getYearsStudiedInState() {
         return yearsStudiedInState;
     }
