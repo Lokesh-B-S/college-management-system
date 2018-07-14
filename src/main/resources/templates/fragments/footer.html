@@ -10,20 +10,15 @@
         <footer>
             <!-- this is footer -->
             &copy; 2018 CMS
-            <span sec:authorize="isAuthenticated()">
-                | Logged user: <span sec:authentication="name"></span> |
-                Roles: <span sec:authentication="principal.authorities"></span> |
-                <a th:href="@{/logout}">Sign Out</a>
-            </span>
-            <span th:text="${#authorization.expression('isAuthenticated()')} ?
+            <!--<span th:text="${#authorization.expression('isAuthenticated()')} ?
                'the user is logged in' :
                'the user is NOT logged in'">
-            </span>
+            </span>-->
 
             <script rel="script" type="text/javascript" th:href="@{/js/jquery.min.js}"
                     src="../../js/jquery.min.js"></script>
             <script rel="script" type="text/javascript" th:href="@{/js/bootstrap.min.js}"
-                    src="../../js/bootstrap.min.js}"></script>
+                    src="../../js/bootstrap.min.js"></script>
         </footer>
     </div>
 

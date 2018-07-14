@@ -16,8 +16,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/about").permitAll()
-                .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**").permitAll()
+                .antMatchers("/", "/about").permitAll()
+                .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/user/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
@@ -34,7 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-
         auth.inMemoryAuthentication()
                 .withUser("user").password("{noop}password").roles("USER")
                 .and()
