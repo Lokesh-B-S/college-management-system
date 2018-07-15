@@ -20,6 +20,7 @@
         <!--<li><a data-toggle="tab" href="#category">Category Information</a></li>
         <li><a data-toggle="tab" href="#other">Others</a></li>-->
     </ul>
+    <form action="/studentEdit" th:action="@{/studentEdit}" method="post">
     <table width="100%">
         <tr>
             <td align="right">
@@ -28,7 +29,7 @@
             </td>
         </tr>
     </table>
-    <form action="/studentEdit" th:action="@{/studentEdit}" method="post">
+
         <div class="tab-content">
             <div id="basic" class="tab-pane fade in active">
                 <table border="0" width="80%">

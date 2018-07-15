@@ -1,6 +1,6 @@
 package com.ras.cms.controller;
 
-import com.ras.cms.service.StudentService;
+import com.ras.cms.service.student.StudentService;
 import com.ras.cms.domain.Student;
 
 import org.springframework.beans.factory.annotation.Autowired;

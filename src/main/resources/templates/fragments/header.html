@@ -13,7 +13,7 @@
     <nav class="navbar navbar-inverse">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" th:href="@{/home}">CMS App</a>
+                <a class="navbar-brand" th:href="@{/}">CMS App</a>
             </div>
             <font face="Trebuchet ms" color="#f3f72a">
                 <span class="pull-right" sec:authorize="isAuthenticated()">
@@ -24,6 +24,7 @@
             </font>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
+                    <li><a th:href="@{/collageEdit}">Collage</a></li>
                     <li><a th:href="@{/studentEdit}">Register Student </a></li>
                     <li><a th:href="@{/listStudent}">List Student </a></li>
                 </ul>

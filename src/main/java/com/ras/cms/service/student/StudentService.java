@@ -1,4 +1,4 @@
-package com.ras.cms.service;
+package com.ras.cms.service.student;
 
 import com.ras.cms.domain.Student;
 

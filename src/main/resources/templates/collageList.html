@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Collage List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1> Collage </h1>
+
+    <p>
+        <a href="/collageEdit" th:href="@{/collageEdit}">Create</a>
+    </p>
+
+    <table class="table" border="10">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="collage : ${collageList}">
+            <td th:text="${collage.collageId}">1</td>
+            <td th:text="${collage.collageName}">Test</td>
+            <td th:text="${collage.collageCode}">Test</td>
+            <td th:text="${collage.collageAddress}">Test</td>
+            <td>
+                <a href="/collageEdit/1" th:href="@{/collageEdit/__${collage.collageId}__}">Edit</a>
+                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
