@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Collage List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<form action="/addCourse" th:action="@{/addCourse}" method="post">
+    <div th:replace="fragments/header :: header"/>
+    <div class="container">
+        <h1> Collage - Add Course(s) </h1>
+
+        <p>
+            <a href="/courseEdit" th:href="@{/courseEdit}">Create Course</a>
+        </p>
+
+        <table class="table" border="10">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Address</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="collage : ${collageList}">
+                <td th:text="${collage.collageId}">1</td>
+                <td th:text="${collage.collageName}">Test</td>
+                <td th:text="${collage.collageCode}">Test</td>
+                <td th:text="${collage.collageAddress}">Test</td>
+                <input th:type="hidden" name="collageId" th:value="${collage.collageId}"/>
+            </tr>
+            <tr>
+                <td colspan="2"> Select Courses</td>
+                <td colspan="2">
+                    <select class="form-control" multiple="multiple" name="selectedCourse" id="selectedCourse">
+                        <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"/>
+                    </select>
+                </td>
+            </tr>
+            </tr>
+            </tbody>
+        </table>
+        <table width="100%">
+            <tr>
+                <td align="right">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" th:href="@{/}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div th:replace="fragments/footer :: footer"/>
+</form>
+</body>
+</html>

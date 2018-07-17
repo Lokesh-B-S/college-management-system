@@ -20,7 +20,7 @@
         <tr>
             <td align="right">
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                <a href="#" th:href="@{/}" class="btn btn-danger" role="button">Cancel</a>
             </td>
         </tr>
     </table>
@@ -53,6 +53,16 @@
                 </td>
             </tr>
         </table>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label">Existing Courses</label>
+            <div class="col-lg-10">
+                <div th:each="course : ${courses}">
+                    <span th:text="${course.courseId}" /> - <span th:text="${course.courseName}" />
+                </div>
+            </div>
+        </div>
+
     </form>
 </div>
 <div th:replace="fragments/footer :: footer"/>

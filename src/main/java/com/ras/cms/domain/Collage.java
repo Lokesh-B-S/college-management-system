@@ -1,9 +1,7 @@
 package com.ras.cms.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Collage {
@@ -14,6 +12,9 @@ public class Collage {
     String collageName;
     String collageAddress;
     String collageCode;
+
+    @ManyToMany
+    List<Course> courses;
 
     public Long getCollageId() {
         return collageId;
@@ -45,5 +46,22 @@ public class Collage {
 
     public void setCollageCode(String collageCode) {
         this.collageCode = collageCode;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    public boolean hasCourse(Course course) {
+        for (Course containedSkill: getCourses()) {
+            if (containedSkill.getCourseId() == course.getCourseId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

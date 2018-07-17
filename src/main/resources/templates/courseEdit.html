@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Course</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <form action="/courseEdit" th:action="@{/courseEdit}" method="post">
+
+    <table width="100%">
+        <tr>
+            <td align="right">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+            </td>
+        </tr>
+    </table>
+
+        <table border="0" width="80%">
+            <tr>
+                <td><input th:type="hidden" name="courseId" th:field="${course.courseId}"/>
+                    <div class="form-group">
+                        <label for="courseCode">Course Code</label>
+                        <input type="text" class="form-control" id="courseCode" th:field="${course.courseCode}"
+                               placeholder="Course Code"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="courseName">Course Name</label>
+                        <input type="text" class="form-control" id="courseName" th:field="${course.courseName}"
+                               placeholder="Course Name"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="courseDuration">Course Duration</label>
+                        <input type="text" class="form-control" id="courseDuration" th:field="${course.courseDuration}"
+                               placeholder="Course Duration"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="semister">Semister</label>
+                        <input type="text" class="form-control" id="semister" th:field="${course.semister}"
+                               placeholder="Semister"/>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
