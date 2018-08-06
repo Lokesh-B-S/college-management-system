@@ -65,8 +65,12 @@ public class CollageController {
     public String addCourses(Model model, @RequestParam String selectedCourse,@RequestParam Long collageId) {
         Collage collage = collageService.findOne(collageId);
         for(String courseId : selectedCourse.split(",")){
-            collage.getCourses().add(courseService.findOne(Long.parseLong(courseId)));
+            Course c = courseService.findOne(Long.parseLong(courseId));
+            if(!collage.hasCourse(c)){
+                collage.getCourses().add(c);
+            }
         }
+        collageService.saveCollage(collage);
         model.addAttribute("collage", collage);
         model.addAttribute("courses",collage.getCourses());
         return "/collageEdit";

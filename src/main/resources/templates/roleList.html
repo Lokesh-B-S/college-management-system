@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Roles List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1> Roles </h1>
+
+    <table class="table" border="10">
+        <thead>
+        <tr>
+            <th>Role Id</th>
+            <th>Role Code</th>
+            <th>Role Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="role : ${roleList}">
+            <td th:text="${role.roleId}">1</td>
+            <td th:text="${role.roleCode}">Test</td>
+            <td th:text="${role.roleDesc}">Test</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
