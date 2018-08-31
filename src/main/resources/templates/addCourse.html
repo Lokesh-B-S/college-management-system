@@ -38,7 +38,7 @@
                 <input th:type="hidden" name="collageId" th:value="${collage.collageId}"/>
             </tr>
             <tr>
-                <td colspan="2"> Select Courses</td>
+                <td colspan="2"> Select Courses </td>
                 <td colspan="2">
                     <select class="form-control" multiple="multiple" name="selectedCourse" id="selectedCourse">
                         <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"/>
