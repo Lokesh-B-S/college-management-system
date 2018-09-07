@@ -1,7 +1,10 @@
 package com.ras.cms.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Surya on 12-Jun-18.
@@ -10,20 +13,40 @@ import java.util.Date;
 public class Student {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
+    @NotNull
     private String dob;
     private String address;
+
     private String aadhar;
+    @NotNull
     private String fatherName;
+    @NotNull
     private String gender;
+    @NotNull
     private String motherName;
     private String state;
+
+    public String getNativeCode() {
+        return nativeCode;
+    }
+
+    public void setNativeCode(String nativeCode) {
+        this.nativeCode = nativeCode;
+    }
+
+    private String nativeCode;
+
+    @NotNull
     private int pin;
+    @NotNull
     private String primaryContactNumber;
     private String secondaryContactNumber;
+    @NotNull
     private String primaryEmailAddress;
     private String secondaryEmailAddress;
 
@@ -37,7 +60,10 @@ public class Student {
 
     private String indianNational;
     private String religion;
-    //    private ArrayList<Qualification> qualifications;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Qualification> qualifications;
+
     private int yearsStudiedInState;
     private Boolean ruralStudent;
     private Boolean SNQCliming;
@@ -48,7 +74,7 @@ public class Student {
     private String nameOfCaste;
     private String specialCategoryCode;
     private long amoutPaid;
-//    private Address address;
+    //    private Address address;
     private Date amoutPaidDate;
     private String challanNo;
 
@@ -164,14 +190,14 @@ public class Student {
         this.religion = religion;
     }
 
-    /* public ArrayList<Qualification> getQualifications() {
+    public List<Qualification> getQualifications() {
          return qualifications;
      }
 
-     public void setQualifications(ArrayList<Qualification> qualifications) {
+     public void setQualifications(List<Qualification> qualifications) {
          this.qualifications = qualifications;
      }
- */
+
     public int getYearsStudiedInState() {
         return yearsStudiedInState;
     }
@@ -274,5 +300,14 @@ public class Student {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public boolean hasQualification(Qualification qualification) {
+        for (Qualification qualif : getQualifications()) {
+            if (qualif.getName() != null && qualif.getName().equalsIgnoreCase(qualification.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

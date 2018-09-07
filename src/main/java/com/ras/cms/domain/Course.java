@@ -8,7 +8,7 @@ import javax.persistence.Id;
 @Entity
 public class Course {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long courseId;
     private String courseCode;
     private String courseName;

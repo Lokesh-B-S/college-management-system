@@ -1,12 +1,16 @@
 package com.ras.cms.domain;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 /**
  * Created by Surya on 12-Jun-18.
  */
-//@Entity
+@Entity
 public class Qualification {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long qualifId;
+
     private String name;
     private String board;
     private long yearOfPassing;
@@ -15,6 +19,23 @@ public class Qualification {
     private double totalMarks;
     private double marksInMaths;
     private double marksInScience;
+    private String registrationNumber;
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    public Long getQualifId() {
+        return qualifId;
+    }
+
+    public void setQualifId(Long qualifId) {
+        this.qualifId = qualifId;
+    }
 
     public String getBoard() {
         return board;
@@ -84,5 +105,12 @@ public class Qualification {
         this.name = name;
         this.yearOfPassing = yearOfPassing;
         this.sgpaOrPercentage = sgpaOrPercentage;
+    }
+    public Qualification(String name) {
+        this.name = name;
+    }
+
+    public Qualification(){
+
     }
 }

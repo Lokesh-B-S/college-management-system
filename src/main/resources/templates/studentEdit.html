@@ -10,17 +10,41 @@
 
     <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+    <script>
+    (function($){
+      var $form = $('#student');
+      $form.on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+          url: $form.attr('action'),
+          type: 'post',
+          data: $form.serialize(),
+          success: function(response) {
+            // if the response contains any errors, replace the form
+            if ($(response).find('.has-error').length) {
+              $form.replaceWith(response);
+            } else {
+              // in this case we can actually replace the form
+              // with the response as well, unless we want to
+              // show the success message a different way
+            }
+          }
+      });
+    })
+    }(jQuery));
+    </script>
 </head>
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container">
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#basic">Basic Details</a></li>
-        <li><a data-toggle="tab" href="#education"> Additional Info </a></li>
+        <li><a data-toggle="tab" href="#additional"> Additional Info  </a></li>
+        <li><a data-toggle="tab" href="#education"> Previous Education</a></li>
         <!--<li><a data-toggle="tab" href="#category">Category Information</a></li>
         <li><a data-toggle="tab" href="#other">Others</a></li>-->
     </ul>
-    <form action="/studentEdit" th:action="@{/studentEdit}" method="post">
+    <form action="/studentEdit" th:action="@{/studentEdit}" method="post" id="student">
     <table width="100%">
         <tr>
             <td align="right">
@@ -121,15 +145,28 @@
                         <td> &nbsp</td>
                         <td>
                             <div class="form-group">
-                                <label for="state"> State </label> <br>
-                                <select class="form-control" th:field="*{student.state}">
-                                    <option th:each="state : ${states}" th:value="${state}" th:text="${state}"
-                                            id="state"> State </option>
-                                </select>
+                                <label for="nativeCode">  </label> <br>
+                                <div class="form-group">
+                                    <label for="nativeCode"> State </label> <br>
+                                    <select class="form-control" th:field="*{student.nativeCode}">
+                                        <option th:each="st : ${native}" th:value="${st.key}" th:text="${st.value}"
+                                                id="nativeCode"> State </option> 
+                                    </select>
+                                </div>
                             </div>
                         </td>
                     </tr>
                     <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="state.stateCode"> District  </label> <br>
+                                <select class="form-control" th:field="*{student.state}">
+                                    <option th:each="state : ${states}" th:value="${state.stateCode}" th:text="${state.stateName}"
+                                            id="state.stateCode"> District </option>
+                                </select>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
                         <td>
                             <div class="form-group">
                                 <label for="pin"> Pin Code </label>
@@ -140,7 +177,7 @@
                     </tr>
                 </table>
             </div>
-            <div id="education" class="tab-pane fade">
+            <div id="additional" class="tab-pane fade">
                 <table border="0" width="80%">
                     <tr>
                         <td>
@@ -164,12 +201,106 @@
                     </tr>
                 </table>
             </div>
-            <!--<div id="category" class="tab-pane fade">
-                Category Details
+
+            <div id="education" class="tab-pane fade">
+                <table width="80%" class="table table-striped">
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label> Name </label>
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <label>Board / University </label> <br>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="form-group">
+                                <label> Year of Passing </label> <br>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <label>SGPA/CGPA/Oveall Percentage</label> <br>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="form-group">
+                                <label> Marks Obtained </label> <br>
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <label> Maximum Marks </label> <br>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="form-group">
+                                <label> Register Number </label> <br>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="form-group">
+                                <label> Marks in Mathematics </label> <br>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <label>Marks in Science</label> <br>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!--<a href="/studentEdit/1" th:href="@{/studentEdit/__${student.id}__?add=true}" class="btn btn-primary">Add Row</a>-->
+                    <button type="submit" class="btn btn-primary" id="addedu">Add Row</button>
+
+                    <tr th:each="qualif, itemStat : *{student.qualifications}">
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].name}"
+                                   placeholder="Qualifaction " />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].board}"
+                                   placeholder="Board"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].yearOfPassing}"
+                                   placeholder="YOP"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].sgpaOrPercentage}"
+                                   placeholder="GPA / Overall Percentage"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].marksObtained}"
+                                   placeholder="Marks Obtained"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].totalMarks}"
+                                   placeholder="Maximum Marks"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].registrationNumber}"
+                                   placeholder="Registration Number"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].marksInMaths}"
+                                   placeholder="Marks in Mathematics"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" th:field="*{student.qualifications[__${itemStat.index}__].marksInScience}"
+                                   placeholder="Marks in Science"/>
+                        </td>
+                    </tr>
+                </table>
             </div>
-            <div id="others" class="tab-pane fade">
-                Other Details
-            </div>-->
         </div>
     </form>
 </div>

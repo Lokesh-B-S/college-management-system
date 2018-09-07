@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class State {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long stateId;
 
     Long stateCode;

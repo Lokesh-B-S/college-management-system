@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class SubjectType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long subjectTypeId;
     String subjectTypeName;
 

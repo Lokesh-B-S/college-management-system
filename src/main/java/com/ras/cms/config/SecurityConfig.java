@@ -12,7 +12,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
 
-    /*@Override
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
@@ -30,18 +30,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
-    }*/
 
-    @Override
+        http.headers().frameOptions().disable();
+    }
+
+    /*@Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/about").permitAll()
-                .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
-                .antMatchers("/listCollage/**","/collageEdit/**","/collageDelete/**").hasAnyRole("SITE_ADMIN")
-                .antMatchers("/collageEdit/**","/listCourse/**","/courseEdit","/courseDelete/").hasAnyRole("COLLAGE_ADMIN")
+                .antMatchers("/", "/about","/error/**","/console/**").permitAll()
+                .antMatchers("/error/403/**","/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
+                .antMatchers("/collageEdit/**","/listCollage/**","/collageDelete/**").hasAnyRole("SITE_ADMIN")
+                .antMatchers("/collageEdit/**","/listCourse/**","/courseEdit/**","/courseDelete/**").hasAnyRole("COLLAGE_ADMIN")
                 .antMatchers("/listCourse/**","/courseEdit/**","/listStudent/**","/studentEdit/**").hasAnyRole("COURSE_ADMIN")
-                .antMatchers("/user/**").hasAnyRole("USER")
+//                .antMatchers("/user/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -52,13 +54,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
-    }
+        http.headers().frameOptions().disable();
+    }*/
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user").password("{noop}password").roles("USER")
+                .withUser("user").password("{noop}password").roles("SITE_ADMIN")
                 .and()
-                .withUser("admin").password("{noop}password").roles("ADMIN");
+                .withUser("admin").password("{noop}password").roles("COLLAGE_ADMIN");
     }
 }
