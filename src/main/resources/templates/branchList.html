@@ -13,32 +13,32 @@
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container">
-    <h1> Courses </h1>
+    <h1> Branch </h1>
 
     <p>
-        <a href="/admin/courseEdit" th:href="@{/admin/courseEdit}">Create</a>
+        <a href="/admin/branchEdit" th:href="@{/admin/branchEdit}">Create</a>
     </p>
 
     <table  class="table table-striped">
         <thead>
         <tr>
-            <th>Course Id</th>
-            <th>Course Code</th>
-            <th>Course Name</th>
-            <th>Course Duration</th>
-            <th>Semister</th>
-            <th>Actions</th>
+            <th> Branch Id</th>
+            <th> Branch Code</th>
+            <th> Branch Name</th>
+            <th> Collage </th>
+            <th> Course </th>
+            <th> Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="course : ${courseList}">
-            <td th:text="${course.courseId}">1</td>
-            <td th:text="${course.courseCode}">Test</td>
-            <td th:text="${course.courseName}">Test</td>
-            <td th:text="${course.courseDuration}">Test</td>
-            <td th:text="${course.semister}">Test</td>
+        <tr th:each="branch : ${branchList}">
+            <td th:text="${branch.branchId}">1</td>
+            <td th:text="${branch.branchCode}">1</td>
+            <td th:text="${branch.branchName}">Test</td>
+            <td th:text="${branch.collageId} + '-' + ${branch.collageName}"> Collage </td>
+            <td th:text="${branch.courseId} + '-' +  ${branch.courseName}"> Branch </td>
             <td>
-                <a href="/admin/courseEdit/1" th:href="@{/admin/courseEdit/__${course.courseId}__}">Edit</a>
+                <a href="/admin/branchEdit/1" th:href="@{/admin/branchEdit/__${branch.branchId}__}">Edit</a>
                 <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
             </td>
         </tr>

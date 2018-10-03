@@ -1,6 +1,5 @@
 package com.ras.cms.service.state;
 
-import com.ras.cms.domain.Role;
 import com.ras.cms.domain.State;
 
 import java.util.List;

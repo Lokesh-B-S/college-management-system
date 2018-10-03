@@ -1,6 +1,5 @@
 package com.ras.cms.controller;
 
-import com.ras.cms.dao.RoleRepository;
 import com.ras.cms.domain.SubjectType;
 import com.ras.cms.service.role.RoleService;
 import com.ras.cms.service.subjecttype.SubjectTypeService;

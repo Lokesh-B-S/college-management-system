@@ -1,18 +1,21 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.Qualification;
-import com.ras.cms.domain.State;
+import com.ras.cms.domain.Student;
 import com.ras.cms.service.state.StateService;
 import com.ras.cms.service.student.StudentService;
-import com.ras.cms.domain.Student;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Surya on 12-Jun-18.
@@ -20,10 +23,10 @@ import java.util.stream.Collectors;
 @Controller
 public class StudentController {
     @Autowired
-    StudentService studentService;
+    private StudentService studentService;
 
     @Autowired
-    StateService stateService;
+    private StateService stateService;
 
     @GetMapping(value="/listStudent")
     public String studentList(Model model) {
@@ -43,6 +46,8 @@ public class StudentController {
             model.addAttribute("student", student);
             model.addAttribute("states",getStates());
             model.addAttribute("native",getNativeState());
+            model.addAttribute("categories",getCategory());
+            model.addAttribute("specialCategory",getSpecialCategory());
         } else {
             Student student = new Student();
             List<Qualification> qualifList = new ArrayList<>(3);
@@ -52,6 +57,8 @@ public class StudentController {
             model.addAttribute("student", student);
             model.addAttribute("states",getStates());
             model.addAttribute("native",getNativeState());
+            model.addAttribute("categories",getCategory());
+            model.addAttribute("specialCategory",getSpecialCategory());
         }
         return "/studentEdit";
     }
@@ -87,6 +94,8 @@ public class StudentController {
         model.addAttribute("student", stud);
         model.addAttribute("states",getStates());
         model.addAttribute("native",getNativeState());
+        model.addAttribute("categories",getCategory());
+        model.addAttribute("specialCategory",getSpecialCategory());
         return "/studentEdit";
     }
 
@@ -98,9 +107,45 @@ public class StudentController {
     }
 
     Map<Integer,String> getNativeState() {
-        Map<Integer, String> nativeState = new HashMap<>();
+        Map<Integer, String> nativeState = new LinkedHashMap<>();
+        nativeState.put(0, "-- Select Category --");
         nativeState.put(1, "Karnataka State");
         nativeState.put(2, "Other State");
         return nativeState;
+    }
+
+    Map<String,String> getCategory() {
+        Map<String, String> category = new LinkedHashMap<>();
+        category.put("", "-- Select Category --");
+        category.put("SC", "SC");
+        category.put("ST", "ST");
+        category.put("CAT-1", "1");
+        category.put("CAT-2 A", "2A");
+        category.put("CAT-2 B", "2B");
+        category.put("CAT-3 A", "3A");
+        category.put("CAT-3 B", "3B");
+        category.put("CAT-1", "GM");
+        category.put("Rural", "Rural");
+        return category;
+    }
+
+    Map<String,String> getSpecialCategory() {
+        Map<String, String> specialCategory = new LinkedHashMap<>();
+        specialCategory.put("", "-- Select Special Category--");
+        specialCategory.put("PS", "Political Sufferer");
+        specialCategory.put("DP", "Defence Personnel");
+        specialCategory.put("EDP", "Ex-Defence Personnel");
+        specialCategory.put("SP", "Sports");
+        specialCategory.put("NCC", "NCC");
+        specialCategory.put("SS", "Scouts");
+        specialCategory.put("JTS", "JTS");
+        specialCategory.put("ITI", "ITI");
+        specialCategory.put("JOC", "JOC");
+        specialCategory.put("CI", "Correctional Institution");
+        specialCategory.put("HK", "Horanadu Kannadiga");
+        specialCategory.put("GK", "Gadinadu Kannadiga");
+        specialCategory.put("PH", "Physically Handicapped");
+        specialCategory.put("AI", "Anglo Indian of Karnataka");
+        return specialCategory;
     }
 }

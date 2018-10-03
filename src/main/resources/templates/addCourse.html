@@ -11,13 +11,13 @@
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
 </head>
 <body>
-<form action="/addCourse" th:action="@{/addCourse}" method="post">
+<form action="/admin/addCourse" th:action="@{/admin/addCourse}" method="post">
     <div th:replace="fragments/header :: header"/>
     <div class="container">
         <h1> Collage - Add Course(s) </h1>
 
         <p>
-            <a href="/courseEdit" th:href="@{/courseEdit}">Create Course</a>
+            <a href="/admin/courseEdit" th:href="@{/admin/courseEdit}">Create Course</a>
         </p>
 
         <table class="table" border="10">

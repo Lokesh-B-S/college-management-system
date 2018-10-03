@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>branch</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <form action="/admin/branchEdit" th:action="@{/admin/branchEdit}" method="post">
+
+    <table width="100%">
+        <tr>
+            <td align="right">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+            </td>
+        </tr>
+    </table>
+
+        <table border="0" width="80%">
+            <tr>
+                <td><input th:type="hidden" name="branchId" th:field="${branch.branchId}"/>
+                    <div class="form-group">
+                        <label> Collage </label>
+                        <select class="form-control" th:field="*{branch.collageId}">
+                            <option th:each="collage : ${collages}" th:value="${collage.collageId}" th:text="${collage.collageName}"
+                                    id="branch.collageId"> Collage </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+                <td>
+                    <div class="form-group">
+                        <label> Course </label>
+                        <select class="form-control" th:field="*{branch.courseId}">
+                            <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"
+                                    id="branch.courseId"> Course </option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="branchCode">Branch Code</label>
+                        <input type="text" class="form-control" id="branchCode" th:field="${branch.branchCode}"
+                               placeholder="Branch Code"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="branchName">Branch Name</label>
+                        <input type="text" class="form-control" id="branchName" th:field="${branch.branchName}"
+                               placeholder="Branch Name"/>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="hodId"> Hod </label>
+                        <input type="text" class="form-control" id="hodId" th:field="${branch.hodId}" placeholder="HOD"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="attendentId"> Attender </label>
+                        <input type="text" class="form-control" id="attendentId" th:field="${branch.attendentId}" placeholder="Attendent"/>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

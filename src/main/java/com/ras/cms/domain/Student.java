@@ -2,9 +2,7 @@ package com.ras.cms.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Surya on 12-Jun-18.
@@ -29,18 +27,9 @@ public class Student {
     private String gender;
     @NotNull
     private String motherName;
+    private String motherTongue;
     private String state;
-
-    public String getNativeCode() {
-        return nativeCode;
-    }
-
-    public void setNativeCode(String nativeCode) {
-        this.nativeCode = nativeCode;
-    }
-
     private String nativeCode;
-
     @NotNull
     private int pin;
     @NotNull
@@ -49,34 +38,48 @@ public class Student {
     @NotNull
     private String primaryEmailAddress;
     private String secondaryEmailAddress;
-
-    public String getIndianNational() {
-        return indianNational;
-    }
-
-    public void setIndianNational(String indianNational) {
-        this.indianNational = indianNational;
-    }
-
     private String indianNational;
     private String religion;
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Qualification> qualifications;
-
     private int yearsStudiedInState;
-    private Boolean ruralStudent;
-    private Boolean SNQCliming;
-    private Boolean studiedInKannadaMedium;
-    private long anualIncome;
+    private String ruralStudent;
+    private String snqCliming;
+    private String studiedInKannadaMedium;
+    private long annualIncome;
     private String anualIncomeUnit;
     private String category;
     private String nameOfCaste;
     private String specialCategoryCode;
-    private long amoutPaid;
+    private long registrationAmountPaid;
     //    private Address address;
-    private Date amoutPaidDate;
+    private String amoutPaidDate;
     private String challanNo;
+    private String hydKarCliming;
+
+    public String getHydKarCliming() {
+        return hydKarCliming;
+    }
+
+    public void setHydKarCliming(String hydKarCliming) {
+        this.hydKarCliming = hydKarCliming;
+    }
+
+    public String getMotherTongue() {
+        return motherTongue;
+    }
+
+    public void setMotherTongue(String motherTongue) {
+        this.motherTongue = motherTongue;
+    }
+
+    public String getNativeCode() {
+        return nativeCode;
+    }
+
+    public void setNativeCode(String nativeCode) {
+        this.nativeCode = nativeCode;
+    }
 
     public int getPin() {
         return pin;
@@ -191,12 +194,12 @@ public class Student {
     }
 
     public List<Qualification> getQualifications() {
-         return qualifications;
-     }
+        return qualifications;
+    }
 
-     public void setQualifications(List<Qualification> qualifications) {
-         this.qualifications = qualifications;
-     }
+    public void setQualifications(List<Qualification> qualifications) {
+        this.qualifications = qualifications;
+    }
 
     public int getYearsStudiedInState() {
         return yearsStudiedInState;
@@ -206,36 +209,36 @@ public class Student {
         this.yearsStudiedInState = yearsStudiedInState;
     }
 
-    public Boolean isRuralStudent() {
+    public String getRuralStudent() {
         return ruralStudent;
     }
 
-    public void setRuralStudent(Boolean ruralStudent) {
+    public void setRuralStudent(String ruralStudent) {
         this.ruralStudent = ruralStudent;
     }
 
-    public Boolean isSNQCliming() {
-        return SNQCliming;
+    public String getSnqCliming() {
+        return snqCliming;
     }
 
-    public void setSNQCliming(Boolean SNQCliming) {
-        this.SNQCliming = SNQCliming;
+    public void setSnqCliming(String snqCliming) {
+        this.snqCliming= snqCliming;
     }
 
-    public Boolean isStudiedInKannadaMedium() {
+    public String getStudiedInKannadaMedium() {
         return studiedInKannadaMedium;
     }
 
-    public void setStudiedInKannadaMedium(Boolean studiedInKannadaMedium) {
+    public void setStudiedInKannadaMedium(String studiedInKannadaMedium) {
         this.studiedInKannadaMedium = studiedInKannadaMedium;
     }
 
-    public long getAnualIncome() {
-        return anualIncome;
+    public long getAnnualIncome() {
+        return annualIncome;
     }
 
-    public void setAnualIncome(long anualIncome) {
-        this.anualIncome = anualIncome;
+    public void setAnnualIncome(long annualIncome) {
+        this.annualIncome = annualIncome;
     }
 
     public String getAnualIncomeUnit() {
@@ -270,19 +273,19 @@ public class Student {
         this.specialCategoryCode = specialCategoryCode;
     }
 
-    public long getAmoutPaid() {
-        return amoutPaid;
+    public long getRegistrationAmountPaid() {
+        return registrationAmountPaid;
     }
 
-    public void setAmoutPaid(long amoutPaid) {
-        this.amoutPaid = amoutPaid;
+    public void setRegistrationAmountPaid(long registrationAmountPaid) {
+        this.registrationAmountPaid = registrationAmountPaid;
     }
 
-    public Date getAmoutPaidDate() {
+    public String getAmoutPaidDate() {
         return amoutPaidDate;
     }
 
-    public void setAmoutPaidDate(Date amoutPaidDate) {
+    public void setAmoutPaidDate(String amoutPaidDate) {
         this.amoutPaidDate = amoutPaidDate;
     }
 
@@ -309,5 +312,13 @@ public class Student {
             }
         }
         return false;
+    }
+
+    public String getIndianNational() {
+        return indianNational;
+    }
+
+    public void setIndianNational(String indianNational) {
+        this.indianNational = indianNational;
     }
 }

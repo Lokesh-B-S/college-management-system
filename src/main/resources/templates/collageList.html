@@ -16,7 +16,7 @@
     <h1> Collage </h1>
 
     <p>
-        <a href="/collageEdit" th:href="@{/collageEdit}">Create</a>
+        <a href="/admin/collageEdit" th:href="@{/admin/collageEdit}">Create</a>
     </p>
 
     <table class="table table-striped">
@@ -36,8 +36,8 @@
             <td th:text="${collage.collageCode}">Test</td>
             <td th:text="${collage.collageAddress}">Test</td>
             <td>
-                <a href="/collageEdit/1" th:href="@{/collageEdit/__${collage.collageId}__}">Edit</a>
-                <a href="/addCourse/1" th:href="@{/addCourse/__${collage.collageId}__}">Add Course</a>
+                <a href="/admin/collageEdit/1" th:href="@{/admin/collageEdit/__${collage.collageId}__}">Edit</a>
+                <a href="/admin/addCourse/1" th:href="@{/admin/addCourse/__${collage.collageId}__}">Add Course</a>
                 <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
             </td>
         </tr>

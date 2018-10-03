@@ -41,6 +41,7 @@
         <li class="active"><a data-toggle="tab" href="#basic">Basic Details</a></li>
         <li><a data-toggle="tab" href="#additional"> Additional Info  </a></li>
         <li><a data-toggle="tab" href="#education"> Previous Education</a></li>
+        <li><a data-toggle="tab" href="#fee"> Fees Details </a></li>
         <!--<li><a data-toggle="tab" href="#category">Category Information</a></li>
         <li><a data-toggle="tab" href="#other">Others</a></li>-->
     </ul>
@@ -145,12 +146,11 @@
                         <td> &nbsp</td>
                         <td>
                             <div class="form-group">
-                                <label for="nativeCode">  </label> <br>
                                 <div class="form-group">
-                                    <label for="nativeCode"> State </label> <br>
+                                    <label for="nativeCode"> Native State Code </label> <br>
                                     <select class="form-control" th:field="*{student.nativeCode}">
                                         <option th:each="st : ${native}" th:value="${st.key}" th:text="${st.value}"
-                                                id="nativeCode"> State </option> 
+                                                id="nativeCode"> State </option>
                                     </select>
                                 </div>
                             </div>
@@ -159,7 +159,7 @@
                     <tr>
                         <td>
                             <div class="form-group">
-                                <label for="state.stateCode"> District  </label> <br>
+                                <label for="state.stateCode"> Native District Code  </label> <br>
                                 <select class="form-control" th:field="*{student.state}">
                                     <option th:each="state : ${states}" th:value="${state.stateCode}" th:text="${state.stateName}"
                                             id="state.stateCode"> District </option>
@@ -198,6 +198,136 @@
                             </div>
 
                         </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label> Mother Toungue </label><br>
+                                <input type="text" class="form-control" id="motherTongue" th:field="${student.motherTongue}"
+                                       placeholder="Mother Tongue"/>
+                            </div>
+                        </td>
+                        <td> &nbsp; </td>
+                        <td>
+                            <div class="form-group">
+                                <label> Years Studied In Karnataka </label><br>
+                                <input type="text" class="form-control" id="yearsStudiedInState" th:field="${student.yearsStudiedInState}"
+                                       placeholder="Years Studied in Karnataka "/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label> Rural Student from 1st to 10th?  </label><br>
+                                <input type="radio" th:field="*{student.ruralStudent}" name="ruralStudent" value="Y" id="ruralStudent"/>
+                                <label th:text="Y">Y</label>
+                                <input type="radio" th:field="*{student.ruralStudent}" name="ruralStudent" value="N"/>
+                                <label th:text="N">No</label>
+                            </div>
+                        </td>
+                        <td> &nbsp; </td>
+                        <td>
+                            <div class="form-group">
+                                <label> Studied Kannada Medium from 1st to 10th?  </label><br>
+                                <input type="radio" th:field="*{student.studiedInKannadaMedium}" name="studiedInKannadaMedium" value="Y" id="studiedInKannadaMedium"/>
+                                <label th:text="Y">Y</label>
+                                <input type="radio" th:field="*{student.studiedInKannadaMedium}" name="studiedInKannadaMedium" value="N"/>
+                                <label th:text="N">No</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label> SNQ Claiming ?  </label><br>
+                                <input type="radio" th:field="*{student.snqCliming}" name="snqCliming" value="Y" id="snqCliming"/>
+                                <label th:text="Y">Y</label>
+                                <input type="radio" th:field="*{student.snqCliming}" name="snqCliming" value="N"/>
+                                <label th:text="N">No</label>
+                            </div>
+                        </td>
+                        <td> &nbsp; </td>
+                        <td>
+                            <div class="form-group">
+                                <label> 317(J) Hyderbad-Karnataka Claiming?  </label><br>
+                                <input type="radio" th:field="*{student.hydKarCliming}" name="hydKarCliming" value="Y" id="hydKarCliming"/>
+                                <label th:text="Y">Y</label>
+                                <input type="radio" th:field="*{student.hydKarCliming}" name="hydKarCliming" value="N"/>
+                                <label th:text="N">No</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="annualIncome">Annual Income of Family</label>
+                                <input type="text" class="form-control" id="annualIncome" th:field="${student.annualIncome}"
+                                       placeholder="Annual Income"/>
+                            </div>
+                        </td>
+                        <td> &nbsp; </td>
+                        <td>
+                            <div class="form-group">
+                                <label> Category  </label><br>
+                                <select class="form-control" th:field="*{student.category}">
+                                    <option th:each="cat : ${categories}" th:value="${cat.key}" th:text="${cat.value}"
+                                            id="category"> Select Category </option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="nameOfCaste">Name Of Caste</label>
+                                <input type="text" class="form-control" id="nameOfCaste" th:field="${student.nameOfCaste}"
+                                       placeholder="Name of Caste"/>
+                            </div>
+                        </td>
+                        <td> &nbsp; </td>
+                        <td>
+                            <div class="form-group">
+                                <label> Special Category </label><br>
+                                <select class="form-control" th:field="*{student.specialCategoryCode}">
+                                    <option th:each="scat : ${specialCategory}" th:value="${scat.key}" th:text="${scat.value}"
+                                            id="specialCategoryCode"> Special Category </option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="fee" class="tab-pane fade">
+                <table border="0" width="80%">
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="name">Registration Fee paid (in Rs.) </label>
+                                <input type="text" class="form-control" id="registrationAmountPaid" th:field="${student.registrationAmountPaid}"
+                                       placeholder="Registration Amount "/>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td>
+                            <div class="form-group">
+                                <label for="fatherName">Amout Paid Date </label>
+                                <input type="date" class="form-control" id="amoutPaidDate" th:field="${student.amoutPaidDate}"
+                                       placeholder="Amout Paid Date"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label for="challanNo"> Challan No </label>
+                                <input type="text" class="form-control" id="challanNo" th:field="${student.challanNo}"
+                                       placeholder="Challan No"/>
+                            </div>
+                        </td>
+                        <td> &nbsp</td>
+                        <td> &nbsp</td>
                     </tr>
                 </table>
             </div>
