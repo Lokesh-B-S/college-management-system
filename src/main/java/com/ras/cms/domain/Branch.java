@@ -8,7 +8,7 @@ import javax.persistence.Id;
 @Entity
 public class Branch {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long branchId;
     private String branchCode;
     private String branchName;
@@ -16,6 +16,8 @@ public class Branch {
     private Long attendentId;
     private Long collageId;
     private Long courseId;
+    private String collageName;
+    private String courseName;
 
     public String getCollageName() {
         return collageName;
@@ -32,9 +34,6 @@ public class Branch {
     public void setCourseName(String courseName) {
         this.courseName = courseName;
     }
-
-    private String collageName;
-    private String courseName;
 
     public String getBranchCode() {
         return branchCode;
