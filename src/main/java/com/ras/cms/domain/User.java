@@ -15,7 +15,7 @@ public class User {
     private String emailId;
     private String loginId;
 
-    private Long collageId;
+    private Long CollegeId;
     private Long courseId;
     private Long branchId;
 
@@ -77,12 +77,12 @@ public class User {
         this.loginId = loginId;
     }
 
-    public Long getCollageId() {
-        return collageId;
+    public Long getCollegeId() {
+        return CollegeId;
     }
 
-    public void setCollageId(Long collageId) {
-        this.collageId = collageId;
+    public void setCollegeId(Long CollegeId) {
+        this.CollegeId = CollegeId;
     }
 
     public Long getCourseId() {

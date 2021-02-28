@@ -3,7 +3,7 @@
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>Collage</title>
+    <title>College</title>
 
     <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}"/>
@@ -66,10 +66,10 @@
             <tr>
                 <td>
                     <div class="form-group">
-                        <label> Collage Id </label>
-                        <select class="form-control" th:field="*{user.collageId}">
-                            <option th:each="collage : ${collages}" th:value="${collage.collageId}" th:text="${collage.collageName}"
-                                    id="collage.collageId"> Collage </option>
+                        <label> College Id </label>
+                        <select class="form-control" th:field="*{user.CollegeId}">
+                            <option th:each="College : ${Colleges}" th:value="${College.CollegeId}" th:text="${College.CollegeName}"
+                                    id="College.CollegeId"> College </option>
                         </select>
                     </div>
                 </td>

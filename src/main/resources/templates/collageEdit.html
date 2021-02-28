@@ -3,7 +3,7 @@
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>Collage</title>
+    <title>College</title>
 
     <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}"/>
@@ -14,7 +14,7 @@
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container">
-    <form action="/admin/collageEdit" th:action="@{/admin/collageEdit}" method="post">
+    <form action="/admin/CollegeEdit" th:action="@{/admin/CollegeEdit}" method="post">
 
     <table width="100%">
         <tr>
@@ -27,27 +27,27 @@
 
         <table border="0" width="80%">
             <tr>
-                <td><input th:type="hidden" name="collageId" th:field="${collage.collageId}"/>
+                <td><input th:type="hidden" name="CollegeId" th:field="${College.CollegeId}"/>
                     <div class="form-group">
-                        <label for="collageName">Collage Name</label>
-                        <input type="text" class="form-control" id="collageName" th:field="${collage.collageName}"
-                               placeholder="Collage Name"/>
+                        <label for="CollegeName">College Name</label>
+                        <input type="text" class="form-control" id="CollegeName" th:field="${College.CollegeName}"
+                               placeholder="College Name"/>
                     </div>
                 </td>
                 <td> &nbsp;</td>
                 <td>
                     <div class="form-group">
-                        <label for="collageCode">Collage Code</label>
-                        <input type="text" class="form-control" id="collageCode" th:field="${collage.collageCode}"
-                               placeholder="Collage Code"/>
+                        <label for="CollegeCode">College Code</label>
+                        <input type="text" class="form-control" id="CollegeCode" th:field="${College.CollegeCode}"
+                               placeholder="College Code"/>
                     </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="3">
                     <div class="form-group">
-                        <label for="collageAddress"> Address </label>
-                        <input type="text" class="form-control" id="collageAddress" th:field="${collage.collageAddress}"
+                        <label for="CollegeAddress"> Address </label>
+                        <input type="text" class="form-control" id="CollegeAddress" th:field="${College.CollegeAddress}"
                                placeholder=" Address "/>
                     </div>
                 </td>

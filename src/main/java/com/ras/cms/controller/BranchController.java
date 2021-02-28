@@ -2,7 +2,7 @@ package com.ras.cms.controller;
 
 import com.ras.cms.domain.Branch;
 import com.ras.cms.service.branch.BranchService;
-import com.ras.cms.service.collage.CollageService;
+import com.ras.cms.service.college.CollegeService;
 import com.ras.cms.service.course.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,7 @@ public class BranchController {
     private BranchService branchService;
 
     @Autowired
-    private CollageService collageService;
+    private CollegeService CollegeService;
 
     @Autowired
     private CourseService courseService;
@@ -34,7 +34,7 @@ public class BranchController {
     public String branchList(Model model) {
         List<Branch> branchList = branchService.findAll();
         for (Branch branch : branchList ) {
-            branch.setCollageName(collageService.findOne(branch.getCollageId()).getCollageName());
+            branch.setCollegeName(CollegeService.findOne(branch.getCollegeId()).getCollegeName());
             branch.setCourseName(courseService.findOne(branch.getCourseId()).getCourseName());
         }
         model.addAttribute("branchList",  branchList);
@@ -48,13 +48,13 @@ public class BranchController {
         } else {
             model.addAttribute("branch", new Branch());
         }
-        model.addAttribute("collages", getCollages());
+        model.addAttribute("Colleges", getColleges());
         model.addAttribute("courses", getCourses());
         return "/branchEdit";
     }
 
-    private Object getCollages() {
-        return  collageService.findAll();
+    private Object getColleges() {
+        return  CollegeService.findAll();
     }
 
     private Object getCourses() {

@@ -30,7 +30,7 @@ public class InitApplicationService implements ApplicationRunner {
     public void run(ApplicationArguments applicationArguments) {
         if(roleService.findAll().size() == 0) {
             roleService.saveRole(new Role("SITE_ADMIN", "Site Administrator"));
-            roleService.saveRole(new Role("COLLAGE_ADMIN", "Collage Administrator"));
+            roleService.saveRole(new Role("College_ADMIN", "College Administrator"));
             roleService.saveRole(new Role("COURSE_ADMIN", "Course Administrator"));
             roleService.saveRole(new Role("DEPT_ADMIN", "Department Administrator"));
             roleService.saveRole(new Role("DEPT_HEAD", "Head of Department"));

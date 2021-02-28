@@ -18,7 +18,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/about","/actuator/**").permitAll()
                 .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
-                .antMatchers("/admin/**").hasAnyRole("COLLAGE_ADMIN")
+                .antMatchers("/admin/**").hasAnyRole("College_ADMIN")
                 .antMatchers("/user/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
                 .and()
@@ -40,8 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/about","/error/**","/console/**").permitAll()
                 .antMatchers("/error/403/**","/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
-                .antMatchers("/collageEdit/**","/listCollage/**","/collageDelete/**").hasAnyRole("SITE_ADMIN")
-                .antMatchers("/collageEdit/**","/listCourse/**","/courseEdit/**","/courseDelete/**").hasAnyRole("COLLAGE_ADMIN")
+                .antMatchers("/CollegeEdit/**","/listCollege/**","/CollegeDelete/**").hasAnyRole("SITE_ADMIN")
+                .antMatchers("/CollegeEdit/**","/listCourse/**","/courseEdit/**","/courseDelete/**").hasAnyRole("College_ADMIN")
                 .antMatchers("/listCourse/**","/courseEdit/**","/listStudent/**","/studentEdit/**").hasAnyRole("COURSE_ADMIN")
 //                .antMatchers("/user/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
@@ -62,6 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser("user").password("{noop}password").roles("SITE_ADMIN")
                 .and()
-                .withUser("admin").password("{noop}password").roles("COLLAGE_ADMIN");
+                .withUser("admin").password("{noop}password").roles("College_ADMIN");
     }
 }

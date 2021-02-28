@@ -25,7 +25,7 @@
             <th> Branch Id</th>
             <th> Branch Code</th>
             <th> Branch Name</th>
-            <th> Collage </th>
+            <th> College </th>
             <th> Course </th>
             <th> Actions</th>
         </tr>
@@ -35,7 +35,7 @@
             <td th:text="${branch.branchId}">1</td>
             <td th:text="${branch.branchCode}">1</td>
             <td th:text="${branch.branchName}">Test</td>
-            <td th:text="${branch.collageId} + '-' + ${branch.collageName}"> Collage </td>
+            <td th:text="${branch.CollegeId} + '-' + ${branch.CollegeName}"> College </td>
             <td th:text="${branch.courseId} + '-' +  ${branch.courseName}"> Branch </td>
             <td>
                 <a href="/admin/branchEdit/1" th:href="@{/admin/branchEdit/__${branch.branchId}__}">Edit</a>

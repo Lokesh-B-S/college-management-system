@@ -29,10 +29,10 @@
             <tr>
                 <td><input th:type="hidden" name="branchId" th:field="${branch.branchId}"/>
                     <div class="form-group">
-                        <label> Collage </label>
-                        <select class="form-control" th:field="*{branch.collageId}">
-                            <option th:each="collage : ${collages}" th:value="${collage.collageId}" th:text="${collage.collageName}"
-                                    id="branch.collageId"> Collage </option>
+                        <label> College </label>
+                        <select class="form-control" th:field="*{branch.CollegeId}">
+                            <option th:each="College : ${Colleges}" th:value="${College.CollegeId}" th:text="${College.CollegeName}"
+                                    id="branch.CollegeId"> College </option>
                         </select>
                     </div>
                 </td>

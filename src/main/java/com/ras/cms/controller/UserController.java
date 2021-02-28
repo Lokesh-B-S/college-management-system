@@ -1,7 +1,7 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.User;
-import com.ras.cms.service.collage.CollageService;
+import com.ras.cms.service.college.CollegeService;
 import com.ras.cms.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +24,7 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    CollageService collageService;
+    CollegeService CollegeService;
 
     @GetMapping(value="/listUser")
     public String userList(Model model) {
@@ -39,8 +39,8 @@ public class UserController {
         } else {
             model.addAttribute("user", new User());
         }
-        model.addAttribute("collages",collageService.findAll());
-//        model.addAttribute("branches",collageService.findAll().get(0).getCourses());
+        model.addAttribute("Colleges",CollegeService.findAll());
+//        model.addAttribute("branches",CollegeService.findAll().get(0).getCourses());
         return "/userEdit";
     }
 

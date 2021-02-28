@@ -11,7 +11,7 @@ public class Subject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long subjectId;
 
-    Long collageId;
+    Long CollegeId;
     Long courseId;
     Long branchId;
     Long subjectTypeId;
@@ -32,12 +32,12 @@ public class Subject {
         this.subjectId = subjectId;
     }
 
-    public Long getCollageId() {
-        return collageId;
+    public Long getCollegeId() {
+        return CollegeId;
     }
 
-    public void setCollageId(Long collageId) {
-        this.collageId = collageId;
+    public void setCollegeId(Long CollegeId) {
+        this.CollegeId = CollegeId;
     }
 
     public Long getCourseId() {

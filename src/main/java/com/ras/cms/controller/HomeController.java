@@ -1,7 +1,7 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.SubjectType;
-import com.ras.cms.service.role.RoleService;
+//import com.ras.cms.service.role.RoleService;
 import com.ras.cms.service.subjecttype.SubjectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.SpringVersion;
@@ -44,21 +44,21 @@ public class HomeController {
     /* Code for SubjectType - End */
 
     /* Code for Role -Start */
-    @Autowired
-    RoleService roleService;
-
-    @GetMapping(value="/listRole")
-    public String roleList(Model model) {
-        model.addAttribute("roleList", roleService.findAll());
-        return "/roleList";
-    }
-
-    @GetMapping(value="/deleteRole")
-    public String deleteRole(Model model) {
-        roleService.deleteRoles();//DELETE All Roles
-        model.addAttribute("roleList", roleService.findAll());
-        return "/roleList";
-    }
+//    @Autowired
+//    RoleService roleService;
+//
+//    @GetMapping(value="/listRole")
+//    public String roleList(Model model) {
+//        model.addAttribute("roleList", roleService.findAll());
+//        return "/roleList";
+//    }
+//
+//    @GetMapping(value="/deleteRole")
+//    public String deleteRole(Model model) {
+//        roleService.deleteRoles();//DELETE All Roles
+//        model.addAttribute("roleList", roleService.findAll());
+//        return "/roleList";
+//    }
 
     /* Code for Role -End */
 }

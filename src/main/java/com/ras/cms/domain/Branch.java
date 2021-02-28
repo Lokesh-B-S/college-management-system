@@ -14,17 +14,17 @@ public class Branch {
     private String branchName;
     private Long hodId;
     private Long attendentId;
-    private Long collageId;
+    private Long CollegeId;
     private Long courseId;
-    private String collageName;
+    private String CollegeName;
     private String courseName;
 
-    public String getCollageName() {
-        return collageName;
+    public String getCollegeName() {
+        return CollegeName;
     }
 
-    public void setCollageName(String collageName) {
-        this.collageName = collageName;
+    public void setCollegeName(String CollegeName) {
+        this.CollegeName = CollegeName;
     }
 
     public String getCourseName() {
@@ -43,12 +43,12 @@ public class Branch {
         this.branchCode = branchCode;
     }
 
-    public Long getCollageId() {
-        return collageId;
+    public Long getCollegeId() {
+        return CollegeId;
     }
 
-    public void setCollageId(Long collageId) {
-        this.collageId = collageId;
+    public void setCollegeId(Long CollegeId) {
+        this.CollegeId = CollegeId;
     }
 
     public Long getCourseId() {

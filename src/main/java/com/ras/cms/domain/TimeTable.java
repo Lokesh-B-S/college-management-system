@@ -1,7 +1,7 @@
 package com.ras.cms.domain;
 
 public class TimeTable {
-    Long collageId;
+    Long CollegeId;
     Long courseId;
     Long branchId;
 

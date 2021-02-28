@@ -7,6 +7,6 @@ import java.util.List;
 public interface CourseService {
     List<Course> findAll();
     Course findOne(Long id);
-    Course saveCourse(Course collage);
+    Course saveCourse(Course College);
     void deleteCourse(Long id);
 }

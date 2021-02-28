@@ -3,7 +3,7 @@
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>Collage List</title>
+    <title>College List</title>
 
     <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}"/>
@@ -14,7 +14,7 @@
 <form action="/admin/addCourse" th:action="@{/admin/addCourse}" method="post">
     <div th:replace="fragments/header :: header"/>
     <div class="container">
-        <h1> Collage - Add Course(s) </h1>
+        <h1> College - Add Course(s) </h1>
 
         <p>
             <a href="/admin/courseEdit" th:href="@{/admin/courseEdit}">Create Course</a>
@@ -30,12 +30,12 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="collage : ${collageList}">
-                <td th:text="${collage.collageId}">1</td>
-                <td th:text="${collage.collageName}">Test</td>
-                <td th:text="${collage.collageCode}">Test</td>
-                <td th:text="${collage.collageAddress}">Test</td>
-                <input th:type="hidden" name="collageId" th:value="${collage.collageId}"/>
+            <tr th:each="College : ${CollegeList}">
+                <td th:text="${College.CollegeId}">1</td>
+                <td th:text="${College.CollegeName}">Test</td>
+                <td th:text="${College.CollegeCode}">Test</td>
+                <td th:text="${College.CollegeAddress}">Test</td>
+                <input th:type="hidden" name="CollegeId" th:value="${College.CollegeId}"/>
             </tr>
             <tr>
                 <td colspan="2"> Select Courses </td>
