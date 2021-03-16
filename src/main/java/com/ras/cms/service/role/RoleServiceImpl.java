@@ -1,10 +1,7 @@
 package com.ras.cms.service.role;
 
-import com.ras.cms.dao.AddressRepository;
 import com.ras.cms.dao.RoleRepository;
-import com.ras.cms.domain.Address;
 import com.ras.cms.domain.Role;
-import com.ras.cms.service.address.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +31,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void deleteRole(Long id) {
         roleRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteRoles(){
+        roleRepository.deleteAll();
     }
 }
