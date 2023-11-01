@@ -17,7 +17,7 @@ public class User {
 
     private Long CollegeId;
     private Long courseId;
-    private Long branchId;
+    private Long departmentId;
 
     private String startDate;
     private String endDate;
@@ -93,12 +93,12 @@ public class User {
         this.courseId = courseId;
     }
 
-    public Long getBranchId() {
-        return branchId;
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
-    public void setBranchId(Long branchId) {
-        this.branchId = branchId;
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
     public String getStartDate() {

@@ -2,67 +2,300 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Course</title>
+    <meta charset="UTF-8"/><!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Course</title>
 
-    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
-          th:href="@{/css/bootstrap.min.css}"/>
+        <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+              th:href="@{/css/bootstrap.min.css}"/>
 
-    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
-    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
-</head>
-<body>
-<div th:replace="fragments/header :: header"/>
-<div class="container">
-    <form action="/admin/courseEdit" th:action="@{/admin/courseEdit}" method="post">
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
 
-    <table width="100%">
-        <tr>
-            <td align="right">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
-            </td>
-        </tr>
-    </table>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/bootstrap.min.css" />
 
-        <table border="0" width="80%">
+        <!-- Include Alertify.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
+
+        <script>
+            // Initialize Alertify.js
+            alertify.set('notifier', 'position', 'top-right'); // Adjust notification position as needed
+        </script>
+
+        <script>
+            // Function to display a success alert
+      function showSuccessAlert(message, timeout) {
+        alertify.success('Entry added successfully');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+        console.log('Alert displayed!');
+      }
+
+      // Function to display an error alert
+      function showErrorAlert(message, timeout) {
+        alertify.error('oops! there was error while adding');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+         function showEntryAlreadyExistsAlert(message, timeout) {
+        alertify.error('Sorry Already an entry exists, Please delete the entry and try again');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+        function deleteSuccess(message, timeout) {
+        alertify.success('entry deleted successfully');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+        function deleteFailure(message, timeout) {
+        alertify.error('failed to delete');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+        </script>
+
+
+        <!-- Include jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!--        &lt;!&ndash;delete course entry&ndash;&gt;-->
+<!--        <script type="text/javascript">-->
+<!--            function deleteEntry() {-->
+<!--                var departmentSemSecId = document.querySelector('[name="departmentSemSecId"]').value; // Get the value from the hidden input field-->
+<!--                var selectedDay = document.getElementById("day").value;-->
+<!--                var selectedTimeSlot = document.getElementById("timeSlot").value;-->
+<!--                var selectedCourse = document.getElementById("course").value;-->
+<!--    -->
+<!--                // Construct the delete URL-->
+<!--                var deleteUrl = "/admin/deleteTimeTable/" + departmentSemSecId + "?day=" + selectedDay + "&timeSlot=" + selectedTimeSlot + "&course=" + selectedCourse;-->
+<!--    -->
+<!--                // Navigate to the delete URL-->
+<!--                window.location.href = deleteUrl;-->
+<!--            }-->
+<!--    -->
+<!--            // Attach the deleteEntry function to the click event of the delete link-->
+<!--           // document.getElementById("deleteLink").addEventListener("click", deleteEntry);-->
+<!--        </script>-->
+
+
+
+    </head>
+    <body>
+    <div th:replace="fragments/header :: header"/>
+
+    <div class="container">
+
+        <table width="100%">
             <tr>
-                <td><input th:type="hidden" name="courseId" th:field="${course.courseId}"/>
-                    <div class="form-group">
-                        <label for="courseCode">Course Code</label>
-                        <input type="text" class="form-control" id="courseCode" th:field="${course.courseCode}"
-                               placeholder="Course Code"/>
-                    </div>
-                </td>
-                <td> &nbsp;</td>
-                <td>
-                    <div class="form-group">
-                        <label for="courseName">Course Name</label>
-                        <input type="text" class="form-control" id="courseName" th:field="${course.courseName}"
-                               placeholder="Course Name"/>
-                    </div>
-                </td>
-            </tr>
+                <th th:text="'Academic Year: ' + ${batchYearDeptProgramSem1.academicYear.year}" style="font-size: 15px;">Academic Year</th>
+                <th th:text="'Batch: ' + ${batchYearDeptProgramSem1.batch.batchName}" style="font-size: 15px;">Batch</th>
+                <th th:text="'Semester: ' + ${batchYearDeptProgramSem1.semester.sem}" style="font-size: 15px;">Semester</th>
+                 </tr>
             <tr>
-                <td>
-                    <div class="form-group">
-                        <label for="courseDuration">Course Duration</label>
-                        <input type="text" class="form-control" id="courseDuration" th:field="${course.courseDuration}"
-                               placeholder="Course Duration"/>
-                    </div>
-                </td>
-                <td> &nbsp;</td>
-                <td>
-                    <div class="form-group">
-                        <label for="semister">Semister</label>
-                        <input type="text" class="form-control" id="semister" th:field="${course.semister}"
-                               placeholder="Semister"/>
-                    </div>
-                </td>
+                <th th:text="'Department: ' + ${batchYearDeptProgramSem1.department.departmentName}" style="font-size: 15px;">Department</th>
+                <th th:text="'Programme: ' + ${batchYearDeptProgramSem1.program.programName}" style="font-size: 15px;">
+                <th th:text="'Course Type: ' + ${courseType.typeOfCourse}" style="font-size: 15px;">CourseType</th>
+
+
+
+                <!--                <td align="left">-->
+<!--                    <a href="/admin/listCourse/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}" th:href="@{/admin/listCourse/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__}" class="btn btn-primary" role="button">View Courses</a>-->
+<!--                </td>-->
+
+<!--                <td align="right">-->
+<!--                    delete button same as in timetable-->
+<!--                   <button class="btn btn-danger" onclick="deleteEntry()">Delete</button>-->
+
+<!--                    <button class="btn btn-primary">Save</button>-->
+<!--                   <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>-->
+<!--                </td>-->
             </tr>
+            <tr><td></td></tr>
         </table>
-    </form>
-</div>
-<div th:replace="fragments/footer :: footer"/>
-</body>
-</html>
+        <hr>
+
+        <form action="/admin/courseEdit" th:action="@{/admin/courseEdit}"  method="post">
+
+            <table border="0" width="80%">
+                <tr> <td> </td></tr>
+                <tr>
+                    <td> <label>Select Teaching Dept. : </label> </td>
+
+                    <td>
+                        <input th:type="hidden" name="batchYearDeptProgramSemId" th:field="${batchYearDeptProgramSem1.batchYearDeptProgramSemId}"/>
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.batch.batchId}" name="batch">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.academicYear.id}" name="academicYear">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.department.departmentId}" name="department">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.program.programId}" name="program">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.semester.semId}" name="semester">
+
+<!--                        <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Theory'" id="courseType"/>-->
+                        <input type="hidden" th:field="${courseType.typeOfCourse}" th:value="${courseType.typeOfCourse}" name="courseType"/>
+
+                        <div class="form-group">
+<!--                            <label>Select Teaching Dept. : </label>-->
+                            <select class="form-control" id="teachingDepartment" name="teachingDepartment.teachingDepartmentId">
+                                <option th:each="teachingDepartment : ${teachingDepartments}" th:value="${teachingDepartment.teachingDepartmentId}" th:text="${teachingDepartment.teachingDepartmentName} + ' - ' + ${teachingDepartment.teachingDepartmentCode}"></option>
+                            </select>
+                        </div>
+                    </td>
+
+                    <td>
+                        <a href="/admin/editTeachingDepartment" th:href="@{/admin/editTeachingDepartment}" class="btn btn-primary" role="button">Add Teaching Department</a>
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="courseName">Course Name:</label>
+                            <input type="text" class="form-control" id="courseName" th:field="${course.courseName}"
+                                   placeholder="Course Name"/>
+                        </div>
+                            </td>
+                     
+
+                    <td>
+                        <div class="form-group">
+                            <label for="courseCode">Course Code:</label>
+                            <input type="text" class="form-control" id="courseCode" th:field="${course.courseCode}"
+                                   placeholder="CSE51"/>
+                        </div>
+                        </td>
+                     
+
+                    <td>
+                        <div class="form-group">
+                            <label for="contactHours">Contact hours per week:</label>
+                            <input type="text" class="form-control" id="contactHours" th:field="${course.contactHours}"
+                                   placeholder="in hours"/>
+                        </div>
+                    </td>
+
+                </tr>
+
+
+
+                <tr><td></td></tr>
+                <tr>
+                    <td>
+                        <label >Credits : </label>
+                        <div class="form-group">
+                            <td>
+                                <div class="form-group">
+                                    <label for="lectureCredits">Lecture Credits (L):</label>
+                                    <input type="text" class="form-control" id="lectureCredits" th:field="${course.lectureCredits}"
+                                           placeholder="Lecture Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="tutorialCredits">Tutorial Credits (T):</label>
+                                    <input type="text" class="form-control" id="tutorialCredits" th:field="${course.tutorialCredits}"
+                                           placeholder="Tutorial Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="practicalCredits">Practical Credits (P):</label>
+                                    <input type="text" class="form-control" id="practicalCredits" th:field="${course.practicalCredits}"
+                                           placeholder="Practical Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="totalCredits">Total Credits :</label>
+                                    <input type="text" class="form-control" id="totalCredits" th:field="${course.totalCredits}"
+                                           placeholder="Total Credits"/>
+                                </div>
+                            </td>
+                             
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr><td></td></tr>
+                <tr>
+                    <td> <label>Total number of batches : </label> </td>
+
+                    <td>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="courseBatchesCount" th:field="${course.courseBatchesCount}"
+                                   placeholder="0"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+
+            </table>
+
+
+            <div align="center">
+                <a href="/admin/listCourse/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}" th:href="@{/admin/listCourse/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__}" class="btn btn-primary" role="button">View Courses</a>
+                <button class="btn btn-primary">Save</button>
+                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+            </div>
+
+            <!-- success-->
+            <script th:if="${successMessage}">
+                showSuccessAlert('${successMessage}', 3000);
+            </script>
+
+            <!-- error -->
+            <script th:if="${errorMessage}">
+                showErrorAlert('${errorMessage}', 3000);
+            </script>
+
+            <script th:if="${EntryAlreadyExistsError}">
+                showEntryAlreadyExistsAlert('${EntryAlreadyExistsError}', 3000);
+            </script>
+
+            <script th:if="${DeleteSuccessMessage}">
+                deleteSuccess('${DeleteSuccessMessage}', 3000);
+            </script>
+
+            <script th:if="${EntryDoesNotExistError}">
+                deleteFailure('${EntryDoesNotExistError}', 3000);
+            </script>
+
+
+
+        </form>
+
+    </div>
+
+
+
+    </body>
+    </html>
+

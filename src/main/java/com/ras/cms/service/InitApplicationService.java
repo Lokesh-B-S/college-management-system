@@ -1,9 +1,13 @@
 package com.ras.cms.service;
 
-import com.ras.cms.domain.Role;
-import com.ras.cms.domain.State;
+import com.ras.cms.domain.*;
+import com.ras.cms.service.coursetype.CourseTypeService;
+import com.ras.cms.service.day.DayService;
 import com.ras.cms.service.role.RoleService;
+import com.ras.cms.service.section.SectionService;
+import com.ras.cms.service.semester.SemesterService;
 import com.ras.cms.service.state.StateService;
+//import com.ras.cms.service.timeslot.TimeSlotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalTime;
+import java.util.List;
 
 /** 
  * Created by Surya on 06-Jun-18.
@@ -27,7 +34,24 @@ public class InitApplicationService implements ApplicationRunner {
     @Autowired
     StateService stateService;
 
+    @Autowired
+    private DayService dayService;
+
+    @Autowired
+    private SemesterService semesterService;
+
+    @Autowired
+    private SectionService sectionService;
+
+    @Autowired
+    private CourseTypeService courseTypeService;
+
+//    @Autowired
+//    private TimeSlotService timeSlotService;
     public void run(ApplicationArguments applicationArguments) {
+        // Log an info message
+        LOGGER.info("Initializing application...");
+
         if(roleService.findAll().size() == 0) {
             roleService.saveRole(new Role("SITE_ADMIN", "Site Administrator"));
             roleService.saveRole(new Role("College_ADMIN", "College Administrator"));
@@ -65,5 +89,65 @@ public class InitApplicationService implements ApplicationRunner {
             stateService.saveState(new State(25L,"Shivamogga"));
             stateService.saveState(new State(26L,"Tumkur"));
         }
+
+        if (dayService.findAll().isEmpty()) {
+            dayService.saveDay(new Day("Monday"));
+            dayService.saveDay(new Day("Tuesday"));
+            dayService.saveDay(new Day("Wednesday"));
+            dayService.saveDay(new Day("Thursday"));
+            dayService.saveDay(new Day("Friday"));
+            dayService.saveDay(new Day("Saturday"));
+            dayService.saveDay(new Day("Sunday"));
+
+
+            // ... Continue adding days as needed
+        }
+
+//        if (timeSlotService.findAll().isEmpty()) {
+//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("09:00"), LocalTime.parse("10:00")));
+//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("10:00"), LocalTime.parse("11:00")));
+//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("11:10"), LocalTime.parse("12:10")));
+//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("12:10"), LocalTime.parse("01:10")));
+//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("01:50"), LocalTime.parse("02:50")));
+//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("02:50"), LocalTime.parse("03:50")));
+//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("03:50"), LocalTime.parse("04:50")));
+//
+//            // ... Continue adding time slots as needed
+//        }
+
+        if(semesterService.findAll().isEmpty()){
+            semesterService.saveSemester(new Semester(1L));
+            semesterService.saveSemester(new Semester(2L));
+            semesterService.saveSemester(new Semester(3L));
+            semesterService.saveSemester(new Semester(4L));
+            semesterService.saveSemester(new Semester(5L));
+            semesterService.saveSemester(new Semester(6L));
+            semesterService.saveSemester(new Semester(7L));
+            semesterService.saveSemester(new Semester(8L));
+        }
+
+        if(sectionService.findAll().isEmpty()){
+            sectionService.saveSection(new Section("A"));
+            sectionService.saveSection(new Section("B"));
+            sectionService.saveSection(new Section("C"));
+            sectionService.saveSection(new Section("D"));
+            sectionService.saveSection(new Section("E"));
+            sectionService.saveSection(new Section("F"));
+            sectionService.saveSection(new Section("G"));
+            sectionService.saveSection(new Section("H"));
+        }
+
+        if(courseTypeService.findAll().isEmpty()){
+            courseTypeService.saveCourseType(new CourseType("Theory"));
+            courseTypeService.saveCourseType(new CourseType("Lab"));
+            courseTypeService.saveCourseType(new CourseType("Professional Elective 1"));
+            courseTypeService.saveCourseType(new CourseType("Professional Elective 2"));
+            courseTypeService.saveCourseType(new CourseType("Open Elective 1"));
+            courseTypeService.saveCourseType(new CourseType("Open Elective 2"));
+        }
+
+
+        // Log a message when initialization is complete
+        LOGGER.info("Initialization complete.");
     }
 }

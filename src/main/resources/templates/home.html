@@ -17,6 +17,24 @@
     </div>
 
 </div>
+
+<div class="container">
+    <table>
+        <tbody>
+        <tr style="marginBottom: 10px;">
+            <td><a href="#" th:href="@{/admin/userEdit}">User Edit</a></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td> <a href="#" th:href="@{/admin/listUser}">User List</a></td>
+        </tr>
+
+        <tr style="marginBottom: 10px;">
+            <td><a href="#" th:href="@{/subjectTypeEdit}">Subject type edit</a></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td> <a href="#" th:href="@{/listSubjectType}">Subject type List</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <!-- /.container -->
 
 <div th:replace="fragments/footer :: footer"/>

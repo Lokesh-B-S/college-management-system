@@ -1,19 +1,58 @@
 package com.ras.cms.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.ras.cms.service.coursetype.CourseTypeService;
+
+import javax.persistence.*;
 
 @Entity
 public class Course {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long courseId;
+    @ManyToOne
+    private Program program;
+    @ManyToOne
+    private Department department;
+    @ManyToOne
+    private Semester semester;//No of Semisters
+    @ManyToOne
+    private Batch batch;
+    @ManyToOne
+    private AcademicYear academicYear;
+    @ManyToOne
+    private TeachingDepartment teachingDepartment;
+
+
+    private Long courseBatchesCount;
+    private String courseType;
+    private Long contactHours; // in Years
     private String courseCode;
     private String courseName;
-    private Long courseDuration; // in Years
-    private Long semister;//No of Semisters
+
+//    private String courseType;
+    private Long lectureCredits;
+    private Long tutorialCredits;
+    private Long practicalCredits;
+    private Long totalCredits;
+
+
+    private Long batchYearDeptProgramSemId;
+
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 
     public Long getCourseId() {
         return courseId;
@@ -39,19 +78,99 @@ public class Course {
         this.courseName = courseName;
     }
 
-    public Long getCourseDuration() {
-        return courseDuration;
+    public Long getContactHours() {
+        return contactHours;
     }
 
-    public void setCourseDuration(Long courseDuration) {
-        this.courseDuration = courseDuration;
+    public void setContactHours(Long contactHours) {
+        this.contactHours = contactHours;
     }
 
-    public Long getSemister() {
-        return semister;
+    public Semester getSemester() {
+        return semester;
     }
 
-    public void setSemister(Long semister) {
-        this.semister = semister;
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public Batch getBatch() {
+        return batch;
+    }
+
+    public void setBatch(Batch batch) {
+        this.batch = batch;
+    }
+
+    public AcademicYear getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(AcademicYear academicYear) {
+        this.academicYear = academicYear;
+    }
+
+    public Long getCourseBatchesCount() {
+        return courseBatchesCount;
+    }
+
+    public void setCourseBatchesCount(Long courseBatchesCount) {
+        this.courseBatchesCount = courseBatchesCount;
+    }
+
+    public String getCourseType() {
+        return courseType;
+    }
+
+    public void setCourseType(String courseType) {
+        this.courseType = courseType;
+    }
+
+    public Long getLectureCredits() {
+        return lectureCredits;
+    }
+
+    public void setLectureCredits(Long lectureCredits) {
+        this.lectureCredits = lectureCredits;
+    }
+
+    public Long getTutorialCredits() {
+        return tutorialCredits;
+    }
+
+    public void setTutorialCredits(Long tutorialCredits) {
+        this.tutorialCredits = tutorialCredits;
+    }
+
+    public Long getPracticalCredits() {
+        return practicalCredits;
+    }
+
+    public void setPracticalCredits(Long practicalCredits) {
+        this.practicalCredits = practicalCredits;
+    }
+
+    public Long getTotalCredits() {
+        return totalCredits;
+    }
+
+    public void setTotalCredits(Long totalCredits) {
+        this.totalCredits = totalCredits;
+    }
+
+    public TeachingDepartment getTeachingDepartment() {
+        return teachingDepartment;
+    }
+
+    public void setTeachingDepartment(TeachingDepartment teachingDepartment) {
+        this.teachingDepartment = teachingDepartment;
+    }
+
+    public Long getBatchYearDeptProgramSemId() {
+        return batchYearDeptProgramSemId;
+    }
+
+    public void setBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId) {
+        this.batchYearDeptProgramSemId = batchYearDeptProgramSemId;
     }
 }

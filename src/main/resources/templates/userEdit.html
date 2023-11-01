@@ -78,10 +78,10 @@
 
                 <td>
                     <div class="form-group">
-                        <label> Branch Id </label>
-                        <select class="form-control" th:field="*{user.branchId}">
-                            <option th:each="branch : ${branches}" th:value="${branch.branchId}" th:text="${branch.branchName}"
-                                    id="branch.branchId"> Branch </option>
+                        <label> Department Id </label>
+                        <select class="form-control" th:field="*{user.departmentId}">
+                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"
+                                    id="department.departmentId"> Department </option>
                         </select>
                     </div>
                 </td>

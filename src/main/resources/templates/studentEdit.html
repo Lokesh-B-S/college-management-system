@@ -45,7 +45,7 @@
         <!--<li><a data-toggle="tab" href="#category">Category Information</a></li>
         <li><a data-toggle="tab" href="#other">Others</a></li>-->
     </ul>
-    <form action="/studentEdit" th:action="@{/x}" method="post" id="student">
+    <form action="/studentEdit" th:action="@{/studentEdit}" method="post" id="student">
     <table width="100%">
         <tr>
             <td align="right">
@@ -90,7 +90,7 @@
                             <div class="form-group">
                                 <label for="motherName">Mother Name</label>
                                 <input type="text" class="form-control" id="motherName" th:field="${student.motherName}"
-                                       placeholder="Father Name"/>
+                                       placeholder="Mother Name"/>
                             </div>
                         </td>
                     </tr>
@@ -126,7 +126,7 @@
                         <td> &nbsp</td>
                         <td>
                             <div class="form-group">
-                                <label for="primaryEmailAddress">Phone Numbers (s) </label>
+                                <label for="primaryEmailAddress">Email (s) </label>
                                 <input type="email" class="form-control" id="primaryEmailAddress" th:field="${student.primaryEmailAddress}"
                                        placeholder="Pimary EMail Address"/><br>
                                 <input type="email" class="form-control" id="secondaryEmailAddress" th:field="${student.secondaryEmailAddress}"

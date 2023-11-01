@@ -13,7 +13,7 @@ public class Subject {
 
     Long CollegeId;
     Long courseId;
-    Long branchId;
+    Long departmentId;
     Long subjectTypeId;
     String subjectName;
     String subjectCode;
@@ -48,12 +48,12 @@ public class Subject {
         this.courseId = courseId;
     }
 
-    public Long getBranchId() {
-        return branchId;
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
-    public void setBranchId(Long branchId) {
-        this.branchId = branchId;
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
     public Long getSubjectTypeId() {

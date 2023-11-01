@@ -3,7 +3,7 @@
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>branch</title>
+    <title>department</title>
 
     <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}"/>
@@ -14,10 +14,14 @@
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container">
-    <form action="/admin/branchEdit" th:action="@{/admin/branchEdit}" method="post">
+    <form action="/admin/departmentEdit" th:action="@{/admin/departmentEdit}" method="post">
 
     <table width="100%">
         <tr>
+            <td align="left">
+                <a href="/admin/listDepartment" th:href="@{/admin/listDepartment}" class="btn btn-primary" role="button">View Departments</a>
+            </td>
+
             <td align="right">
                 <button type="submit" class="btn btn-primary">Save</button>
                 <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
@@ -27,22 +31,21 @@
 
         <table border="0" width="80%">
             <tr>
-                <td><input th:type="hidden" name="branchId" th:field="${branch.branchId}"/>
+                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>
                     <div class="form-group">
                         <label> College </label>
-                        <select class="form-control" th:field="*{branch.CollegeId}">
+                        <select class="form-control" th:field="*{department.CollegeId}">
                             <option th:each="College : ${Colleges}" th:value="${College.CollegeId}" th:text="${College.CollegeName}"
-                                    id="branch.CollegeId"> College </option>
+                                    id="department.CollegeId"> College </option>
                         </select>
                     </div>
                 </td>
                 <td> &nbsp</td>
                 <td>
                     <div class="form-group">
-                        <label> Course </label>
-                        <select class="form-control" th:field="*{branch.courseId}">
-                            <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"
-                                    id="branch.courseId"> Course </option>
+                        <label> Program: </label>
+                        <select class="form-control" id="program" name="program.programId">
+                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"></option>
                         </select>
                     </div>
                 </td>
@@ -51,17 +54,17 @@
             <tr>
                 <td>
                     <div class="form-group">
-                        <label for="branchCode">Branch Code</label>
-                        <input type="text" class="form-control" id="branchCode" th:field="${branch.branchCode}"
-                               placeholder="Branch Code"/>
+                        <label for="departmentCode">Department Code</label>
+                        <input type="text" class="form-control" id="departmentCode" th:field="${department.departmentCode}"
+                               placeholder="Department Code"/>
                     </div>
                 </td>
                 <td> &nbsp;</td>
                 <td>
                     <div class="form-group">
-                        <label for="branchName">Branch Name</label>
-                        <input type="text" class="form-control" id="branchName" th:field="${branch.branchName}"
-                               placeholder="Branch Name"/>
+                        <label for="departmentName">Department Name</label>
+                        <input type="text" class="form-control" id="departmentName" th:field="${department.departmentName}"
+                               placeholder="Department Name"/>
                     </div>
                 </td>
             </tr>
@@ -70,20 +73,24 @@
                 <td>
                     <div class="form-group">
                         <label for="hodId"> Hod </label>
-                        <input type="text" class="form-control" id="hodId" th:field="${branch.hodId}" placeholder="HOD"/>
+                        <input type="text" class="form-control" id="hodId" th:field="${department.hodId}" placeholder="HOD"/>
                     </div>
                 </td>
                 <td> &nbsp;</td>
                 <td>
                     <div class="form-group">
                         <label for="attendentId"> Attender </label>
-                        <input type="text" class="form-control" id="attendentId" th:field="${branch.attendentId}" placeholder="Attendent"/>
+                        <input type="text" class="form-control" id="attendentId" th:field="${department.attendentId}" placeholder="Attendent"/>
                     </div>
                 </td>
             </tr>
         </table>
     </form>
 </div>
+
 <div th:replace="fragments/footer :: footer"/>
+
+<script src="../../static/js/custom.js"></script>
+
 </body>
 </html>

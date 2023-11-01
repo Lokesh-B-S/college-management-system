@@ -20,6 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
                 .antMatchers("/admin/**").hasAnyRole("College_ADMIN")
                 .antMatchers("/user/**").hasAnyRole("USER")
+                .antMatchers("/student/**").hasAnyRole("STUDENT")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -60,8 +61,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user").password("{noop}password").roles("SITE_ADMIN")
+                .withUser("u").password("{noop}p").roles("SITE_ADMIN")
                 .and()
-                .withUser("admin").password("{noop}password").roles("College_ADMIN");
+                .withUser("a").password("{noop}p").roles("College_ADMIN")    //user //password //admin //password
+                .and()
+                .withUser("s").password("{noop}p").roles("STUDENT");
+
     }
 }

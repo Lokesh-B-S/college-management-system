@@ -41,6 +41,12 @@ public class HomeController {
         model.addAttribute("subjectTypeList", subjectTypeService.findAll());
         return "/subjectTypeList";
     }
+
+    @GetMapping(value="/listSubjectType")
+    public String SubjectTypeList(Model model) {
+        model.addAttribute("subjectTypeList", subjectTypeService.findAll());
+        return "/subjectTypeList";
+    }
     /* Code for SubjectType - End */
 
     /* Code for Role -Start */
