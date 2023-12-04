@@ -7,10 +7,7 @@ import com.ras.cms.service.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,6 +18,7 @@ import java.util.Map;
  * Created by Surya on 12-Jun-18.
  */
 @Controller
+//@RequestMapping("/admin")
 public class StudentController {
     @Autowired
     private StudentService studentService;
@@ -28,7 +26,7 @@ public class StudentController {
     @Autowired
     private StateService stateService;
 
-    @GetMapping(value="/listStudent")
+    @GetMapping(value={"/admin/listStudent","/hod/listStudent","/student/listStudent"})
     public String studentList(Model model) {
         model.addAttribute("studentList", studentService.findAll());
         return "/studentList";
@@ -38,7 +36,7 @@ public class StudentController {
         return  stateService.findAll();
     }
 
-    @GetMapping(value={"/studentEdit","/studentEdit/{id}"})
+    @GetMapping(value={"/admin/studentEdit","/admin/studentEdit/{id}"})
     public String studentEditForm(Model model, @PathVariable(required = false, name = "id") Long id,
                                   @RequestParam(required = false, name="add") String add) {
         if (null != id) {
@@ -63,7 +61,7 @@ public class StudentController {
         return "/studentEdit";
     }
 
-    @PostMapping(value="/studentEdit")
+    @PostMapping(value="/admin/studentEdit")
     public String studentEdit(Model model, Student student) {
         studentService.saveStudent(student);
         model.addAttribute("studentList", studentService.findAll());
@@ -75,7 +73,7 @@ public class StudentController {
 
     }
 
-    @PostMapping(value="/studentEduAdd")
+    @PostMapping(value="/admin/studentEduAdd")
     public String studentEditAddRow(Model model, Student student){
         Student stud = studentService.findOne(student.getId());
         List<Qualification> finalList = new ArrayList<>();
@@ -99,7 +97,7 @@ public class StudentController {
         return "/studentEdit";
     }
 
-    @GetMapping(value="/studentDelete/{id}")
+    @GetMapping(value="/admin/studentDelete/{id}")
     public String studentDelete(Model model, @PathVariable(required = true, name = "id") Long id) {
         studentService.deleteStudent(id);
         model.addAttribute("studentList", studentService.findAll());

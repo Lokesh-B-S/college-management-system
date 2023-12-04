@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>TimeTable</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+
+    <form action="/hod/selectTimeTable" th:action="@{/hod/selectTimeTable}" th:object="${departmentSemSec1}" method="post">
+
+        <table width="100%">
+            <tr>
+                <td align="left">
+                    <a href="/hod/editTimeSlot" th:href="@{/hod/editTimeSlot}" class="btn btn-primary" role="button">Add TimeSlots</a>
+                </td>
+
+                <td align="right">
+<!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+
+        <table border="0" width="80%">
+<!--            <h1 th:text="${departmentSemSec1.department}"></h1>-->
+<!--            <h1 th:text="${departmentSemSec1.semester}"></h1>-->
+<!--            <h1 th:text="${departmentSemSec1.section}"></h1>-->
+            <tr>
+                <td>
+<!--                    <input type="hidden" th:value="${selectedRowId}" name="id" />-->
+<!--                    <p th:field="${ttid}"></p>-->
+
+
+<!--                    <input type="hidden" name="departmentSemSecId" th:value="${departmentSemSec.departmentSemSecId}" />-->
+                    <div class="form-group">
+                        <label> Department </label>
+                        <select class="form-control" id="department" name="department.departmentId" >  //th:field="*{department}"
+                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"
+                                    id="selection.departmentId"> Department </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td>
+                    <!--                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>-->
+                    <div class="form-group">
+                        <label> Semester: </label>
+                        <select class="form-control" id="semester" name="semester.semId">
+                            <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+
+                <td>
+                    <div class="form-group">
+                        <label> Section: </label>
+                        <select class="form-control" id="section" name="section.sectionId">
+                            <option th:each="section : ${sections}" th:value="${section.sectionId}" th:text="${section.sec}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+
+            </tr>
+
+<!--            <h1 th:text="${departmentSemSec1.departmentSemSecId}"></h1>-->
+
+<!--            <a th:href="@{'/admin/editTimeTable/' + ${departmentSemSec1.departmentSemSecId}}">Edit</a>-->
+
+
+
+
+        </table>
+
+    </form>
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+
+
+</body>
+</html>

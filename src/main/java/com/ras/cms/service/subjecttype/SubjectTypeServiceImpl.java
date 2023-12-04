@@ -1,6 +1,6 @@
 package com.ras.cms.service.subjecttype;
 
-import com.ras.cms.dao.SubjectTypeRepo;
+import com.ras.cms.repository.SubjectTypeRepo;
 import com.ras.cms.domain.SubjectType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

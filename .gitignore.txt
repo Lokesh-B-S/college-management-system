@@ -1,0 +1,9 @@
+# IntelliJ IDEA
+.idea/
+
+# Gradle build directory
+build/
+
+# Gradle wrapper files
+gradle/wrapper/gradle-wrapper.properties
+gradlew

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Course</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <form action="/admin/editFaculty" th:action="@{/admin/editFaculty}" method="post">
+
+        <table width="100%">
+            <tr>
+
+                <td align="left">
+                    <a href="/admin/listFaculty" th:href="@{/admin/listFaculty}" class="btn btn-primary" role="button">View Faculties</a>
+                </td>
+
+                <td align="right">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+
+            </tr>
+        </table>
+
+        <table border="0" width="80%">
+            <tr>
+                <td><input th:type="hidden" name="facultyId" th:field="${faculty.id}"/>
+                    <div class="form-group">
+                        <label for="facultyname">Faculty Name</label>
+                        <input type="text" class="form-control" id="facultyname" th:field="${faculty.name}"
+                               placeholder="Faculty Name"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="shortName">Short Name </label>
+                        <input type="text" class="form-control" id="shortName" th:field="${faculty.shortName}"
+                               placeholder="Short Name"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="designation">Designation</label>
+                        <input type="text" class="form-control" id="designation" th:field="${faculty.designation}"
+                               placeholder="Designation"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="highestQualification">Highest Qualification</label>
+                        <input type="text" class="form-control" id="highestQualification" th:field="${faculty.highestQualification}"
+                               placeholder="Highest Qualification"/>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="specialization">Specialization</label>
+                        <input type="text" class="form-control" id="specialization" th:field="${faculty.specialization}"
+                               placeholder="specialization"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="teachingExperience">Teaching experience</label>
+                        <input type="text" class="form-control" id="teachingExperience" th:field="${faculty.teachingExperience}"
+                               placeholder="Teaching experience"/>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

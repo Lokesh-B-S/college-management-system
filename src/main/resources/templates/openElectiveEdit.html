@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/><!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Open Elective</title>
+
+        <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+              th:href="@{/css/bootstrap.min.css}"/>
+
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/bootstrap.min.css" />
+
+        <!-- Include Alertify.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
+
+        <script>
+            // Initialize Alertify.js
+            alertify.set('notifier', 'position', 'top-right'); // Adjust notification position as needed
+        </script>
+
+        <script>
+            // Function to display a success alert
+      function showSuccessAlert(message, timeout) {
+        alertify.success('Entry added successfully');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+        console.log('Alert displayed!');
+      }
+
+      // Function to display an error alert
+      function showErrorAlert(message, timeout) {
+        alertify.error('oops! there was error while adding');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+         function showEntryAlreadyExistsAlert(message, timeout) {
+        alertify.error('Sorry Already an entry exists, Please delete the entry and try again');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+        function deleteSuccess(message, timeout) {
+        alertify.success('entry deleted successfully');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+        function deleteFailure(message, timeout) {
+        alertify.error('failed to delete');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+        </script>
+
+        <!-- Include jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    </head>
+    <body>
+    <div th:replace="fragments/header :: header"/>
+
+    <div class="container">
+
+        <table width="100%">
+            <tr>
+                <th th:text="'Academic Year: ' + ${batchYearSemTerm1.academicYear.year}" style="font-size: 15px;">Academic Year</th>
+                <th th:text="'Batch: ' + ${batchYearSemTerm1.batch.batchName}" style="font-size: 15px;">Batch</th>
+                <th th:text="'Semester: ' + ${batchYearSemTerm1.semester.sem}" style="font-size: 15px;">Semester</th>
+            </tr>
+            <tr>
+<!--                <th th:text="'Department: ' " style="font-size: 15px;">Department</th>-->
+                <th th:text="'Department: ' + ${department.departmentName}" style="font-size: 15px;" >Department</th>
+                <th th:text="'Term: ' + ${batchYearSemTerm1.term.termDate}" style="font-size: 15px;">Term</th>
+                <th th:text="'Open Elective Type: ' + ${openElectiveType.typeOfOpenElective}" style="font-size: 15px;">OpenElectiveType</th>
+
+            </tr>
+            <tr><td></td></tr>
+        </table>
+        <hr>
+
+        <form action="/hod/openElectiveEdit" th:action="@{/hod/openElectiveEdit}"  method="post">
+
+            <table border="0" width="80%">
+                <tr> <td> </td></tr>
+                <tr>
+                    <td> <label>Select Teaching Dept. : </label> </td>
+
+                    <td>
+                        <input th:type="hidden" name="batchYearSemTermId" th:field="${batchYearSemTerm1.batchYearSemTermId}"/>
+                        <input type="hidden" th:value="${batchYearSemTerm1.batch.batchId}" name="batch">
+                        <input type="hidden" th:value="${batchYearSemTerm1.academicYear.id}" name="academicYear">
+<!--                        <input type="hidden" th:value="${batchYearSemTerm1.department.departmentId}" name="department">-->
+<!--                        <input type="hidden" th:value="${batchYearSemTerm1.program.programId}" name="program">-->
+                        <input type="hidden" th:value="${batchYearSemTerm1.semester.semId}" name="semester">
+                        <input type="hidden" th:value="${batchYearSemTerm1.term.id}" name="term">
+
+
+                        <!--                        <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Theory'" id="courseType"/>-->
+                        <input type="hidden" th:field="${openElectiveType.typeOfOpenElective}" th:value="${openElectiveType.typeOfOpenElective}" name="openElectiveType"/>
+
+                        <div class="form-group">
+                            <!--                            <label>Select Teaching Dept. : </label>-->
+                            <select class="form-control" id="teachingDepartment" name="teachingDepartment.teachingDepartmentId">
+                                <option th:each="teachingDepartment : ${teachingDepartments}" th:value="${teachingDepartment.teachingDepartmentId}" th:text="${teachingDepartment.teachingDepartmentName} + ' - ' + ${teachingDepartment.teachingDepartmentCode}"></option>
+                            </select>
+                        </div>
+                    </td>
+
+                    <td>
+                        <a href="/hod/editTeachingDepartment" th:href="@{/hod/editTeachingDepartment}" class="btn btn-primary" role="button">Add Teaching Department</a>
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="courseName">Course Name:</label>
+                            <input type="text" class="form-control" id="courseName" th:field="${openElective.courseName}"
+                                   placeholder="Course Name"/>
+                        </div>
+                    </td>
+
+
+                    <td>
+                        <div class="form-group">
+                            <label for="courseCode">Course Code:</label>
+                            <input type="text" class="form-control" id="courseCode" th:field="${openElective.courseCode}"
+                                   placeholder="CSE51"/>
+                        </div>
+                    </td>
+
+
+                    <td>
+                        <div class="form-group">
+                            <label for="contactHours">Contact hours per week:</label>
+                            <input type="text" class="form-control" id="contactHours" th:field="${openElective.contactHours}"
+                                   placeholder="in hours"/>
+                        </div>
+                    </td>
+
+                </tr>
+
+
+
+                <tr><td></td></tr>
+                <tr>
+                    <td>
+                        <label >Credits : </label>
+                        <div class="form-group">
+                            <td>
+                                <div class="form-group">
+                                    <label for="lectureCredits">Lecture Credits (L):</label>
+                                    <input type="text" class="form-control" id="lectureCredits" th:field="${openElective.lectureCredits}"
+                                           placeholder="Lecture Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="tutorialCredits">Tutorial Credits (T):</label>
+                                    <input type="text" class="form-control" id="tutorialCredits" th:field="${openElective.tutorialCredits}"
+                                           placeholder="Tutorial Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="practicalCredits">Practical Credits (P):</label>
+                                    <input type="text" class="form-control" id="practicalCredits" th:field="${openElective.practicalCredits}"
+                                           placeholder="Practical Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="totalCredits">Total Credits :</label>
+                                    <input type="text" class="form-control" id="totalCredits" th:field="${openElective.totalCredits}"
+                                           placeholder="Total Credits"/>
+                                </div>
+                            </td>
+
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+                <tr>
+                    <td> <label>Total number of batches : </label> </td>
+
+                    <td>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="courseBatchesCount" th:field="${openElective.courseBatchesCount}"
+                                   placeholder="0"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+
+
+
+            </table>
+
+
+            <div align="center">
+                <a href="/hod/listOpenElective/${batchYearSemTerm1.batchYearSemTermId}/${openElectiveType.typeOfOpenElective}" th:href="@{/hod/listOpenElective/__${batchYearSemTerm1.batchYearSemTermId}__/__${openElectiveType.typeOfOpenElective}__}" class="btn btn-primary" role="button">View Open Elective Courses</a>
+                <button class="btn btn-primary">Save</button>
+                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+            </div>
+
+            <!-- success-->
+            <script th:if="${successMessage}">
+                showSuccessAlert('${successMessage}', 3000);
+            </script>
+
+            <!-- error -->
+            <script th:if="${errorMessage}">
+                showErrorAlert('${errorMessage}', 3000);
+            </script>
+
+            <script th:if="${EntryAlreadyExistsError}">
+                showEntryAlreadyExistsAlert('${EntryAlreadyExistsError}', 3000);
+            </script>
+
+            <script th:if="${DeleteSuccessMessage}">
+                deleteSuccess('${DeleteSuccessMessage}', 3000);
+            </script>
+
+            <script th:if="${EntryDoesNotExistError}">
+                deleteFailure('${EntryDoesNotExistError}', 3000);
+            </script>
+
+
+
+        </form>
+
+    </div>
+
+
+
+    </body>
+    </html>
+

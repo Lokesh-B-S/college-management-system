@@ -9,4 +9,6 @@ public interface DepartmentService {
     Department findOne(Long id);
     Department saveDepartment(Department department);
     void deleteDepartment(Long id);
+
+    Department findByDepartmentName(String departmentName);
 }

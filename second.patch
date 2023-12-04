@@ -1,0 +1,2622 @@
+Index: src/main/java/com/ras/cms/config/SecurityConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/config/SecurityConfig.java b/src/main/java/com/ras/cms/config/SecurityConfig.java
+--- a/src/main/java/com/ras/cms/config/SecurityConfig.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/config/SecurityConfig.java	(date 1698684026294)
+@@ -20,6 +20,7 @@
+                 .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
+                 .antMatchers("/admin/**").hasAnyRole("College_ADMIN")
+                 .antMatchers("/user/**").hasAnyRole("USER")
++                .antMatchers("/student/**").hasAnyRole("STUDENT")
+                 .anyRequest().authenticated()
+                 .and()
+                 .formLogin()
+@@ -60,8 +61,11 @@
+     @Autowired
+     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+         auth.inMemoryAuthentication()
+-                .withUser("user").password("{noop}password").roles("SITE_ADMIN")
++                .withUser("u").password("{noop}p").roles("SITE_ADMIN")
+                 .and()
+-                .withUser("admin").password("{noop}password").roles("College_ADMIN");
++                .withUser("a").password("{noop}p").roles("College_ADMIN")    //user //password //admin //password
++                .and()
++                .withUser("s").password("{noop}p").roles("STUDENT");
++
+     }
+ }
+\ No newline at end of file
+Index: src/main/java/com/ras/cms/controller/BranchController.java
+===================================================================
+diff --git a/src/main/java/com/ras/cms/controller/BranchController.java b/src/main/java/com/ras/cms/controller/BranchController.java
+deleted file mode 100644
+--- a/src/main/java/com/ras/cms/controller/BranchController.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ /dev/null	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
+@@ -1,77 +0,0 @@
+-package com.ras.cms.controller;
+-
+-import com.ras.cms.domain.Branch;
+-import com.ras.cms.service.branch.BranchService;
+-import com.ras.cms.service.college.CollegeService;
+-import com.ras.cms.service.course.CourseService;
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.stereotype.Controller;
+-import org.springframework.ui.Model;
+-import org.springframework.web.bind.annotation.GetMapping;
+-import org.springframework.web.bind.annotation.PathVariable;
+-import org.springframework.web.bind.annotation.PostMapping;
+-import org.springframework.web.bind.annotation.RequestMapping;
+-
+-import java.util.List;
+-
+-/**
+- * Created by Surya on 12-Jun-18.
+- */
+-@Controller
+-@RequestMapping("/admin")
+-public class BranchController {
+-
+-    @Autowired
+-    private BranchService branchService;
+-
+-    @Autowired
+-    private CollegeService CollegeService;
+-
+-    @Autowired
+-    private CourseService courseService;
+-
+-    @GetMapping(value="/listBranch")
+-    public String branchList(Model model) {
+-        List<Branch> branchList = branchService.findAll();
+-        for (Branch branch : branchList ) {
+-            branch.setCollegeName(CollegeService.findOne(branch.getCollegeId()).getCollegeName());
+-            branch.setCourseName(courseService.findOne(branch.getCourseId()).getCourseName());
+-        }
+-        model.addAttribute("branchList",  branchList);
+-        return "/branchList";
+-    }
+-
+-    @GetMapping(value={"/branchEdit","/branchEdit/{id}"})
+-    public String branchEdit(Model model, @PathVariable(required = false, name = "id") Long id) {
+-        if (null != id) {
+-            model.addAttribute("branch", branchService.findOne(id));
+-        } else {
+-            model.addAttribute("branch", new Branch());
+-        }
+-        model.addAttribute("Colleges", getColleges());
+-        model.addAttribute("courses", getCourses());
+-        return "/branchEdit";
+-    }
+-
+-    private Object getColleges() {
+-        return  CollegeService.findAll();
+-    }
+-
+-    private Object getCourses() {
+-        return  courseService.findAll();
+-    }
+-
+-    @PostMapping(value="/branchEdit")
+-    public String branchEdit(Model model, Branch branch) {
+-        branchService.saveBranch(branch);
+-        model.addAttribute("branchList", branchService.findAll());
+-        return "/branchList";
+-    }
+-
+-    @GetMapping(value="/branchDelete/{id}")
+-    public String  branchDelete(Model model, @PathVariable(required = true, name = "id") Long id) {
+-        branchService.deleteBranch(id);
+-        model.addAttribute("branchList", branchService.findAll());
+-        return "/branchList";
+-    }
+-}
+\ No newline at end of file
+Index: src/main/java/com/ras/cms/controller/CourseController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/controller/CourseController.java b/src/main/java/com/ras/cms/controller/CourseController.java
+--- a/src/main/java/com/ras/cms/controller/CourseController.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/controller/CourseController.java	(date 1698324757845)
+@@ -1,14 +1,22 @@
+ package com.ras.cms.controller;
+ 
+-import com.ras.cms.domain.Course;
++import com.ras.cms.domain.*;
++import com.ras.cms.service.academicyear.AcademicYearService;
++import com.ras.cms.service.batch.BatchService;
++import com.ras.cms.service.batchyeardeptprogramsem.BatchYearDeptProgramSemService;
++import com.ras.cms.service.coursetype.CourseTypeService;
++import com.ras.cms.service.department.DepartmentService;
+ import com.ras.cms.service.course.CourseService;
++import com.ras.cms.service.program.ProgramService;
++import com.ras.cms.service.semester.SemesterService;
++import com.ras.cms.service.teachingdepartment.TeachingDepartmentService;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Controller;
+ import org.springframework.ui.Model;
+-import org.springframework.web.bind.annotation.GetMapping;
+-import org.springframework.web.bind.annotation.PathVariable;
+-import org.springframework.web.bind.annotation.PostMapping;
+-import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.*;
++import org.springframework.web.servlet.mvc.support.RedirectAttributes;
++
++import java.util.List;
+ 
+ /**
+  * Created by Surya on 12-Jun-18.
+@@ -20,33 +28,216 @@
+     @Autowired
+     CourseService courseService;
+ 
+-    @GetMapping(value="/listCourse")
+-    public String courseList(Model model) {
+-        model.addAttribute("courseList", courseService.findAll());
++    @Autowired
++    CourseTypeService courseTypeService;
++
++    @Autowired
++    DepartmentService departmentService;
++
++    @Autowired
++    ProgramService programService;
++
++    @Autowired
++    SemesterService semesterService;
++
++    @Autowired
++    BatchService batchService;
++
++    @Autowired
++    AcademicYearService academicYearService;
++    @Autowired
++    BatchYearDeptProgramSemService batchYearDeptProgramSemService;
++
++    @Autowired
++    TeachingDepartmentService teachingDepartmentService;
++
++
++
++    @GetMapping(value = "/listCourse/{id}")
++    public String courseList(Model model, @PathVariable(required = false, name = "id") Long id) {
++        List<Course> entries = courseService.getEntriesByBatchYearDeptProgramSemId(id);
++        model.addAttribute("id", id);
++
++        BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
++        if (batchYearDeptProgramSem != null) {
++            List<Course> courses = courseService.getCoursesByDepartmentAndSemester(batchYearDeptProgramSem.getDepartment(), batchYearDeptProgramSem.getSemester());
++            model.addAttribute("courses", courses);
++            model.addAttribute("batchYearDeptProgramSemView", batchYearDeptProgramSem);
++
++            // Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours
++            Long totalLectureCredits = courses.stream().mapToLong(Course::getLectureCredits).sum();
++            Long totalTutorialCredits = courses.stream().mapToLong(Course::getTutorialCredits).sum();
++            Long totalPracticalCredits = courses.stream().mapToLong(Course::getPracticalCredits).sum();
++            Long totalTotalCredits = courses.stream().mapToLong(Course::getTotalCredits).sum();
++            Long totalContactHours = courses.stream().mapToLong(Course::getContactHours).sum();
++
++            model.addAttribute("courses", courses);
++            //model.addAttribute("teachingDepartments",teachingDepartmentService.findAll());
++            model.addAttribute("totalLectureCredits", totalLectureCredits);
++            model.addAttribute("totalTutorialCredits", totalTutorialCredits);
++            model.addAttribute("totalPracticalCredits", totalPracticalCredits);
++            model.addAttribute("totalTotalCredits", totalTotalCredits);
++            model.addAttribute("totalContactHours", totalContactHours);
++        } else {
++            model.addAttribute("courses", courseService.findAll());
++        }
++
++        //model.addAttribute("courseList", courseService.findAll());
+         return "/courseList";
+     }
+ 
+-    @GetMapping(value={"/courseEdit","/courseEdit/{id}"})
+-    public String courseEdit(Model model, @PathVariable(required = false, name = "id") Long id) {
++    @GetMapping("/selectCourse")
++    public String selectCourse(Model model) {
++
++        List<Batch> batches = batchService.findAll();
++        List<AcademicYear> academicYears = academicYearService.findAll();
++        List<Department> departments = departmentService.findAll();
++        List<Program> programs = programService.findAll();
++        List<Semester> semesters = semesterService.findAll();
++
++        model.addAttribute("batches", batches);
++        model.addAttribute("academicYears", academicYears);
++        model.addAttribute("departments", departments);
++        model.addAttribute("programs", programs);
++        model.addAttribute("semesters", semesters);
++
++        model.addAttribute("batchYearDeptProgramSem", new BatchYearDeptProgramSem());
++
++        return "/courseSelection";
++    }
++
++
++    @PostMapping("/selectCourse")
++    public String selectandsubmitCourse(Model model, BatchYearDeptProgramSem batchYearDeptProgramSem, RedirectAttributes redirectAttributes) {
++
++        if (batchYearDeptProgramSemService.existsEntry(batchYearDeptProgramSem)) {
++            redirectAttributes.addFlashAttribute("message", "Entry already exists.");
++            BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
++            return "redirect:/admin/selectCourseType?id=" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId();
++        } else {
++            try {
++                batchYearDeptProgramSemService.saveEntry(batchYearDeptProgramSem);
++                try {
++                    BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findOne(batchYearDeptProgramSem.getBatchYearDeptProgramSemId());
++                    model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSem1);
++                    return "redirect:/admin/selectCourseType?id=" + batchYearDeptProgramSem.getBatchYearDeptProgramSemId();
++                } catch (Exception e) {
++                }
++            } catch (Exception e) {
++            }
++        }
++        return "/403";
++    }
++
++    @GetMapping("/selectCourseType")
++    public String selectCourseType(Model model, @RequestParam(required = false, name = "id") Long id) {
+         if (null != id) {
+-            model.addAttribute("course", courseService.findOne(id));
++            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(id));
+         } else {
+-            model.addAttribute("course", new Course());
+-        }
++            model.addAttribute("batchYearDeptProgramSem1", new BatchYearDeptProgramSem());
++        }
++
++        List<CourseType> courseTypes = courseTypeService.findAll();
++        model.addAttribute("courseTypes", courseTypes);
++        return "courseTypeSelect";
++    }
++
++    @PostMapping("/selectCourseType")
++    public String selectandsubmitCourseType(Model model,@ModelAttribute CourseType courseType, BatchYearDeptProgramSem batchYearDeptProgramSem, RedirectAttributes redirectAttributes) {
++
++        System.out.println(courseType.getCourseTypeId() +  courseType.getTypeOfCourse());
++
++
++            BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
++            return "redirect:/admin/courseEdit/" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId() + "/" + courseType.getTypeOfCourse() ;
++//return "courseTypeSelect";
++    }
++
++
++    @GetMapping(value = {"/courseEdit", "/courseEdit/{courseId}", "/courseEdit/{batchYearDeptProgramSemId}/{courseType}"})
++    public String courseEdit(Model model, @RequestParam(required = false, name = "id") Long id,
++                             @PathVariable(required = false, name="courseId") Long courseId,
++                             @PathVariable(required = false, name = "batchYearDeptProgramSemId") Long batchYearDeptProgramId,
++                             @PathVariable(required = false, name="courseType") String typeOfCourse) {
++       System.out.println(typeOfCourse);
++        if (null != batchYearDeptProgramId) {
++            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(batchYearDeptProgramId));
++        } else {
++            model.addAttribute("batchYearDeptProgramSem1", new BatchYearDeptProgramSem());
++        }
++
++       // BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
++if(courseId!=null){
++    model.addAttribute("course", courseService.findOne(courseId));
++    Course course1 = courseService.findOne(courseId);
++    Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
++    model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(batchYearDeptProgramSemId));
++}
++else {
++    model.addAttribute("course", new Course());
++}
++
++CourseType courseType = courseTypeService.getCourseTypeByTypeOfCourse(typeOfCourse);
++
++        model.addAttribute("courseType", courseType);
++        model.addAttribute("departments", departmentService.findAll());
++        model.addAttribute("programs", programService.findAll());
++        model.addAttribute("semesters", semesterService.findAll());
++        model.addAttribute("teachingDepartments", teachingDepartmentService.findAll());
++
++
++        System.out.println(courseType.getTypeOfCourse() + " in get");
++       // model.addAttribute("courseEntry", new Course());
+         return "/courseEdit";
+     }
+ 
+-    @PostMapping(value="/courseEdit")
+-    public String courseEdit(Model model, Course course) {
+-        courseService.saveCourse(course);
+-        model.addAttribute("courseList", courseService.findAll());
+-        return "/courseList";
+-    }
++    @PostMapping(value = "/courseEdit")
++    public String courseEdit(Model model,@ModelAttribute CourseType courseType, Course course, BatchYearDeptProgramSem batchYearDeptProgramSem1, RedirectAttributes attributes, @RequestParam Long batchYearDeptProgramSemId) {
++
++                try {
++            // Check if an entry already exists for the given parameters, if yes set the batch,program etc values to course and save
++            boolean entryExists = courseService.doesEntryExist(batchYearDeptProgramSemId, course.getContactHours(),course.getCourseBatchesCount(), course.getCourseCode(), course.getCourseName(), course.getTeachingDepartment(), course.getCourseType(), course.getLectureCredits(), course.getTutorialCredits(), course.getPracticalCredits(), course.getTotalCredits());
++
++            if (!entryExists) {
++                course.setBatchYearDeptProgramSemId(batchYearDeptProgramSem1.getBatchYearDeptProgramSemId());
++                course.setDepartment(batchYearDeptProgramSem1.getDepartment());
++                course.setProgram(batchYearDeptProgramSem1.getProgram());
++                course.setSemester(batchYearDeptProgramSem1.getSemester());
++                course.setBatch(batchYearDeptProgramSem1.getBatch());
++                course.setAcademicYear(batchYearDeptProgramSem1.getAcademicYear());
++               course.setCourseType(courseType.getTypeOfCourse());
++
++                System.out.println(courseType.getTypeOfCourse() + " in post");
++                courseService.saveCourse(course);
++
++                System.out.println("Success");
++                // model.addAttribute("alertType", "success");
++                attributes.addFlashAttribute("successMessage", "Course saved successfully");
++            } else {
++                attributes.addFlashAttribute("EntryAlreadyExistsError", "Sorry! already there is an entry exists");
++            }
+ 
+-    @GetMapping(value="/courseDelete/{id}")
+-    public String courseDelete(Model model, @PathVariable(required = true, name = "id") Long id) {
+-        courseService.deleteCourse(id);
+-        model.addAttribute("courseList", courseService.findAll());
+-        return "/courseList";
++        } catch (Exception e) {
++            System.out.println("fail");
++            System.out.println(e);
++            // model.addAttribute("alertType", "danger");
++            attributes.addFlashAttribute("errorMessage", "Course couldn't be saved!");
++
++        }
++        return "redirect:/admin/courseEdit/" + batchYearDeptProgramSemId + "/" + courseType.getTypeOfCourse();
++//        return "redirect:/admin/courseEdit?id=" + batchYearDeptProgramSemId;
+     }
+-}
+\ No newline at end of file
++
++
++    @GetMapping(value="/deleteCourse/{courseId}")
++    public String courseDelete(Model model, @PathVariable(required = true, name = "courseId") Long courseId, RedirectAttributes attributes, BatchYearDeptProgramSem batchYearDeptProgramSem) {
++        Course course1 = courseService.findOne(courseId);
++        Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
++
++        courseService.deleteCourse(courseId);
++       attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
++
++        //model.addAttribute("courses", courseService.findAll());
++     return "redirect:/admin/listCourse/" + batchYearDeptProgramSemId;
++    }
++}
+Index: src/main/java/com/ras/cms/controller/DepartmentController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/controller/DepartmentController.java b/src/main/java/com/ras/cms/controller/DepartmentController.java
+new file mode 100644
+--- /dev/null	(date 1696255459927)
++++ b/src/main/java/com/ras/cms/controller/DepartmentController.java	(date 1696255459927)
+@@ -0,0 +1,92 @@
++package com.ras.cms.controller;
++
++import com.ras.cms.domain.Department;
++import com.ras.cms.domain.Program;
++import com.ras.cms.service.department.DepartmentService;
++import com.ras.cms.service.college.CollegeService;
++import com.ras.cms.service.course.CourseService;
++import com.ras.cms.service.program.ProgramService;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Controller;
++import org.springframework.ui.Model;
++import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.PathVariable;
++import org.springframework.web.bind.annotation.PostMapping;
++import org.springframework.web.bind.annotation.RequestMapping;
++
++import java.util.List;
++
++/**
++ * Created by Surya on 12-Jun-18.
++ */
++@Controller
++@RequestMapping("/admin")
++public class DepartmentController {
++
++    @Autowired
++    private DepartmentService departmentService;
++
++    @Autowired
++    private CollegeService CollegeService;
++
++    @Autowired
++    private CourseService courseService;
++
++    @Autowired
++    private ProgramService programService;
++
++    @GetMapping(value="/listDepartment")
++    public String departmentList(Model model) {
++
++        //old code by sir
++//        List<Department> departmentList = departmentService.findAll();
++//        for (Department department : departmentList ) {
++//            department.setCollegeName(CollegeService.findOne(department.getCollegeId()).getCollegeName());
++//            //department.setCourseName(courseService.findOne(department.getCourseId()).getCourseName());
++//        }
++//        model.addAttribute("departmentList",  departmentList);
++
++        List<Department> departments = departmentService.findAll();
++        model.addAttribute("departmentList", departments);
++        return "/departmentList";
++    }
++
++    @GetMapping(value={"/departmentEdit","/departmentEdit/{id}"})
++    public String departmentEdit(Model model, @PathVariable(required = false, name = "id") Long id) {
++        if (null != id) {
++            model.addAttribute("department", departmentService.findOne(id));
++        } else {
++            model.addAttribute("department", new Department());
++        }
++        model.addAttribute("Colleges", getColleges());
++        List<Program> programs = programService.findAll();
++        model.addAttribute("programs",programs);
++        model.addAttribute("courses", getCourses());
++        return "/departmentEdit";
++    }
++
++    private Object getColleges() {
++        return  CollegeService.findAll();
++    }
++
++    private Object getCourses() {
++        return  courseService.findAll();
++    }
++
++    @PostMapping(value="/departmentEdit")
++    public String departmentEdit(Model model, Department department) {
++        departmentService.saveDepartment(department);
++
++        List<Program> programs = programService.findAll();
++        model.addAttribute("programs",programs);
++        model.addAttribute("departmentList", departmentService.findAll());
++        return "/departmentList";
++    }
++
++    @GetMapping(value="/departmentDelete/{id}")
++    public String  departmentDelete(Model model, @PathVariable(required = true, name = "id") Long id) {
++        departmentService.deleteDepartment(id);
++        model.addAttribute("departmentList", departmentService.findAll());
++        return "/departmentList";
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/ras/cms/controller/HomeController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/controller/HomeController.java b/src/main/java/com/ras/cms/controller/HomeController.java
+--- a/src/main/java/com/ras/cms/controller/HomeController.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/controller/HomeController.java	(date 1693230901695)
+@@ -41,6 +41,12 @@
+         model.addAttribute("subjectTypeList", subjectTypeService.findAll());
+         return "/subjectTypeList";
+     }
++
++    @GetMapping(value="/listSubjectType")
++    public String SubjectTypeList(Model model) {
++        model.addAttribute("subjectTypeList", subjectTypeService.findAll());
++        return "/subjectTypeList";
++    }
+     /* Code for SubjectType - End */
+ 
+     /* Code for Role -Start */
+Index: src/main/java/com/ras/cms/dao/BranchRepository.java
+===================================================================
+diff --git a/src/main/java/com/ras/cms/dao/BranchRepository.java b/src/main/java/com/ras/cms/dao/BranchRepository.java
+deleted file mode 100644
+--- a/src/main/java/com/ras/cms/dao/BranchRepository.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ /dev/null	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
+@@ -1,7 +0,0 @@
+-package com.ras.cms.dao;
+-
+-import com.ras.cms.domain.Branch;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-
+-public interface BranchRepository extends JpaRepository<Branch, Long> {
+-}
+Index: src/main/java/com/ras/cms/dao/CourseRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/dao/CourseRepository.java b/src/main/java/com/ras/cms/dao/CourseRepository.java
+--- a/src/main/java/com/ras/cms/dao/CourseRepository.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/dao/CourseRepository.java	(date 1698324757991)
+@@ -1,7 +1,24 @@
+ package com.ras.cms.dao;
+ 
+-import com.ras.cms.domain.Course;
++import com.ras.cms.domain.*;
+ import org.springframework.data.jpa.repository.JpaRepository;
+ 
++import java.util.List;
++
+ public interface CourseRepository extends JpaRepository<Course, Long> {
++
++    List<Course> findByBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId);
++
++    boolean existsByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(
++            Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
++
++    Course findByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(
++            Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
++
++    List<Course> findAllByDepartmentAndSemester(Department department, Semester semester);
++
++    Long findBatchYearDeptProgramSemIdByCourseId(Long courseId);
++
++    //Course findByCourseId(Long courseId);
++
+ }
+Index: src/main/java/com/ras/cms/dao/DepartmentRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/dao/DepartmentRepository.java b/src/main/java/com/ras/cms/dao/DepartmentRepository.java
+new file mode 100644
+--- /dev/null	(date 1696255459742)
++++ b/src/main/java/com/ras/cms/dao/DepartmentRepository.java	(date 1696255459742)
+@@ -0,0 +1,7 @@
++package com.ras.cms.dao;
++
++import com.ras.cms.domain.Department;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++public interface DepartmentRepository extends JpaRepository<Department, Long> {
++}
+Index: src/main/java/com/ras/cms/domain/Branch.java
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/Branch.java b/src/main/java/com/ras/cms/domain/Branch.java
+deleted file mode 100644
+--- a/src/main/java/com/ras/cms/domain/Branch.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ /dev/null	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
+@@ -1,93 +0,0 @@
+-package com.ras.cms.domain;
+-
+-import javax.persistence.Entity;
+-import javax.persistence.GeneratedValue;
+-import javax.persistence.GenerationType;
+-import javax.persistence.Id;
+-
+-@Entity
+-public class Branch {
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Long branchId;
+-    private String branchCode;
+-    private String branchName;
+-    private Long hodId;
+-    private Long attendentId;
+-    private Long CollegeId;
+-    private Long courseId;
+-    private String CollegeName;
+-    private String courseName;
+-
+-    public String getCollegeName() {
+-        return CollegeName;
+-    }
+-
+-    public void setCollegeName(String CollegeName) {
+-        this.CollegeName = CollegeName;
+-    }
+-
+-    public String getCourseName() {
+-        return courseName;
+-    }
+-
+-    public void setCourseName(String courseName) {
+-        this.courseName = courseName;
+-    }
+-
+-    public String getBranchCode() {
+-        return branchCode;
+-    }
+-
+-    public void setBranchCode(String branchCode) {
+-        this.branchCode = branchCode;
+-    }
+-
+-    public Long getCollegeId() {
+-        return CollegeId;
+-    }
+-
+-    public void setCollegeId(Long CollegeId) {
+-        this.CollegeId = CollegeId;
+-    }
+-
+-    public Long getCourseId() {
+-        return courseId;
+-    }
+-
+-    public void setCourseId(Long courseId) {
+-        this.courseId = courseId;
+-    }
+-
+-    public Long getBranchId() {
+-        return branchId;
+-    }
+-
+-    public void setBranchId(Long branchId) {
+-        this.branchId = branchId;
+-    }
+-
+-    public String getBranchName() {
+-        return branchName;
+-    }
+-
+-    public void setBranchName(String branchName) {
+-        this.branchName = branchName;
+-    }
+-
+-    public Long getHodId() {
+-        return hodId;
+-    }
+-
+-    public void setHodId(Long hodId) {
+-        this.hodId = hodId;
+-    }
+-
+-    public Long getAttendentId() {
+-        return attendentId;
+-    }
+-
+-    public void setAttendentId(Long attendentId) {
+-        this.attendentId = attendentId;
+-    }
+-}
+Index: src/main/java/com/ras/cms/domain/Course.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/Course.java b/src/main/java/com/ras/cms/domain/Course.java
+--- a/src/main/java/com/ras/cms/domain/Course.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/domain/Course.java	(date 1698322950596)
+@@ -1,19 +1,58 @@
+ package com.ras.cms.domain;
+ 
+-import javax.persistence.Entity;
+-import javax.persistence.GeneratedValue;
+-import javax.persistence.GenerationType;
+-import javax.persistence.Id;
++import com.ras.cms.service.coursetype.CourseTypeService;
++
++import javax.persistence.*;
+ 
+ @Entity
+ public class Course {
+     @Id
+     @GeneratedValue(strategy= GenerationType.IDENTITY)
+     private Long courseId;
++    @ManyToOne
++    private Program program;
++    @ManyToOne
++    private Department department;
++    @ManyToOne
++    private Semester semester;//No of Semisters
++    @ManyToOne
++    private Batch batch;
++    @ManyToOne
++    private AcademicYear academicYear;
++    @ManyToOne
++    private TeachingDepartment teachingDepartment;
++
++
++    private Long courseBatchesCount;
++    private String courseType;
++    private Long contactHours; // in Years
+     private String courseCode;
+     private String courseName;
+-    private Long courseDuration; // in Years
+-    private Long semister;//No of Semisters
++
++//    private String courseType;
++    private Long lectureCredits;
++    private Long tutorialCredits;
++    private Long practicalCredits;
++    private Long totalCredits;
++
++
++    private Long batchYearDeptProgramSemId;
++
++    public Program getProgram() {
++        return program;
++    }
++
++    public void setProgram(Program program) {
++        this.program = program;
++    }
++
++    public Department getDepartment() {
++        return department;
++    }
++
++    public void setDepartment(Department department) {
++        this.department = department;
++    }
+ 
+     public Long getCourseId() {
+         return courseId;
+@@ -39,19 +78,99 @@
+         this.courseName = courseName;
+     }
+ 
+-    public Long getCourseDuration() {
+-        return courseDuration;
++    public Long getContactHours() {
++        return contactHours;
++    }
++
++    public void setContactHours(Long contactHours) {
++        this.contactHours = contactHours;
++    }
++
++    public Semester getSemester() {
++        return semester;
++    }
++
++    public void setSemester(Semester semester) {
++        this.semester = semester;
++    }
++
++    public Batch getBatch() {
++        return batch;
++    }
++
++    public void setBatch(Batch batch) {
++        this.batch = batch;
++    }
++
++    public AcademicYear getAcademicYear() {
++        return academicYear;
++    }
++
++    public void setAcademicYear(AcademicYear academicYear) {
++        this.academicYear = academicYear;
++    }
++
++    public Long getCourseBatchesCount() {
++        return courseBatchesCount;
++    }
++
++    public void setCourseBatchesCount(Long courseBatchesCount) {
++        this.courseBatchesCount = courseBatchesCount;
++    }
++
++    public String getCourseType() {
++        return courseType;
++    }
++
++    public void setCourseType(String courseType) {
++        this.courseType = courseType;
++    }
++
++    public Long getLectureCredits() {
++        return lectureCredits;
++    }
++
++    public void setLectureCredits(Long lectureCredits) {
++        this.lectureCredits = lectureCredits;
++    }
++
++    public Long getTutorialCredits() {
++        return tutorialCredits;
++    }
++
++    public void setTutorialCredits(Long tutorialCredits) {
++        this.tutorialCredits = tutorialCredits;
++    }
++
++    public Long getPracticalCredits() {
++        return practicalCredits;
++    }
++
++    public void setPracticalCredits(Long practicalCredits) {
++        this.practicalCredits = practicalCredits;
++    }
++
++    public Long getTotalCredits() {
++        return totalCredits;
+     }
+ 
+-    public void setCourseDuration(Long courseDuration) {
+-        this.courseDuration = courseDuration;
++    public void setTotalCredits(Long totalCredits) {
++        this.totalCredits = totalCredits;
+     }
+ 
+-    public Long getSemister() {
+-        return semister;
++    public TeachingDepartment getTeachingDepartment() {
++        return teachingDepartment;
+     }
+ 
+-    public void setSemister(Long semister) {
+-        this.semister = semister;
++    public void setTeachingDepartment(TeachingDepartment teachingDepartment) {
++        this.teachingDepartment = teachingDepartment;
++    }
++
++    public Long getBatchYearDeptProgramSemId() {
++        return batchYearDeptProgramSemId;
++    }
++
++    public void setBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId) {
++        this.batchYearDeptProgramSemId = batchYearDeptProgramSemId;
+     }
+ }
+Index: src/main/java/com/ras/cms/domain/Day.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/Day.java b/src/main/java/com/ras/cms/domain/Day.java
+new file mode 100644
+--- /dev/null	(date 1693417788793)
++++ b/src/main/java/com/ras/cms/domain/Day.java	(date 1693417788793)
+@@ -0,0 +1,39 @@
++package com.ras.cms.domain;
++
++import javax.persistence.Entity;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++
++@Entity
++public class Day {  //earlier it was enum
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long id;
++
++    private String name; // "Monday", "Tuesday", ...
++
++    public Day() {
++        // Default constructor
++    }
++
++    public Day(String name) {
++        this.name = name;
++    }
++
++    public Long getId() {
++        return id;
++    }
++
++    public void setId(Long id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++}
+Index: src/main/java/com/ras/cms/domain/Department.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/Department.java b/src/main/java/com/ras/cms/domain/Department.java
+new file mode 100644
+--- /dev/null	(date 1696255460096)
++++ b/src/main/java/com/ras/cms/domain/Department.java	(date 1696255460096)
+@@ -0,0 +1,104 @@
++package com.ras.cms.domain;
++
++import javax.persistence.*;
++import javax.validation.constraints.NotNull;
++
++@Entity
++public class Department {
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long departmentId;
++    private String departmentCode;
++    private String departmentName;
++    private Long hodId;
++    private Long attendentId;
++    private Long CollegeId;
++
++    //private Long courseId;
++    @ManyToOne
++    @NotNull
++    private College CollegeName;
++@ManyToOne
++@NotNull
++    private Program programName;
++
++    public College getCollegeName() {
++        return CollegeName;
++    }
++
++    public void setCollegeName(College CollegeName) {
++        this.CollegeName = CollegeName;
++    }
++
++//    public String getCourseName() {
++//        return programName;
++//    }
++//
++//    public void setCourseName(String programName) {
++//        this.programName = programName;
++//    }
++
++    public String getDepartmentCode() {
++        return departmentCode;
++    }
++
++    public void setDepartmentCode(String departmentCode) {
++        this.departmentCode = departmentCode;
++    }
++
++    public Long getCollegeId() {
++        return CollegeId;
++    }
++
++    public void setCollegeId(Long CollegeId) {
++        this.CollegeId = CollegeId;
++    }
++
++//    public Long getCourseId() {
++//        return courseId;
++//    }
++//
++//    public void setCourseId(Long courseId) {
++//        this.courseId = courseId;
++//    }
++
++    public Long getDepartmentId() {
++        return departmentId;
++    }
++
++    public void setDepartmentId(Long departmentId) {
++        this.departmentId = departmentId;
++    }
++
++    public String getDepartmentName() {
++        return departmentName;
++    }
++
++    public void setDepartmentName(String departmentName) {
++        this.departmentName = departmentName;
++    }
++
++    public Long getHodId() {
++        return hodId;
++    }
++
++    public void setHodId(Long hodId) {
++        this.hodId = hodId;
++    }
++
++    public Long getAttendentId() {
++        return attendentId;
++    }
++
++    public void setAttendentId(Long attendentId) {
++        this.attendentId = attendentId;
++    }
++
++    public Program getProgramName() {
++        return programName;
++    }
++
++    public void setProgramName(Program programName) {
++        this.programName = programName;
++    }
++}
+Index: src/main/java/com/ras/cms/domain/Subject.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/Subject.java b/src/main/java/com/ras/cms/domain/Subject.java
+--- a/src/main/java/com/ras/cms/domain/Subject.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/domain/Subject.java	(date 1696255460082)
+@@ -13,7 +13,7 @@
+ 
+     Long CollegeId;
+     Long courseId;
+-    Long branchId;
++    Long departmentId;
+     Long subjectTypeId;
+     String subjectName;
+     String subjectCode;
+@@ -48,12 +48,12 @@
+         this.courseId = courseId;
+     }
+ 
+-    public Long getBranchId() {
+-        return branchId;
++    public Long getDepartmentId() {
++        return departmentId;
+     }
+ 
+-    public void setBranchId(Long branchId) {
+-        this.branchId = branchId;
++    public void setDepartmentId(Long departmentId) {
++        this.departmentId = departmentId;
+     }
+ 
+     public Long getSubjectTypeId() {
+Index: src/main/java/com/ras/cms/domain/TimeTable.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/TimeTable.java b/src/main/java/com/ras/cms/domain/TimeTable.java
+--- a/src/main/java/com/ras/cms/domain/TimeTable.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/domain/TimeTable.java	(date 1693300596191)
+@@ -1,11 +1,58 @@
+ package com.ras.cms.domain;
+ 
++import javax.persistence.Entity;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++
++@Entity
+ public class TimeTable {
+-    Long CollegeId;
+-    Long courseId;
+-    Long branchId;
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long id;
++    private String day;
++    private String time;
++    private String course;
++
++    public Long getId() {
++        return id;
++    }
++
++    public void setId(Long id) {
++        this.id = id;
++    }
++
++    public String getDay() {
++        return day;
++    }
++
++    public void setDay(String day) {
++        this.day = day;
++    }
++
++    public String getTime() {
++        return time;
++    }
+ 
+-    Long subjectId;
+-    String Day;
++    public void setTime(String time) {
++        this.time = time;
++    }
++
++    public String getCourse() {
++        return course;
++    }
++
++    public void setCourse(String course) {
++        this.course = course;
++    }
++//    Long CollegeId;
++//    Long courseId;
++//    Long branchId;
++//
++//    Long subjectId;
++//    String Day;
++
++
+ 
+ }
+Index: src/main/java/com/ras/cms/domain/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/User.java b/src/main/java/com/ras/cms/domain/User.java
+--- a/src/main/java/com/ras/cms/domain/User.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/domain/User.java	(date 1696255460147)
+@@ -17,7 +17,7 @@
+ 
+     private Long CollegeId;
+     private Long courseId;
+-    private Long branchId;
++    private Long departmentId;
+ 
+     private String startDate;
+     private String endDate;
+@@ -93,12 +93,12 @@
+         this.courseId = courseId;
+     }
+ 
+-    public Long getBranchId() {
+-        return branchId;
++    public Long getDepartmentId() {
++        return departmentId;
+     }
+ 
+-    public void setBranchId(Long branchId) {
+-        this.branchId = branchId;
++    public void setDepartmentId(Long departmentId) {
++        this.departmentId = departmentId;
+     }
+ 
+     public String getStartDate() {
+Index: src/main/java/com/ras/cms/domain/WeekDay.java
+===================================================================
+diff --git a/src/main/java/com/ras/cms/domain/WeekDay.java b/src/main/java/com/ras/cms/domain/WeekDay.java
+deleted file mode 100644
+--- a/src/main/java/com/ras/cms/domain/WeekDay.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ /dev/null	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
+@@ -1,5 +0,0 @@
+-package com.ras.cms.domain;
+-
+-public enum WeekDay {
+-    
+-}
+Index: src/main/java/com/ras/cms/service/branch/BranchService.java
+===================================================================
+diff --git a/src/main/java/com/ras/cms/service/branch/BranchService.java b/src/main/java/com/ras/cms/service/branch/BranchService.java
+deleted file mode 100644
+--- a/src/main/java/com/ras/cms/service/branch/BranchService.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ /dev/null	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
+@@ -1,12 +0,0 @@
+-package com.ras.cms.service.branch;
+-
+-import com.ras.cms.domain.Branch;
+-
+-import java.util.List;
+-
+-public interface BranchService {
+-    List<Branch> findAll();
+-    Branch findOne(Long id);
+-    Branch saveBranch(Branch branch);
+-    void deleteBranch(Long id);
+-}
+\ No newline at end of file
+Index: src/main/java/com/ras/cms/service/branch/BranchServiceImpl.java
+===================================================================
+diff --git a/src/main/java/com/ras/cms/service/branch/BranchServiceImpl.java b/src/main/java/com/ras/cms/service/branch/BranchServiceImpl.java
+deleted file mode 100644
+--- a/src/main/java/com/ras/cms/service/branch/BranchServiceImpl.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ /dev/null	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
+@@ -1,36 +0,0 @@
+-package com.ras.cms.service.branch;
+-
+-import com.ras.cms.dao.BranchRepository;
+-import com.ras.cms.domain.Branch;
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.stereotype.Service;
+-
+-import java.util.List;
+-
+-@Service
+-public class BranchServiceImpl implements BranchService {
+-
+-    @Autowired
+-    BranchRepository branchRepository;
+-
+-    @Override
+-    public List<Branch> findAll() {
+-        return branchRepository.findAll();
+-    }
+-
+-    @Override
+-    public Branch findOne(Long id) {
+-        return branchRepository.findById(id).get();
+-    }
+-
+-
+-    @Override
+-    public Branch saveBranch(Branch branch) {
+-        return branchRepository.save(branch);
+-    }
+-
+-    @Override
+-    public void deleteBranch(Long id) {
+-        branchRepository.deleteById(id);
+-    }
+-}
+\ No newline at end of file
+Index: src/main/java/com/ras/cms/service/course/CourseService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/service/course/CourseService.java b/src/main/java/com/ras/cms/service/course/CourseService.java
+--- a/src/main/java/com/ras/cms/service/course/CourseService.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/service/course/CourseService.java	(date 1698324758035)
+@@ -1,12 +1,27 @@
+ package com.ras.cms.service.course;
+ 
+-import com.ras.cms.domain.Course;
++import com.ras.cms.domain.*;
+ 
+ import java.util.List;
+ 
+ public interface CourseService {
+     List<Course> findAll();
+     Course findOne(Long id);
+-    Course saveCourse(Course College);
++    Course saveCourse(Course course);
++
++    List<Course> getEntriesByBatchYearDeptProgramSemId(Long BatchYearDeptProgramSemId);
++
++    Long getBatchYearDeptProgramSemIdByCourseId(Long courseId);
++
++//    Long getBatchYearDeptProgramSemId(Long courseId);
++
++
++    boolean doesEntryExist(Long batchYearDeptProgramSemId, Long contactHours, Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
++    //boolean doesEntryExist(Long departmentSemSecId, Day day, TimeSlotSelection timeSlot, Course course);
++
++    Course getEntry(Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
++
+     void deleteCourse(Long id);
++
++    List<Course> getCoursesByDepartmentAndSemester(Department department, Semester semester);
+ }
+Index: src/main/java/com/ras/cms/service/course/CourseServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/service/course/CourseServiceImpl.java b/src/main/java/com/ras/cms/service/course/CourseServiceImpl.java
+--- a/src/main/java/com/ras/cms/service/course/CourseServiceImpl.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/service/course/CourseServiceImpl.java	(date 1698324757916)
+@@ -1,7 +1,7 @@
+ package com.ras.cms.service.course;
+ 
+ import com.ras.cms.dao.CourseRepository;
+-import com.ras.cms.domain.Course;
++import com.ras.cms.domain.*;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+@@ -23,13 +23,37 @@
+         return courseRepository.findById(id).get();
+     }
+ 
++    @Override
++    public Long getBatchYearDeptProgramSemIdByCourseId(Long courseId){return courseRepository.findBatchYearDeptProgramSemIdByCourseId(courseId);}
++
++//    @Override
++//    public Long getBatchYearDeptProgramSemId(Long courseId){return courseRepository.findBatchYearDeptProgramSemId(courseId);}
++
++
+     @Override
+     public Course saveCourse(Course course) {
+         return courseRepository.save(course);
+     }
+ 
++    @Override
++    public List<Course> getEntriesByBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId){
++        return courseRepository.findByBatchYearDeptProgramSemId(batchYearDeptProgramSemId);
++    }
++
++    public boolean doesEntryExist(Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
++        return courseRepository.existsByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearDeptProgramSemId, contactHours,courseBatchesCount, courseCode, courseName,teachingDepartmentName, courseType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
++    }
++
++    //fetching the row based on below parameters
++    public Course getEntry(Long batchYearDeptProgramSemId, Long contactHours, Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
++        return courseRepository.findByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearDeptProgramSemId, contactHours,courseBatchesCount, courseCode, courseName, teachingDepartmentName, courseType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
++    }
++
+     @Override
+     public void deleteCourse(Long id) {
+         courseRepository.deleteById(id);
+     }
++
++    @Override
++    public List<Course> getCoursesByDepartmentAndSemester(Department department, Semester semester){return courseRepository.findAllByDepartmentAndSemester(department,semester);}
+ }
+Index: src/main/java/com/ras/cms/service/department/DepartmentService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/service/department/DepartmentService.java b/src/main/java/com/ras/cms/service/department/DepartmentService.java
+new file mode 100644
+--- /dev/null	(date 1696255460346)
++++ b/src/main/java/com/ras/cms/service/department/DepartmentService.java	(date 1696255460346)
+@@ -0,0 +1,12 @@
++package com.ras.cms.service.department;
++
++import com.ras.cms.domain.Department;
++
++import java.util.List;
++
++public interface DepartmentService {
++    List<Department> findAll();
++    Department findOne(Long id);
++    Department saveDepartment(Department department);
++    void deleteDepartment(Long id);
++}
+\ No newline at end of file
+Index: src/main/java/com/ras/cms/service/department/DepartmentServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/service/department/DepartmentServiceImpl.java b/src/main/java/com/ras/cms/service/department/DepartmentServiceImpl.java
+new file mode 100644
+--- /dev/null	(date 1696255459673)
++++ b/src/main/java/com/ras/cms/service/department/DepartmentServiceImpl.java	(date 1696255459673)
+@@ -0,0 +1,38 @@
++package com.ras.cms.service.department;
++
++import com.ras.cms.dao.DepartmentRepository;
++import com.ras.cms.domain.Department;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Service;
++
++import java.util.List;
++
++@Service
++public class DepartmentServiceImpl implements DepartmentService {
++
++    @Autowired
++    DepartmentRepository departmentRepository;
++
++    @Override
++    public List<Department> findAll() {
++        return departmentRepository.findAll();
++    }
++
++    @Override
++    public Department findOne(Long id) {
++        return departmentRepository.findById(id).get();
++    }
++
++
++    @Override
++    public Department saveDepartment(Department department) {
++        return departmentRepository.save(department);
++    }
++
++    @Override
++    public void deleteDepartment(Long id) {
++        departmentRepository.deleteById(id);
++    }
++
++    //public Department findByDepartmentName(Department department){return departmentRepository.}
++}
+\ No newline at end of file
+Index: src/main/java/com/ras/cms/service/InitApplicationService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/ras/cms/service/InitApplicationService.java b/src/main/java/com/ras/cms/service/InitApplicationService.java
+--- a/src/main/java/com/ras/cms/service/InitApplicationService.java	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/java/com/ras/cms/service/InitApplicationService.java	(date 1697449220549)
+@@ -1,9 +1,13 @@
+ package com.ras.cms.service;
+ 
+-import com.ras.cms.domain.Role;
+-import com.ras.cms.domain.State;
++import com.ras.cms.domain.*;
++import com.ras.cms.service.coursetype.CourseTypeService;
++import com.ras.cms.service.day.DayService;
+ import com.ras.cms.service.role.RoleService;
++import com.ras.cms.service.section.SectionService;
++import com.ras.cms.service.semester.SemesterService;
+ import com.ras.cms.service.state.StateService;
++//import com.ras.cms.service.timeslot.TimeSlotService;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+@@ -12,6 +16,9 @@
+ import org.springframework.core.annotation.Order;
+ import org.springframework.stereotype.Component;
+ 
++import java.time.LocalTime;
++import java.util.List;
++
+ /** 
+  * Created by Surya on 06-Jun-18.
+  */
+@@ -27,7 +34,24 @@
+     @Autowired
+     StateService stateService;
+ 
++    @Autowired
++    private DayService dayService;
++
++    @Autowired
++    private SemesterService semesterService;
++
++    @Autowired
++    private SectionService sectionService;
++
++    @Autowired
++    private CourseTypeService courseTypeService;
++
++//    @Autowired
++//    private TimeSlotService timeSlotService;
+     public void run(ApplicationArguments applicationArguments) {
++        // Log an info message
++        LOGGER.info("Initializing application...");
++
+         if(roleService.findAll().size() == 0) {
+             roleService.saveRole(new Role("SITE_ADMIN", "Site Administrator"));
+             roleService.saveRole(new Role("College_ADMIN", "College Administrator"));
+@@ -65,5 +89,65 @@
+             stateService.saveState(new State(25L,"Shivamogga"));
+             stateService.saveState(new State(26L,"Tumkur"));
+         }
++
++        if (dayService.findAll().isEmpty()) {
++            dayService.saveDay(new Day("Monday"));
++            dayService.saveDay(new Day("Tuesday"));
++            dayService.saveDay(new Day("Wednesday"));
++            dayService.saveDay(new Day("Thursday"));
++            dayService.saveDay(new Day("Friday"));
++            dayService.saveDay(new Day("Saturday"));
++            dayService.saveDay(new Day("Sunday"));
++
++
++            // ... Continue adding days as needed
++        }
++
++//        if (timeSlotService.findAll().isEmpty()) {
++//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("09:00"), LocalTime.parse("10:00")));
++//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("10:00"), LocalTime.parse("11:00")));
++//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("11:10"), LocalTime.parse("12:10")));
++//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("12:10"), LocalTime.parse("01:10")));
++//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("01:50"), LocalTime.parse("02:50")));
++//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("02:50"), LocalTime.parse("03:50")));
++//            timeSlotService.saveTimeSlot(new TimeSlot(LocalTime.parse("03:50"), LocalTime.parse("04:50")));
++//
++//            // ... Continue adding time slots as needed
++//        }
++
++        if(semesterService.findAll().isEmpty()){
++            semesterService.saveSemester(new Semester(1L));
++            semesterService.saveSemester(new Semester(2L));
++            semesterService.saveSemester(new Semester(3L));
++            semesterService.saveSemester(new Semester(4L));
++            semesterService.saveSemester(new Semester(5L));
++            semesterService.saveSemester(new Semester(6L));
++            semesterService.saveSemester(new Semester(7L));
++            semesterService.saveSemester(new Semester(8L));
++        }
++
++        if(sectionService.findAll().isEmpty()){
++            sectionService.saveSection(new Section("A"));
++            sectionService.saveSection(new Section("B"));
++            sectionService.saveSection(new Section("C"));
++            sectionService.saveSection(new Section("D"));
++            sectionService.saveSection(new Section("E"));
++            sectionService.saveSection(new Section("F"));
++            sectionService.saveSection(new Section("G"));
++            sectionService.saveSection(new Section("H"));
++        }
++
++        if(courseTypeService.findAll().isEmpty()){
++            courseTypeService.saveCourseType(new CourseType("Theory"));
++            courseTypeService.saveCourseType(new CourseType("Lab"));
++            courseTypeService.saveCourseType(new CourseType("Professional Elective 1"));
++            courseTypeService.saveCourseType(new CourseType("Professional Elective 2"));
++            courseTypeService.saveCourseType(new CourseType("Open Elective 1"));
++            courseTypeService.saveCourseType(new CourseType("Open Elective 2"));
++        }
++
++
++        // Log a message when initialization is complete
++        LOGGER.info("Initialization complete.");
+     }
+ }
+Index: src/main/resources/templates/fragments/footer.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/fragments/footer.html b/src/main/resources/templates/fragments/footer.html
+--- a/src/main/resources/templates/fragments/footer.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/fragments/footer.html	(date 1696776314942)
+@@ -5,7 +5,7 @@
+ <body>
+ <div th:fragment="footer">
+ 
+-    <div class="footer">
++    <div align="center" class="footer">
+ 
+         <footer>
+             <!-- this is footer -->
+Index: src/main/resources/templates/fragments/header.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/fragments/header.html b/src/main/resources/templates/fragments/header.html
+--- a/src/main/resources/templates/fragments/header.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/fragments/header.html	(date 1698833590028)
+@@ -22,14 +22,53 @@
+                     <a class="navbar-link" th:href="@{/logout}">Sign Out</a>
+                 </span>
+             </font>
++
+             <div id="navbar" class="collapse navbar-collapse">
+                 <ul class="nav navbar-nav">
+-                    <li><a th:href="@{/admin/courseEdit}">Course</a></li>
+                     <li><a th:href="@{/admin/CollegeEdit}">College</a></li>
+-                    <li><a th:href="@{/studentEdit}">Register Student </a></li>
+-                    <li><a th:href="@{/listStudent}">List Student </a></li>
++                    <li><a th:href="@{/admin/departmentEdit}">Department</a></li>
++                    <li><a th:href="@{/admin/editProgram}">Program</a></li>
++                    <li><a th:href="@{/admin/selectCourse}">Course</a></li>
++                    <li><a th:href="@{/admin/selectOpenElective}">Open Elective</a></li>
++                    <li><a th:href="@{/studentEdit}">Register Student</a></li>
++                    <li><a th:href="@{/listStudent}">Students List</a></li>
++                    <li><a th:href="@{/admin/editFaculty}">Faculty</a></li>
++                    <li><a th:href="@{/admin/courseFacultyEdit}">Course-Faculty Allotment</a></li>
++<!--                    <li><a th:href="@{/admin/editTimeSlot}">Add Time Slots</a></li>-->
++                    <li><a th:href="@{/admin/selectTimeTable}">Time Table</a></li>
++
+                 </ul>
+             </div>
++
++
++
++            <!--            <div id="navbar" class="collapse navbar-collapse">-->
++<!--                <ul class="nav navbar-nav">-->
++<!--                    <li class="dropdown">-->
++<!--                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>-->
++<!--                        <ul class="dropdown-menu">-->
++<!--                            <li><a th:href="@{/admin/CollegeEdit}">College</a></li>-->
++<!--                            <li><a th:href="@{/admin/departmentEdit}">Department</a></li>-->
++<!--                            <li><a th:href="@{/admin/courseEdit}">Course</a></li>-->
++<!--                            <li><a th:href="@{/admin/editFaculty}">Faculty</a></li>-->
++<!--                            <li><a th:href="@{/admin/courseFacultyEdit}">Course-Faculty Allotment</a></li>-->
++<!--                            <li><a th:href="@{/admin/editTimeSlot}">Add Time Slots</a></li>-->
++<!--                            <li><a th:href="@{/admin/selectTimeTable}">Time Table</a></li>-->
++<!--                        </ul>-->
++<!--                    </li>-->
++<!--                    <li class="dropdown">-->
++<!--                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Student <b class="caret"></b></a>-->
++<!--                        <ul class="dropdown-menu">-->
++<!--                            <li><a th:href="@{/studentEdit}">Register Student</a></li>-->
++<!--                            <li><a th:href="@{/listStudent}">Students List</a></li>-->
++<!--                        </ul>-->
++<!--                    </li>-->
++
++
++
++
++<!--                </ul>-->
++<!--            </div>-->
+         </div>
+     </nav>
+ </div>
+Index: src/main/resources/templates/collageEdit.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/collageEdit.html b/src/main/resources/templates/CollegeEdit.html
+rename from src/main/resources/templates/collageEdit.html
+rename to src/main/resources/templates/CollegeEdit.html
+--- a/src/main/resources/templates/collageEdit.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/CollegeEdit.html	(date 1693231218698)
+@@ -18,6 +18,11 @@
+ 
+     <table width="100%">
+         <tr>
++            <td align="left">
++                <a href="/admin/listCollege" th:href="@{/admin/listCollege}" class="btn btn-primary" role="button">View Colleges</a>
++            </td>
++
++
+             <td align="right">
+                 <button type="submit" class="btn btn-primary">Save</button>
+                 <a href="#" th:href="@{/}" class="btn btn-danger" role="button">Cancel</a>
+Index: src/main/resources/templates/collageList.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/collageList.html b/src/main/resources/templates/CollegeList.html
+rename from src/main/resources/templates/collageList.html
+rename to src/main/resources/templates/CollegeList.html
+--- a/src/main/resources/templates/collageList.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/CollegeList.html	(date 1693231446872)
+@@ -37,6 +37,7 @@
+             <td th:text="${College.CollegeAddress}">Test</td>
+             <td>
+                 <a href="/admin/CollegeEdit/1" th:href="@{/admin/CollegeEdit/__${College.CollegeId}__}">Edit</a>
++                &nbsp;&nbsp;&nbsp;&nbsp;
+                 <a href="/admin/addCourse/1" th:href="@{/admin/addCourse/__${College.CollegeId}__}">Add Course</a>
+                 <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+             </td>
+Index: src/main/resources/templates/courseEdit.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/courseEdit.html b/src/main/resources/templates/courseEdit.html
+--- a/src/main/resources/templates/courseEdit.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/courseEdit.html	(date 1698325623132)
+@@ -2,67 +2,300 @@
+ <html xmlns:th="http://www.thymeleaf.org"
+       xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+-    <meta charset="UTF-8"/>
+-    <title>Course</title>
++    <meta charset="UTF-8"/><!DOCTYPE html>
++    <html xmlns:th="http://www.thymeleaf.org"
++          xmlns="http://www.w3.org/1999/xhtml">
++    <head>
++        <meta charset="UTF-8"/>
++        <title>Course</title>
+ 
+-    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+-          th:href="@{/css/bootstrap.min.css}"/>
++        <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
++              th:href="@{/css/bootstrap.min.css}"/>
+ 
+-    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+-    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+-</head>
+-<body>
+-<div th:replace="fragments/header :: header"/>
+-<div class="container">
+-    <form action="/admin/courseEdit" th:action="@{/admin/courseEdit}" method="post">
++        <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
++        <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
++
++        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
++        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/bootstrap.min.css" />
++
++        <!-- Include Alertify.js JavaScript -->
++        <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
++
++        <script>
++            // Initialize Alertify.js
++            alertify.set('notifier', 'position', 'top-right'); // Adjust notification position as needed
++        </script>
++
++        <script>
++            // Function to display a success alert
++      function showSuccessAlert(message, timeout) {
++        alertify.success('Entry added successfully');
++        if (timeout) {
++            setTimeout(function () {
++                alertify.dismissAll(); // Close the alert after the specified timeout
++            }, timeout);
++        }
++        console.log('Alert displayed!');
++      }
++
++      // Function to display an error alert
++      function showErrorAlert(message, timeout) {
++        alertify.error('oops! there was error while adding');
++        if (timeout) {
++            setTimeout(function () {
++                alertify.dismissAll(); // Close the alert after the specified timeout
++            }, timeout);
++        }
++      }
++
++         function showEntryAlreadyExistsAlert(message, timeout) {
++        alertify.error('Sorry Already an entry exists, Please delete the entry and try again');
++        if (timeout) {
++            setTimeout(function () {
++                alertify.dismissAll(); // Close the alert after the specified timeout
++            }, timeout);
++        }
++      }
++
++        function deleteSuccess(message, timeout) {
++        alertify.success('entry deleted successfully');
++        if (timeout) {
++            setTimeout(function () {
++                alertify.dismissAll(); // Close the alert after the specified timeout
++            }, timeout);
++        }
++      }
++
++        function deleteFailure(message, timeout) {
++        alertify.error('failed to delete');
++        if (timeout) {
++            setTimeout(function () {
++                alertify.dismissAll(); // Close the alert after the specified timeout
++            }, timeout);
++        }
++      }
++        </script>
++
++
++        <!-- Include jQuery library -->
++        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
++
++
++<!--        &lt;!&ndash;delete course entry&ndash;&gt;-->
++<!--        <script type="text/javascript">-->
++<!--            function deleteEntry() {-->
++<!--                var departmentSemSecId = document.querySelector('[name="departmentSemSecId"]').value; // Get the value from the hidden input field-->
++<!--                var selectedDay = document.getElementById("day").value;-->
++<!--                var selectedTimeSlot = document.getElementById("timeSlot").value;-->
++<!--                var selectedCourse = document.getElementById("course").value;-->
++<!--    -->
++<!--                // Construct the delete URL-->
++<!--                var deleteUrl = "/admin/deleteTimeTable/" + departmentSemSecId + "?day=" + selectedDay + "&timeSlot=" + selectedTimeSlot + "&course=" + selectedCourse;-->
++<!--    -->
++<!--                // Navigate to the delete URL-->
++<!--                window.location.href = deleteUrl;-->
++<!--            }-->
++<!--    -->
++<!--            // Attach the deleteEntry function to the click event of the delete link-->
++<!--           // document.getElementById("deleteLink").addEventListener("click", deleteEntry);-->
++<!--        </script>-->
++
++
++
++    </head>
++    <body>
++    <div th:replace="fragments/header :: header"/>
++
++    <div class="container">
+ 
+-    <table width="100%">
+-        <tr>
+-            <td align="right">
+-                <button type="submit" class="btn btn-primary">Save</button>
+-                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+-            </td>
+-        </tr>
+-    </table>
++        <table width="100%">
++            <tr>
++                <th th:text="'Academic Year: ' + ${batchYearDeptProgramSem1.academicYear.year}" style="font-size: 15px;">Academic Year</th>
++                <th th:text="'Batch: ' + ${batchYearDeptProgramSem1.batch.batchName}" style="font-size: 15px;">Batch</th>
++                <th th:text="'Semester: ' + ${batchYearDeptProgramSem1.semester.sem}" style="font-size: 15px;">Semester</th>
++                 </tr>
++            <tr>
++                <th th:text="'Department: ' + ${batchYearDeptProgramSem1.department.departmentName}" style="font-size: 15px;">Department</th>
++                <th th:text="'Programme: ' + ${batchYearDeptProgramSem1.program.programName}" style="font-size: 15px;">
++                <th th:text="'Course Type: ' + ${courseType.typeOfCourse}" style="font-size: 15px;">CourseType</th>
++
++
++
++                <!--                <td align="left">-->
++<!--                    <a href="/admin/listCourse/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}" th:href="@{/admin/listCourse/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__}" class="btn btn-primary" role="button">View Courses</a>-->
++<!--                </td>-->
++
++<!--                <td align="right">-->
++<!--                    delete button same as in timetable-->
++<!--                   <button class="btn btn-danger" onclick="deleteEntry()">Delete</button>-->
++
++<!--                    <button class="btn btn-primary">Save</button>-->
++<!--                   <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>-->
++<!--                </td>-->
++            </tr>
++            <tr><td></td></tr>
++        </table>
++        <hr>
++
++        <form action="/admin/courseEdit" th:action="@{/admin/courseEdit}"  method="post">
+ 
+-        <table border="0" width="80%">
+-            <tr>
+-                <td><input th:type="hidden" name="courseId" th:field="${course.courseId}"/>
+-                    <div class="form-group">
+-                        <label for="courseCode">Course Code</label>
+-                        <input type="text" class="form-control" id="courseCode" th:field="${course.courseCode}"
+-                               placeholder="Course Code"/>
+-                    </div>
+-                </td>
+-                <td> &nbsp;</td>
+-                <td>
+-                    <div class="form-group">
+-                        <label for="courseName">Course Name</label>
+-                        <input type="text" class="form-control" id="courseName" th:field="${course.courseName}"
+-                               placeholder="Course Name"/>
+-                    </div>
+-                </td>
+-            </tr>
+-            <tr>
+-                <td>
+-                    <div class="form-group">
+-                        <label for="courseDuration">Course Duration</label>
+-                        <input type="text" class="form-control" id="courseDuration" th:field="${course.courseDuration}"
+-                               placeholder="Course Duration"/>
+-                    </div>
+-                </td>
+-                <td> &nbsp;</td>
+-                <td>
+-                    <div class="form-group">
+-                        <label for="semister">Semister</label>
+-                        <input type="text" class="form-control" id="semister" th:field="${course.semister}"
+-                               placeholder="Semister"/>
+-                    </div>
+-                </td>
+-            </tr>
+-        </table>
+-    </form>
+-</div>
+-<div th:replace="fragments/footer :: footer"/>
+-</body>
+-</html>
+\ No newline at end of file
++            <table border="0" width="80%">
++                <tr> <td> </td></tr>
++                <tr>
++                    <td> <label>Select Teaching Dept. : </label> </td>
++
++                    <td>
++                        <input th:type="hidden" name="batchYearDeptProgramSemId" th:field="${batchYearDeptProgramSem1.batchYearDeptProgramSemId}"/>
++                        <input type="hidden" th:value="${batchYearDeptProgramSem1.batch.batchId}" name="batch">
++                        <input type="hidden" th:value="${batchYearDeptProgramSem1.academicYear.id}" name="academicYear">
++                        <input type="hidden" th:value="${batchYearDeptProgramSem1.department.departmentId}" name="department">
++                        <input type="hidden" th:value="${batchYearDeptProgramSem1.program.programId}" name="program">
++                        <input type="hidden" th:value="${batchYearDeptProgramSem1.semester.semId}" name="semester">
++
++<!--                        <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Theory'" id="courseType"/>-->
++                        <input type="hidden" th:field="${courseType.typeOfCourse}" th:value="${courseType.typeOfCourse}" name="courseType"/>
++
++                        <div class="form-group">
++<!--                            <label>Select Teaching Dept. : </label>-->
++                            <select class="form-control" id="teachingDepartment" name="teachingDepartment.teachingDepartmentId">
++                                <option th:each="teachingDepartment : ${teachingDepartments}" th:value="${teachingDepartment.teachingDepartmentId}" th:text="${teachingDepartment.teachingDepartmentName} + ' - ' + ${teachingDepartment.teachingDepartmentCode}"></option>
++                            </select>
++                        </div>
++                    </td>
++
++                    <td>
++                        <a href="/admin/editTeachingDepartment" th:href="@{/admin/editTeachingDepartment}" class="btn btn-primary" role="button">Add Teaching Department</a>
++                    </td>
++                </tr>
++                <tr><td></td></tr>
++
++                <tr>
++                    <td>
++                        <div class="form-group">
++                            <label for="courseName">Course Name:</label>
++                            <input type="text" class="form-control" id="courseName" th:field="${course.courseName}"
++                                   placeholder="Course Name"/>
++                        </div>
++                            </td>
++                     
++
++                    <td>
++                        <div class="form-group">
++                            <label for="courseCode">Course Code:</label>
++                            <input type="text" class="form-control" id="courseCode" th:field="${course.courseCode}"
++                                   placeholder="CSE51"/>
++                        </div>
++                        </td>
++                     
++
++                    <td>
++                        <div class="form-group">
++                            <label for="contactHours">Contact hours per week:</label>
++                            <input type="text" class="form-control" id="contactHours" th:field="${course.contactHours}"
++                                   placeholder="in hours"/>
++                        </div>
++                    </td>
++
++                </tr>
++
++
++
++                <tr><td></td></tr>
++                <tr>
++                    <td>
++                        <label >Credits : </label>
++                        <div class="form-group">
++                            <td>
++                                <div class="form-group">
++                                    <label for="lectureCredits">Lecture Credits (L):</label>
++                                    <input type="text" class="form-control" id="lectureCredits" th:field="${course.lectureCredits}"
++                                           placeholder="Lecture Credits"/>
++                                </div>
++                            </td>
++
++                            <td>
++                                <div class="form-group">
++                                    <label for="tutorialCredits">Tutorial Credits (T):</label>
++                                    <input type="text" class="form-control" id="tutorialCredits" th:field="${course.tutorialCredits}"
++                                           placeholder="Tutorial Credits"/>
++                                </div>
++                            </td>
++
++                            <td>
++                                <div class="form-group">
++                                    <label for="practicalCredits">Practical Credits (P):</label>
++                                    <input type="text" class="form-control" id="practicalCredits" th:field="${course.practicalCredits}"
++                                           placeholder="Practical Credits"/>
++                                </div>
++                            </td>
++
++                            <td>
++                                <div class="form-group">
++                                    <label for="totalCredits">Total Credits :</label>
++                                    <input type="text" class="form-control" id="totalCredits" th:field="${course.totalCredits}"
++                                           placeholder="Total Credits"/>
++                                </div>
++                            </td>
++                             
++
++                        </div>
++                    </td>
++                </tr>
++
++                <tr><td></td></tr>
++                <tr>
++                    <td> <label>Total number of batches : </label> </td>
++
++                    <td>
++
++                        <div class="form-group">
++                            <input type="text" class="form-control" id="courseBatchesCount" th:field="${course.courseBatchesCount}"
++                                   placeholder="0"/>
++                        </div>
++                    </td>
++                </tr>
++                <tr><td></td></tr>
++
++
++            </table>
++
++
++            <div align="center">
++                <a href="/admin/listCourse/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}" th:href="@{/admin/listCourse/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__}" class="btn btn-primary" role="button">View Courses</a>
++                <button class="btn btn-primary">Save</button>
++                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
++            </div>
++
++            <!-- success-->
++            <script th:if="${successMessage}">
++                showSuccessAlert('${successMessage}', 3000);
++            </script>
++
++            <!-- error -->
++            <script th:if="${errorMessage}">
++                showErrorAlert('${errorMessage}', 3000);
++            </script>
++
++            <script th:if="${EntryAlreadyExistsError}">
++                showEntryAlreadyExistsAlert('${EntryAlreadyExistsError}', 3000);
++            </script>
++
++            <script th:if="${DeleteSuccessMessage}">
++                deleteSuccess('${DeleteSuccessMessage}', 3000);
++            </script>
++
++            <script th:if="${EntryDoesNotExistError}">
++                deleteFailure('${EntryDoesNotExistError}', 3000);
++            </script>
++
++
++
++        </form>
++
++    </div>
++
++
++
++    </body>
++    </html>
++
+Index: src/main/resources/templates/courseList.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/courseList.html b/src/main/resources/templates/courseList.html
+--- a/src/main/resources/templates/courseList.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/courseList.html	(date 1698325154365)
+@@ -13,37 +13,154 @@
+ <body>
+ <div th:replace="fragments/header :: header"/>
+ <div class="container">
+-    <h1> Courses </h1>
++<!--    <h1> Courses </h1>-->
+ 
+     <p>
+-        <a href="/admin/courseEdit" th:href="@{/admin/courseEdit}">Create</a>
++        <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
++        <a href="/admin/selectCourseType?id=${batchYearDeptProgramSemView.batchYearDeptProgramSemId}}" th:href="@{/admin/selectCourseType?id=__${batchYearDeptProgramSemView.batchYearDeptProgramSemId}__}">Add more</a>
+     </p>
+ 
+-    <table  class="table table-striped">
++    <table  class="table table-bordered">
+         <thead>
++
++        <tr>
++            <th colspan="11" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
++                class="text-center">College
++            </th>
++        </tr>
++
++        <tr>
++            <th colspan="11" th:text="'Department of ' + ${batchYearDeptProgramSemView.department.departmentName}" style="font-size: 30px;"  class="text-center">Department</th>
++           </tr>
++        <tr>
++            <th colspan="11" th:text="'Programme: ' + ${batchYearDeptProgramSemView.program.programName}" style="font-size: 25px;"  class="text-center">Program</th>
++            </tr>
++        <tr>
++            <th colspan="5" th:text="'Batch: ' + ${batchYearDeptProgramSemView.batch.batchName}" style="font-size: 20px;"  class="text-center">Batch</th>
++            <th colspan="7" th:text="'Academic Year: ' + ${batchYearDeptProgramSemView.academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
++        </tr>
+         <tr>
+-            <th>Course Id</th>
+-            <th>Course Code</th>
+-            <th>Course Name</th>
+-            <th>Course Duration</th>
+-            <th>Semister</th>
+-            <th>Actions</th>
++            <th colspan="5" th:text="'Semester: ' + ${batchYearDeptProgramSemView.semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
++            <th colspan="7" th:text="'Term: '" style="font-size: 20px;" class="text-center">Term</th>
+         </tr>
++
++
+         </thead>
+         <tbody>
+-        <tr th:each="course : ${courseList}">
+-            <td th:text="${course.courseId}">1</td>
+-            <td th:text="${course.courseCode}">Test</td>
+-            <td th:text="${course.courseName}">Test</td>
+-            <td th:text="${course.courseDuration}">Test</td>
+-            <td th:text="${course.semister}">Test</td>
++        <tr style="text-align:center">
++            <th rowspan="2" class="text-center">Course Id</th>
++            <th rowspan="2" class="text-center">Course Type</th>
++            <th rowspan="2" class="text-center">Course Code</th>
++            <th rowspan="2" class="text-center">Course Name</th>
++            <th rowspan="2" class="text-center">Teaching Department</th>
++            <th colspan="4" class="text-center">Credits</th>
++            <th rowspan="2" class="text-center">Contact Hours/ week</th>
++            <th rowspan="2" class="text-center">Actions</th>
++        </tr>
++        <tr style="text-align:center">
++            <th>L</th>
++            <th>T</th>
++            <th>P</th>
++            <th>Total</th>
++        </tr>
++
++        <tr th:each="course : ${courses}">
++            <td th:text="${course.courseId}" class="text-center">1</td>
++            <td th:text="${course.courseType}" class="text-center">1</td>
++            <td th:text="${course.courseCode}" class="text-center">Test</td>
++            <td th:text="${course.courseName}" class="text-center">Test</td>
++            <td th:text="${course.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
++            <td th:text="${course.lectureCredits}" class="text-center">Test</td>
++            <td th:text="${course.tutorialCredits}" class="text-center">Test</td>
++            <td th:text="${course.practicalCredits}" class="text-center">Test</td>
++            <td th:text="${course.totalCredits}" class="text-center">Test</td>
++            <td th:text="${course.contactHours}" class="text-center">Test</td>
++
++<!--            <td th:text="${course.program.programName}">Test</td>-->
++<!--            <td th:text="${course.department.departmentName}">Test</td>-->
++<!--            <td th:text="${course.semester.sem}">Test</td>-->
+             <td>
+-                <a href="/admin/courseEdit/1" th:href="@{/admin/courseEdit/__${course.courseId}__}">Edit</a>
++<!--                <a href="/admin/courseEdit/1" th:href="@{/admin/courseEdit/__${course.courseId}__}">Edit</a>-->
++&nbsp;&nbsp;
++                <a href="/admin/deleteCourse/1" th:href="@{/admin/deleteCourse/__${course.courseId}__}">Delete</a>
++
+                 <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+             </td>
++        </tr>
++        <tr>
++            <th class="text-center">Total</th>
++            <td></td>
++            <td></td>
++            <td></td>
++            <td></td>
++
++            <th th:text="${totalLectureCredits}" class="text-center">0</th>
++            <th th:text="${totalTutorialCredits}" class="text-center">0</th>
++            <th th:text="${totalPracticalCredits}" class="text-center">0</th>
++            <th th:text="${totalTotalCredits}" class="text-center">0</th>
++            <th th:text="${totalContactHours}" class="text-center">0</th>
++
++
+         </tr>
+         </tbody>
+     </table>
++
++
++<!--    Print  -->
++    <div align="center">
++    <button id="printButton">Print</button>
++    <script>
++        document.getElementById("printButton").addEventListener("click", function() {
++        window.print();
++        });
++    </script>
++    </div>
++
++
++<!--    <table  class="table table-striped table-bordered">-->
++<!--        <thead>-->
++
++<!--        <tr style="text-align:center">-->
++<!--            <th rowspan="2">Course Id</th>-->
++<!--            <th rowspan="2">Course Code</th>-->
++<!--            <th rowspan="2">Course Name</th>-->
++<!--            <th rowspan="2">Teaching Department</th>-->
++<!--            <th colspan="4">Credits</th>-->
++<!--            <th rowspan="2">Contact Hours</th>-->
++<!--            <th rowspan="2">Actions</th>-->
++<!--        </tr>-->
++<!--        <tr style="text-align:center">-->
++<!--            <th>L</th>-->
++<!--            <th>T</th>-->
++<!--            <th>P</th>-->
++<!--            <th>Total</th>-->
++<!--        </tr>-->
++<!--        </thead>-->
++<!--        <tbody>-->
++<!--        <tr th:each="course : ${courses}">-->
++<!--            <td th:text="${course.courseId}">1</td>-->
++<!--            <td th:text="${course.courseCode}">Test</td>-->
++<!--            <td th:text="${course.courseName}">Test</td>-->
++<!--            <td th:text="${course.department.departmentName}">Test</td>-->
++<!--            <td th:text="${course.lectureCredits}">Test</td>-->
++<!--            <td th:text="${course.tutorialCredits}">Test</td>-->
++<!--            <td th:text="${course.practicalCredits}">Test</td>-->
++<!--            <td th:text="${course.totalCredits}">Test</td>-->
++<!--            <td th:text="${course.contactHours}">Test</td>-->
++
++<!--            &lt;!&ndash;            <td th:text="${course.program.programName}">Test</td>&ndash;&gt;-->
++<!--            &lt;!&ndash;            <td th:text="${course.department.departmentName}">Test</td>&ndash;&gt;-->
++<!--            &lt;!&ndash;            <td th:text="${course.semester.sem}">Test</td>&ndash;&gt;-->
++<!--            <td>-->
++<!--                <a href="/admin/courseEdit/1" th:href="@{/admin/courseEdit/__${course.courseId}__}">Edit</a>-->
++<!--                &nbsp;&nbsp;-->
++<!--                <a href="/admin/deleteCourse/1" th:href="@{/admin/deleteCourse/__${course.courseId}__}">Delete</a>-->
++
++<!--                &lt;!&ndash;<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>&ndash;&gt;-->
++<!--            </td>-->
++<!--        </tr>-->
++<!--        </tbody>-->
++<!--    </table>-->
+ </div>
+ <div th:replace="fragments/footer :: footer"/>
+ </body>
+Index: src/main/resources/templates/branchEdit.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/branchEdit.html b/src/main/resources/templates/departmentEdit.html
+rename from src/main/resources/templates/branchEdit.html
+rename to src/main/resources/templates/departmentEdit.html
+--- a/src/main/resources/templates/branchEdit.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/departmentEdit.html	(date 1696255748789)
+@@ -3,7 +3,7 @@
+       xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+     <meta charset="UTF-8"/>
+-    <title>branch</title>
++    <title>department</title>
+ 
+     <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+           th:href="@{/css/bootstrap.min.css}"/>
+@@ -14,10 +14,14 @@
+ <body>
+ <div th:replace="fragments/header :: header"/>
+ <div class="container">
+-    <form action="/admin/branchEdit" th:action="@{/admin/branchEdit}" method="post">
++    <form action="/admin/departmentEdit" th:action="@{/admin/departmentEdit}" method="post">
+ 
+     <table width="100%">
+         <tr>
++            <td align="left">
++                <a href="/admin/listDepartment" th:href="@{/admin/listDepartment}" class="btn btn-primary" role="button">View Departments</a>
++            </td>
++
+             <td align="right">
+                 <button type="submit" class="btn btn-primary">Save</button>
+                 <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+@@ -27,22 +31,21 @@
+ 
+         <table border="0" width="80%">
+             <tr>
+-                <td><input th:type="hidden" name="branchId" th:field="${branch.branchId}"/>
++                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>
+                     <div class="form-group">
+                         <label> College </label>
+-                        <select class="form-control" th:field="*{branch.CollegeId}">
++                        <select class="form-control" th:field="*{department.CollegeId}">
+                             <option th:each="College : ${Colleges}" th:value="${College.CollegeId}" th:text="${College.CollegeName}"
+-                                    id="branch.CollegeId"> College </option>
++                                    id="department.CollegeId"> College </option>
+                         </select>
+                     </div>
+                 </td>
+                 <td> &nbsp</td>
+                 <td>
+                     <div class="form-group">
+-                        <label> Course </label>
+-                        <select class="form-control" th:field="*{branch.courseId}">
+-                            <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"
+-                                    id="branch.courseId"> Course </option>
++                        <label> Program: </label>
++                        <select class="form-control" id="program" name="program.programId">
++                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"></option>
+                         </select>
+                     </div>
+                 </td>
+@@ -51,17 +54,17 @@
+             <tr>
+                 <td>
+                     <div class="form-group">
+-                        <label for="branchCode">Branch Code</label>
+-                        <input type="text" class="form-control" id="branchCode" th:field="${branch.branchCode}"
+-                               placeholder="Branch Code"/>
++                        <label for="departmentCode">Department Code</label>
++                        <input type="text" class="form-control" id="departmentCode" th:field="${department.departmentCode}"
++                               placeholder="Department Code"/>
+                     </div>
+                 </td>
+                 <td> &nbsp;</td>
+                 <td>
+                     <div class="form-group">
+-                        <label for="branchName">Branch Name</label>
+-                        <input type="text" class="form-control" id="branchName" th:field="${branch.branchName}"
+-                               placeholder="Branch Name"/>
++                        <label for="departmentName">Department Name</label>
++                        <input type="text" class="form-control" id="departmentName" th:field="${department.departmentName}"
++                               placeholder="Department Name"/>
+                     </div>
+                 </td>
+             </tr>
+@@ -70,20 +73,24 @@
+                 <td>
+                     <div class="form-group">
+                         <label for="hodId"> Hod </label>
+-                        <input type="text" class="form-control" id="hodId" th:field="${branch.hodId}" placeholder="HOD"/>
++                        <input type="text" class="form-control" id="hodId" th:field="${department.hodId}" placeholder="HOD"/>
+                     </div>
+                 </td>
+                 <td> &nbsp;</td>
+                 <td>
+                     <div class="form-group">
+                         <label for="attendentId"> Attender </label>
+-                        <input type="text" class="form-control" id="attendentId" th:field="${branch.attendentId}" placeholder="Attendent"/>
++                        <input type="text" class="form-control" id="attendentId" th:field="${department.attendentId}" placeholder="Attendent"/>
+                     </div>
+                 </td>
+             </tr>
+         </table>
+     </form>
+ </div>
++
+ <div th:replace="fragments/footer :: footer"/>
++
++<script src="../../static/js/custom.js"></script>
++
+ </body>
+ </html>
+\ No newline at end of file
+Index: src/main/resources/templates/branchList.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/branchList.html b/src/main/resources/templates/departmentList.html
+rename from src/main/resources/templates/branchList.html
+rename to src/main/resources/templates/departmentList.html
+--- a/src/main/resources/templates/branchList.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/departmentList.html	(date 1696255460089)
+@@ -13,32 +13,33 @@
+ <body>
+ <div th:replace="fragments/header :: header"/>
+ <div class="container">
+-    <h1> Branch </h1>
++    <h1> Department </h1>
+ 
+     <p>
+-        <a href="/admin/branchEdit" th:href="@{/admin/branchEdit}">Create</a>
++        <a href="/admin/departmentEdit" th:href="@{/admin/departmentEdit}">Create</a>
+     </p>
+ 
+     <table  class="table table-striped">
+         <thead>
+         <tr>
+-            <th> Branch Id</th>
+-            <th> Branch Code</th>
+-            <th> Branch Name</th>
++            <th> Department Id</th>
++            <th> Department Code</th>
++            <th> Department Name</th>
+             <th> College </th>
+-            <th> Course </th>
++            <th> Program </th>
+             <th> Actions</th>
+         </tr>
+         </thead>
+         <tbody>
+-        <tr th:each="branch : ${branchList}">
+-            <td th:text="${branch.branchId}">1</td>
+-            <td th:text="${branch.branchCode}">1</td>
+-            <td th:text="${branch.branchName}">Test</td>
+-            <td th:text="${branch.CollegeId} + '-' + ${branch.CollegeName}"> College </td>
+-            <td th:text="${branch.courseId} + '-' +  ${branch.courseName}"> Branch </td>
++        <tr th:each="department : ${departmentList}">
++            <td th:text="${department.departmentId}">1</td>
++            <td th:text="${department.departmentCode}">1</td>
++            <td th:text="${department.departmentName}">Test</td>
++            <td th:text="${department.CollegeId} + '-' + ${department.CollegeName}"> College </td>
++            <td th:text="${department.programName}">Test</td>
++
+             <td>
+-                <a href="/admin/branchEdit/1" th:href="@{/admin/branchEdit/__${branch.branchId}__}">Edit</a>
++                <a href="/admin/departmentEdit/1" th:href="@{/admin/departmentEdit/__${department.departmentId}__}">Edit</a>
+                 <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+             </td>
+         </tr>
+Index: src/main/resources/templates/home.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/home.html b/src/main/resources/templates/home.html
+--- a/src/main/resources/templates/home.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/home.html	(date 1693230918032)
+@@ -16,6 +16,24 @@
+         <h1>Welcome to CMS App</h1>
+     </div>
+ 
++</div>
++
++<div class="container">
++    <table>
++        <tbody>
++        <tr style="marginBottom: 10px;">
++            <td><a href="#" th:href="@{/admin/userEdit}">User Edit</a></td>
++            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
++            <td> <a href="#" th:href="@{/admin/listUser}">User List</a></td>
++        </tr>
++
++        <tr style="marginBottom: 10px;">
++            <td><a href="#" th:href="@{/subjectTypeEdit}">Subject type edit</a></td>
++            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
++            <td> <a href="#" th:href="@{/listSubjectType}">Subject type List</a></td>
++        </tr>
++        </tbody>
++    </table>
+ </div>
+ <!-- /.container -->
+ 
+Index: src/main/resources/templates/login.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/login.html b/src/main/resources/templates/login.html
+--- a/src/main/resources/templates/login.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/login.html	(date 1692697140012)
+@@ -22,13 +22,13 @@
+                     </div>
+                     <div th:if="${param.logout}">
+                         <div class="alert alert-info">
+-                            You have been logged out.
++                            You have been logged out
+                         </div>
+                     </div>
+ 
+                     <div class="form-group">
+                         <input type="text" name="username" id="username" class="form-control input-lg"
+-                               placeholder="UserName" required="true" autofocus="true"/>
++                               placeholder="Username" required="true" autofocus="true"/>
+                     </div>
+                     <div class="form-group">
+                         <input type="password" name="password" id="password" class="form-control input-lg"
+Index: src/main/resources/templates/studentEdit.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/studentEdit.html b/src/main/resources/templates/studentEdit.html
+--- a/src/main/resources/templates/studentEdit.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/studentEdit.html	(date 1693207567830)
+@@ -45,7 +45,7 @@
+         <!--<li><a data-toggle="tab" href="#category">Category Information</a></li>
+         <li><a data-toggle="tab" href="#other">Others</a></li>-->
+     </ul>
+-    <form action="/studentEdit" th:action="@{/x}" method="post" id="student">
++    <form action="/studentEdit" th:action="@{/studentEdit}" method="post" id="student">
+     <table width="100%">
+         <tr>
+             <td align="right">
+@@ -90,7 +90,7 @@
+                             <div class="form-group">
+                                 <label for="motherName">Mother Name</label>
+                                 <input type="text" class="form-control" id="motherName" th:field="${student.motherName}"
+-                                       placeholder="Father Name"/>
++                                       placeholder="Mother Name"/>
+                             </div>
+                         </td>
+                     </tr>
+@@ -126,7 +126,7 @@
+                         <td> &nbsp</td>
+                         <td>
+                             <div class="form-group">
+-                                <label for="primaryEmailAddress">Phone Numbers (s) </label>
++                                <label for="primaryEmailAddress">Email (s) </label>
+                                 <input type="email" class="form-control" id="primaryEmailAddress" th:field="${student.primaryEmailAddress}"
+                                        placeholder="Pimary EMail Address"/><br>
+                                 <input type="email" class="form-control" id="secondaryEmailAddress" th:field="${student.secondaryEmailAddress}"
+Index: src/main/resources/templates/userEdit.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/userEdit.html b/src/main/resources/templates/userEdit.html
+--- a/src/main/resources/templates/userEdit.html	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/templates/userEdit.html	(date 1696255459667)
+@@ -78,10 +78,10 @@
+ 
+                 <td>
+                     <div class="form-group">
+-                        <label> Branch Id </label>
+-                        <select class="form-control" th:field="*{user.branchId}">
+-                            <option th:each="branch : ${branches}" th:value="${branch.branchId}" th:text="${branch.branchName}"
+-                                    id="branch.branchId"> Branch </option>
++                        <label> Department Id </label>
++                        <select class="form-control" th:field="*{user.departmentId}">
++                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"
++                                    id="department.departmentId"> Department </option>
+                         </select>
+                     </div>
+                 </td>
+Index: src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+--- a/src/main/resources/application.properties	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/src/main/resources/application.properties	(date 1696336823853)
+@@ -1,39 +1,94 @@
+-#Change server port
+-server.port = 8090
+-#server.servlet.contextPath=/cms
++#----------------MySQL configurations----------------
++
++# Change server port
++server.port=8080
+ 
+-#Disable Thymeleaf caching for development, should be enabled for production
++# Disable Thymeleaf caching for development, should be enabled for production
+ spring.thymeleaf.cache=true
+ 
+-logging.file= app.log
+-logging.level.org.springframework.web= ERROR
+-logging.level.org.apache.tiles= ERROR
++#thymeleaf debugging
++spring.thymeleaf.mode=LEGACYHTML5
++
++
++logging.file=app.log
++logging.level.org.springframework.web=ERROR
++logging.level.org.apache.tiles=ERROR
+ logging.level=ERROR
++logging.level.com.ras.cms.InitApplicationService=DEBUG
+ 
+-# DataSource
+-spring.jpa.hibernate.ddl-auto= update
++# DataSource - MySQL configuration
++spring.datasource.url=jdbc:mysql://localhost:3306/cms_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
++#spring.datasource.url=jdbc:mysql://localhost:3306/cms_db?useSSL=false&serverTimezone=UTC
++spring.datasource.username=cms
++spring.datasource.password=cms
++spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
++spring.jpa.hibernate.ddl-auto=update
+ spring.jpa.properties.hibernate.use_sql_comments=false
+ spring.jpa.properties.hibernate.format_sql=false
+-spring.jpa.hibernate.naming_strategy= org.hibernate.cfg.ImprovedNamingStrategy
+-spring.jpa.database= H2
+-spring.jpa.show-sql= true
++spring.jpa.hibernate.naming-strategy=org.hibernate.cfg.ImprovedNamingStrategy
++spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
++spring.jpa.show-sql=true
+ 
+-#spring.datasource.url=jdbc:hsqldb:file:E:/Database/testedb
+-#spring.datasource.type=com.zaxxer.hikari.HikariDataSource
+ 
+-#spring.datasource.url=jdbc:h2:mem:cms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+-spring.datasource.url=jdbc:h2:tcp://localhost/~/cms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+-spring.datasource.platform=h2
+-spring.datasource.username=cms
+-spring.datasource.password=cms
+-spring.datasource.driverClassName=org.h2.Driver
+-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+-
+-#H2 configuration
+-spring.h2.console.enabled=true
+-spring.h2.console.path=/console
+-spring.h2.console.settings.trace=true
+-spring.h2.console.settings.web-allow-others=true
++# H2 console configuration (Optional, you can remove this if not needed)
++spring.h2.console.enabled=false
+ 
+-#Management endpoint
+-management.endpoints.web.exposure.include=*
+\ No newline at end of file
++# Management endpoint
++management.endpoints.web.exposure.include=*
++
++
++
++
++
++# ---------- H2 configurations  ----------------------
++
++##Change server port //earlier it was 8090
++#server.port = 8080
++##server.servlet.contextPath=/cms
++#
++##Disable Thymeleaf caching for development, should be enabled for production
++#spring.thymeleaf.cache=true
++#
++#logging.file= app.log
++#logging.level.org.springframework.web= ERROR
++#logging.level.org.apache.tiles= ERROR
++#logging.level=ERROR
++#
++## DataSource
++#spring.jpa.hibernate.ddl-auto= update
++#spring.jpa.properties.hibernate.use_sql_comments=false
++#spring.jpa.properties.hibernate.format_sql=false
++#spring.jpa.hibernate.naming_strategy= org.hibernate.cfg.ImprovedNamingStrategy
++#spring.jpa.database= H2
++#spring.jpa.show-sql= true
++#
++##spring.datasource.url=jdbc:hsqldb:file:E:/Database/testedb
++##spring.datasource.type=com.zaxxer.hikari.HikariDataSource
++#
++##spring.datasource.url=jdbc:h2:mem:cms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE       #Changed
++##spring.datasource.url=jdbc:h2:tcp://localhost/C:/Users/Mohana kumar l/cms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
++#spring.datasource.url=jdbc:h2:tcp://localhost/~/cms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
++##spring.datasource.url=jdbc:h2:./cms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
++##spring.datasource.url=jdbc:h2:file:./lokeshdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
++#spring.datasource.platform=h2
++#spring.datasource.username=cms      #Changed
++#spring.datasource.password=cms      #Changed
++#spring.datasource.driverClassName=org.h2.Driver      #Changed
++#spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
++#
++##MYSQL
++##spring.datasource.url=jdbc:mysql://localhost:3306/cms_db?useSSL=false&serverTimezone=UTC
++##spring.datasource.username=cms
++##spring.datasource.password=cms
++##spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
++#
++#
++#
++##H2 configuration
++#spring.h2.console.enabled=true
++#spring.h2.console.path=/console
++#spring.h2.console.settings.trace=true
++#spring.h2.console.settings.web-allow-others=true
++#
++##Management endpoint
++#management.endpoints.web.exposure.include=*
+\ No newline at end of file

@@ -1,0 +1,1278 @@
+1. <form th:action="@{${#request.isUserInRole('PRINCIPAL')} ? '/admin/selectOpenElective' : '/hod/selectOpenElective'}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+2. <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editBatch" th:href="@{/hod/editBatch}" class="btn btn-primary" role="button">Add Batch</a>
+
+3. @GetMapping(value="/admin/deleteOpenElective/{openElectiveId}")
+    @PreAuthorize("hasRole('PRINCIPAL')")
+
+4.  if (request.isUserInRole("PRINCIPAL")) {
+         System.out.println("pricipal login");
+
+    ---------------------------------------
+
+//this technique doesnt work but still safer side
+Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+if (auth != null && auth.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("PRINCIPAL"))) {...}
+else if (...)
+
+   ----------------------------------------
+   Fetching username in controllers: (stackoverflow) used in openElectiveController
+   There are multiple ways to do this.
+
+   //Using SecurityContextHolder
+
+   Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+   String username = auth.getName();
+
+   //Using Principal from a Controller
+
+   @RequestMapping(value = "/myusername", method = RequestMethod.GET)
+   @ResponseBody
+   public String currentUserName(Principal principal) {
+       return principal.getName();
+   }
+
+   //From HttpServletRequest
+
+   @RequestMapping(value = "/myusername", method = RequestMethod.GET)
+   @ResponseBody
+   public String getUsername(HttpServletRequest req) {
+       return req.getUserPrincipal.getName();
+   }
+--------------------------------------------------------------------
+javascript dynamic
+
+//when a save button is clicked:-
+    $("button.save").click(function () {
+
+      var arr = [];                                             // create empty array to store data for saving
+      $(".payments-table tbody tr").each(function () {         // Loop through each table row in the tbody of the "payments-table" class
+        var row = $(this);
+
+        if (row.hasClass("dirty") || row.hasClass("deleted")) {           //check if row marked as dirty(modified) class or deleted class
+          var rowData = { id: row.attr("data-id") };                      // Create an object to hold row data with the ID attribute.
+          var keys = ["department", "programName", "programCode"];       // Define an array of keys representing the column names.
+
+          row.find("input, select").each(function (idx) {              // Loop through input fields within the row and populate rowData object.
+
+             if ($(this).is("select")) {
+
+                    console.log("dep object: " ,department);
+
+                    if (keys[idx] === "department") {
+
+                    // Extract the department ID from the department object
+                        rowData[keys[idx]] = $(this).val();
+                    }
+                    else {
+                        rowData[keys[idx]] = $(this).val();
+                    }
+            }
+            else{
+            rowData[keys[idx]] = $(this).val();
+            }
+          });
+
+          // Add an object to the array for this row with action and data.
+          arr.push({
+            action: row.hasClass("deleted") ? "DELETE" : "UPDATE",
+            data: rowData,
+          });
+        }
+      });
+
+          // Perform an AJAX POST request to send the data to the server.
+          $.ajax({
+            type: "POST",
+            url: '/admin/programs',                                // URL to send the data to.
+            contentType: 'application/json',
+            data: JSON.stringify(arr),                      //convert array to JSON string
+            success: tableRefresh,                          //if success, call tableRefresh method, else display alert
+            error: function(jqXHR, textStatus, errorThrown) {
+              alert('error: ' + jqXHR.responseJSON.message);
+            }
+          });
+
+    });
+
+---------------------------------------------------------------------
+OpenElective controller (selectOpenElective() that included batch,year,dept,prog,sem )
+
+    @GetMapping({"/admin/selectOpenElective", "hod/selectOpenElective"})
+    public String selectOpenElectiveCourse(Model model) {
+
+        List<Batch> batches = batchService.findAll();
+        List<AcademicYear> academicYears = academicYearService.findAll();
+        List<Department> departments = departmentService.findAll();
+        List<Program> programs = programService.findAll();
+        List<Semester> semesters = semesterService.findAll();
+
+        model.addAttribute("batches", batches);
+        model.addAttribute("academicYears", academicYears);
+        model.addAttribute("departments", departments);
+        model.addAttribute("programs", programs);
+        model.addAttribute("semesters", semesters);
+
+        model.addAttribute("batchYearDeptProgramSem", new BatchYearDeptProgramSem());
+       // model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
+        return "/openElectiveSelection";
+    }
+
+
+    @PostMapping({"hod/selectOpenElective", "/admin/selectOpenElective"})
+    public String selectandsubmitOpenElectiveCourse(Model model, Authentication authentication, BatchYearDeptProgramSem batchYearDeptProgramSem, RedirectAttributes redirectAttributes) {
+
+        if (batchYearDeptProgramSemService.existsEntry(batchYearDeptProgramSem)) {
+            redirectAttributes.addFlashAttribute("message", "Entry already exists.");
+            BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
+            return "redirect:/hod/selectOpenElectiveType?id=" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId();
+        } else {
+            try {
+                batchYearDeptProgramSemService.saveEntry(batchYearDeptProgramSem);
+                try {
+                    BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findOne(batchYearDeptProgramSem.getBatchYearDeptProgramSemId());
+                    model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSem1);
+                    return "redirect:/hod/selectOpenElectiveType?id=" + batchYearDeptProgramSem.getBatchYearDeptProgramSemId();
+                } catch (Exception e) {
+                }
+            } catch (Exception e) {
+            }
+        }
+        return "/403";
+    }
+
+
+
+    @GetMapping("hod/selectOpenElectiveType")
+    public String selectOpenElectiveCourseType(Model model, @RequestParam(required = false, name = "id") Long id) {
+        if (null != id) {
+            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(id));
+        } else {
+            model.addAttribute("batchYearDeptProgramSem1", new BatchYearDeptProgramSem());
+        }
+
+        List<OpenElectiveType> openElectiveTypes = openElectiveTypeService.findAll();
+        model.addAttribute("openElectiveTypes", openElectiveTypes);
+        return "openElectiveTypeSelect";
+    }
+
+    @PostMapping("hod/selectOpenElectiveType")
+    public String selectandsubmitOpenElectiveCourseType(Model model,@ModelAttribute OpenElectiveType openElectiveType, BatchYearDeptProgramSem batchYearDeptProgramSem, RedirectAttributes redirectAttributes) {
+
+        System.out.println(openElectiveType.getId() +  openElectiveType.getTypeOfOpenElective());
+
+
+        BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
+        return "redirect:/hod/openElectiveEdit/" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId() + "/" + openElectiveType.getTypeOfOpenElective() ;
+//return "courseTypeSelect";
+    }
+
+
+    @GetMapping(value = {"/hod/openElectiveEdit", "/hod/openElectiveEdit/{openElectiveId}", "/hod/openElectiveEdit/{batchYearDeptProgramSemId}/{openElectiveType}"})
+    public String openElectiveCourseEdit(Model model, @RequestParam(required = false, name = "id") Long id,
+                             @PathVariable(required = false, name="openElectiveId") Long openElectiveId,
+                             @PathVariable(required = false, name = "batchYearDeptProgramSemId") Long batchYearDeptProgramId,
+                             @PathVariable(required = false, name="openElectiveType") String typeOfOpenElective) {
+        System.out.println(typeOfOpenElective);
+        if (null != batchYearDeptProgramId) {
+            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(batchYearDeptProgramId));
+        } else {
+            model.addAttribute("batchYearDeptProgramSem1", new BatchYearDeptProgramSem());
+        }
+
+        // BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
+        if(openElectiveId!=null){
+            model.addAttribute("openElective", openElectiveService.findOne(openElectiveId));
+            OpenElective course1 = openElectiveService.findOne(openElectiveId);
+            Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
+            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(batchYearDeptProgramSemId));
+        }
+        else {
+            model.addAttribute("openElective", new OpenElective());
+        }
+
+        OpenElectiveType openElectiveType = openElectiveTypeService.getOpenElectiveTypeByTypeOfOpenElective(typeOfOpenElective);
+
+        model.addAttribute("openElectiveType", openElectiveType);
+        model.addAttribute("departments", departmentService.findAll());
+        model.addAttribute("programs", programService.findAll());
+        model.addAttribute("semesters", semesterService.findAll());
+        model.addAttribute("teachingDepartments", teachingDepartmentService.findAll());
+
+
+      //  System.out.println(courseType.getTypeOfCourse() + " in get");
+
+        return "/openElectiveEdit";
+    }
+
+    @PostMapping(value = "/hod/openElectiveEdit")
+    public String openElectiveCourseEdit(Model model,@ModelAttribute OpenElectiveType openElectiveType, OpenElective openElective, BatchYearDeptProgramSem batchYearDeptProgramSem1, RedirectAttributes attributes, @RequestParam Long batchYearDeptProgramSemId) {
+
+        try {
+            // Check if an entry already exists for the given parameters, if yes set the batch,program etc values to course and save
+            boolean entryExists = openElectiveService.doesEntryExist(batchYearDeptProgramSemId, openElective.getContactHours(),openElective.getCourseBatchesCount(), openElective.getCourseCode(), openElective.getCourseName(), openElective.getTeachingDepartment(), openElective.getCourseType(), openElective.getLectureCredits(), openElective.getTutorialCredits(), openElective.getPracticalCredits(), openElective.getTotalCredits());
+
+            if (!entryExists) {
+                openElective.setBatchYearDeptProgramSemId(batchYearDeptProgramSem1.getBatchYearDeptProgramSemId());
+                openElective.setDepartment(batchYearDeptProgramSem1.getDepartment());
+                openElective.setProgram(batchYearDeptProgramSem1.getProgram());
+                openElective.setSemester(batchYearDeptProgramSem1.getSemester());
+                openElective.setBatch(batchYearDeptProgramSem1.getBatch());
+                openElective.setAcademicYear(batchYearDeptProgramSem1.getAcademicYear());
+                openElective.setCourseType(openElectiveType.getTypeOfOpenElective());
+
+                System.out.println(openElectiveType.getTypeOfOpenElective() + " in post");
+                openElectiveService.saveOpenElective(openElective);
+
+                System.out.println("Success");
+                // model.addAttribute("alertType", "success");
+                attributes.addFlashAttribute("successMessage", "Course saved successfully");
+            } else {
+                attributes.addFlashAttribute("EntryAlreadyExistsError", "Sorry! already there is an entry exists");
+            }
+
+        } catch (Exception e) {
+            System.out.println("fail");
+            System.out.println(e);
+            // model.addAttribute("alertType", "danger");
+            attributes.addFlashAttribute("errorMessage", "Course couldn't be saved!");
+
+        }
+        return "redirect:/hod/openElectiveEdit/" + batchYearDeptProgramSemId + "/" + openElectiveType.getTypeOfOpenElective();
+//        return "redirect:/admin/courseEdit?id=" + batchYearDeptProgramSemId;
+    }
+
+
+
+    @GetMapping(value="/hod/deleteOpenElective/{openElectiveId}")
+    @PreAuthorize("hasRole('DEPT_HEAD')")
+    public String openElectiveCourseDeleteHOD(Model model, @PathVariable(required = true, name = "openElectiveId") Long openElectiveId, RedirectAttributes attributes, BatchYearDeptProgramSem batchYearDeptProgramSem) {
+        OpenElective course1 = openElectiveService.findOne(openElectiveId);
+        Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
+
+        openElectiveService.deleteOpenElective(openElectiveId);
+        attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
+
+        return "redirect:/hod/listOpenElective/" + batchYearDeptProgramSemId;
+    }
+
+    @GetMapping(value="/admin/deleteOpenElective/{openElectiveId}")
+    @PreAuthorize("hasRole('PRINCIPAL')")
+    public String openElectiveCourseDeletePrincipal(Model model, @PathVariable(required = true, name = "openElectiveId") Long openElectiveId, RedirectAttributes attributes, BatchYearDeptProgramSem batchYearDeptProgramSem) {
+
+        openElectiveService.deleteOpenElective(openElectiveId);
+        attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
+
+        return "redirect:/admin/listOpenElective";
+    }
+
+---------------------------------------------------------------------
+OpenElectiveListcontroller (till before hod,principal logins)
+
+
+    @GetMapping(value = {"/admin/listOpenElective", "/hod/listOpenElective/{id}"})
+    public String openElectiveCourseList(Model model, @PathVariable(required = false, name = "id") Long id) {
+
+        List<OpenElective> AllDeptOpenElectives = openElectiveService.findAll();
+        model.addAttribute("AllDeptOpenElectives", AllDeptOpenElectives);
+
+        List<OpenElective> entries = openElectiveService.getEntriesByBatchYearDeptProgramSemId(id);
+        model.addAttribute("id", id);
+
+        BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
+        if (batchYearDeptProgramSem != null) {
+            List<OpenElective> openElectives = openElectiveService.getCoursesByDepartmentAndSemester(batchYearDeptProgramSem.getDepartment(), batchYearDeptProgramSem.getSemester());
+            model.addAttribute("openElectives", openElectives);
+            model.addAttribute("batchYearDeptProgramSemView", batchYearDeptProgramSem);
+
+            // Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours
+            Long totalLectureCredits = openElectives.stream().mapToLong(OpenElective::getLectureCredits).sum();
+            Long totalTutorialCredits = openElectives.stream().mapToLong(OpenElective::getTutorialCredits).sum();
+            Long totalPracticalCredits = openElectives.stream().mapToLong(OpenElective::getPracticalCredits).sum();
+            Long totalTotalCredits = openElectives.stream().mapToLong(OpenElective::getTotalCredits).sum();
+            Long totalContactHours = openElectives.stream().mapToLong(OpenElective::getContactHours).sum();
+
+            model.addAttribute("openElectives", openElectives);
+            //model.addAttribute("teachingDepartments",teachingDepartmentService.findAll());
+            model.addAttribute("totalLectureCredits", totalLectureCredits);
+            model.addAttribute("totalTutorialCredits", totalTutorialCredits);
+            model.addAttribute("totalPracticalCredits", totalPracticalCredits);
+            model.addAttribute("totalTotalCredits", totalTotalCredits);
+            model.addAttribute("totalContactHours", totalContactHours);
+        } else {
+            model.addAttribute("openElectives", openElectiveService.findAll());
+        }
+
+        //model.addAttribute("courseList", openElectiveService.findAll());
+        return "/openElectiveList";
+    }
+------------------------------------------------------------------
+OpenElectiveList (till before hod,principal logins)
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Open Electives List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <!--    <h1> Courses </h1>-->
+
+    <p>
+        <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/selectOpenElectiveType?id=${batchYearDeptProgramSemView.batchYearDeptProgramSemId}}" th:href="@{/hod/selectOpenElectiveType?id=__${batchYearDeptProgramSemView.batchYearDeptProgramSemId}__}">Add more</a>
+    </p>
+
+    <table  class="table table-bordered">
+        <thead>
+
+        <tr>
+            <th colspan="11" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                class="text-center">College
+            </th>
+        </tr>
+
+        <tr>
+            <th colspan="11" th:text="'Department of ' + ${batchYearDeptProgramSemView.department.departmentName}" style="font-size: 30px;"  class="text-center">Department</th>
+        </tr>
+        <tr>
+            <th colspan="11" th:text="'Programme: ' + ${batchYearDeptProgramSemView.program.programName}" style="font-size: 25px;"  class="text-center">Program</th>
+        </tr>
+        <tr>
+            <th colspan="5" th:text="'Batch: ' + ${batchYearDeptProgramSemView.batch.batchName}" style="font-size: 20px;"  class="text-center">Batch</th>
+            <th colspan="7" th:text="'Academic Year: ' + ${batchYearDeptProgramSemView.academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+        </tr>
+        <tr>
+            <th colspan="5" th:text="'Semester: ' + ${batchYearDeptProgramSemView.semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+            <th colspan="7" th:text="'Term: '" style="font-size: 20px;" class="text-center">Term</th>
+        </tr>
+
+
+        </thead>
+        <tbody>
+        <tr style="text-align:center">
+            <th rowspan="2" class="text-center">Course Id</th>
+            <th rowspan="2" class="text-center">Course Type</th>
+            <th rowspan="2" class="text-center">Course Code</th>
+            <th rowspan="2" class="text-center">Course Name</th>
+            <th rowspan="2" class="text-center">Teaching Department</th>
+            <th colspan="4" class="text-center">Credits</th>
+            <th rowspan="2" class="text-center">Contact Hours/ week</th>
+            <th rowspan="2" class="text-center">Actions</th>
+        </tr>
+        <tr style="text-align:center">
+            <th>L</th>
+            <th>T</th>
+            <th>P</th>
+            <th>Total</th>
+        </tr>
+
+        <tr th:each="openElective : ${openElectives}">
+            <td th:text="${openElective.openElectiveId}" class="text-center">1</td>
+            <td th:text="${openElective.courseType}" class="text-center">1</td>
+            <td th:text="${openElective.courseCode}" class="text-center">Test</td>
+            <td th:text="${openElective.courseName}" class="text-center">Test</td>
+            <td th:text="${openElective.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
+            <td th:text="${openElective.lectureCredits}" class="text-center">Test</td>
+            <td th:text="${openElective.tutorialCredits}" class="text-center">Test</td>
+            <td th:text="${openElective.practicalCredits}" class="text-center">Test</td>
+            <td th:text="${openElective.totalCredits}" class="text-center">Test</td>
+            <td th:text="${openElective.contactHours}" class="text-center">Test</td>
+
+            <td>
+                <!--                <a href="/admin/courseEdit/1" th:href="@{/admin/courseEdit/__${course.courseId}__}">Edit</a>-->
+                &nbsp;&nbsp;
+                <a href="/hod/deleteOpenElective/1" th:href="@{/hod/deleteOpenElective/__${openElective.openElectiveId}__}">Delete</a>
+
+                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+            </td>
+        </tr>
+        <tr>
+            <th class="text-center">Total</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+            <th th:text="${totalLectureCredits}" class="text-center">0</th>
+            <th th:text="${totalTutorialCredits}" class="text-center">0</th>
+            <th th:text="${totalPracticalCredits}" class="text-center">0</th>
+            <th th:text="${totalTotalCredits}" class="text-center">0</th>
+            <th th:text="${totalContactHours}" class="text-center">0</th>
+
+
+        </tr>
+        </tbody>
+    </table>
+
+
+    <!--    Print  -->
+    <div align="center">
+        <button id="printButton">Print</button>
+        <script>
+            document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+            });
+        </script>
+    </div>
+
+
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+-----------------------------------------------------------------------
+insideMethod(Model model, Etc etc, Authentication authentication){.....}
+
+if (authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("DEPT_HEAD"))) {
+                return "redirect:/hod/selectOpenElectiveType?id=" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId();
+            }
+            else if(authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("PRINCIPAL"))) {
+                return "redirect:/admin/home";
+            }
+-------------------------------------------------------------------------
+courseList before
+ <p>
+        <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
+        <a href="/admin/courseEdit?id=${id}" th:href="@{/admin/courseEdit?id=__${id}__}">Add more</a>
+    </p>
+
+
+--------------------------------------------------------------------------------
+courseEdit perfectly working- 1 (after this trying to change as going to new pages based on the previous radio selection)
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/><!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Course</title>
+
+        <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+              th:href="@{/css/bootstrap.min.css}"/>
+
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/bootstrap.min.css" />
+
+        <!-- Include Alertify.js JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
+
+        <script>
+            // Initialize Alertify.js
+            alertify.set('notifier', 'position', 'top-right'); // Adjust notification position as needed
+        </script>
+
+        <script>
+            // Function to display a success alert
+      function showSuccessAlert(message, timeout) {
+        alertify.success('Entry added successfully');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+        console.log('Alert displayed!');
+      }
+
+      // Function to display an error alert
+      function showErrorAlert(message, timeout) {
+        alertify.error('oops! there was error while adding');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+         function showEntryAlreadyExistsAlert(message, timeout) {
+        alertify.error('Sorry Already an entry exists, Please delete the entry and try again');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+        function deleteSuccess(message, timeout) {
+        alertify.success('entry deleted successfully');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+
+        function deleteFailure(message, timeout) {
+        alertify.error('failed to delete');
+        if (timeout) {
+            setTimeout(function () {
+                alertify.dismissAll(); // Close the alert after the specified timeout
+            }, timeout);
+        }
+      }
+        </script>
+
+
+        <!-- Include jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!--        &lt;!&ndash;delete course entry&ndash;&gt;-->
+<!--        <script type="text/javascript">-->
+<!--            function deleteEntry() {-->
+<!--                var departmentSemSecId = document.querySelector('[name="departmentSemSecId"]').value; // Get the value from the hidden input field-->
+<!--                var selectedDay = document.getElementById("day").value;-->
+<!--                var selectedTimeSlot = document.getElementById("timeSlot").value;-->
+<!--                var selectedCourse = document.getElementById("course").value;-->
+<!--    -->
+<!--                // Construct the delete URL-->
+<!--                var deleteUrl = "/admin/deleteTimeTable/" + departmentSemSecId + "?day=" + selectedDay + "&timeSlot=" + selectedTimeSlot + "&course=" + selectedCourse;-->
+<!--    -->
+<!--                // Navigate to the delete URL-->
+<!--                window.location.href = deleteUrl;-->
+<!--            }-->
+<!--    -->
+<!--            // Attach the deleteEntry function to the click event of the delete link-->
+<!--           // document.getElementById("deleteLink").addEventListener("click", deleteEntry);-->
+<!--        </script>-->
+
+
+
+    </head>
+    <body>
+    <div th:replace="fragments/header :: header"/>
+
+    <div class="container">
+
+        <table width="100%">
+            <tr>
+                <th th:text="'Academic Year: ' + ${batchYearDeptProgramSem1.academicYear.year}" style="font-size: 15px;">Academic Year</th>
+                <th th:text="'Batch: ' + ${batchYearDeptProgramSem1.batch.batchName}" style="font-size: 15px;">Batch</th>
+                <th th:text="'Semester: ' + ${batchYearDeptProgramSem1.semester.sem}" style="font-size: 15px;">Semester</th>
+                 </tr>
+            <tr>
+                <th th:text="'Department: ' + ${batchYearDeptProgramSem1.department.departmentName}" style="font-size: 15px;">Department</th>
+                <th th:text="'Programme: ' + ${batchYearDeptProgramSem1.program.programName}" style="font-size: 15px;">
+                <th th:text="'Term: '" style="font-size: 15px;">Term</th>
+
+
+
+                <!--                <td align="left">-->
+<!--                    <a href="/admin/listCourse/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}" th:href="@{/admin/listCourse/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__}" class="btn btn-primary" role="button">View Courses</a>-->
+<!--                </td>-->
+
+<!--                <td align="right">-->
+<!--                    delete button same as in timetable-->
+<!--                   <button class="btn btn-danger" onclick="deleteEntry()">Delete</button>-->
+
+<!--                    <button class="btn btn-primary">Save</button>-->
+<!--                   <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>-->
+<!--                </td>-->
+            </tr>
+            <tr><td></td></tr>
+        </table>
+        <hr>
+
+        <form action="/admin/courseEdit" th:action="@{/admin/courseEdit}"  method="post">
+
+            <table border="0" width="80%">
+                <tr> <td> </td></tr>
+                <tr>
+                    <td>
+                        <input th:type="hidden" name="batchYearDeptProgramSemId" th:field="${batchYearDeptProgramSem1.batchYearDeptProgramSemId}"/>
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.batch.batchId}" name="batch">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.academicYear.id}" name="academicYear">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.department.departmentId}" name="department">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.program.programId}" name="program">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.semester.semId}" name="semester">
+
+                        <div class="form-group">
+                            <label for="courseType">Course Type : </label>
+                            <br>
+                            <div align="left">
+                                <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Theory'" id="courseType"/>
+                                <label th:text="'Regular Theory'">Theory</label>
+
+
+                                <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Lab'"/>
+                                <label th:text="'Regular Laboratory'">Lab</label>
+
+
+                                <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Professional Elective'"/>
+                                <label th:text="'Professional Elective'">Professional Elective</label>
+
+
+                                <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Open Elective'"/>
+                                <label th:text="'Open Elective'">Open Elective</label>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label>Select Teaching Department: </label>
+                            <select class="form-control" id="teachingDepartment" name="teachingDepartment.teachingDepartmentId">
+                                <option th:each="teachingDepartment : ${teachingDepartments}" th:value="${teachingDepartment.teachingDepartmentId}" th:text="${teachingDepartment.teachingDepartmentName} + ' - ' + ${teachingDepartment.teachingDepartmentCode}"></option>
+                            </select>
+                        </div>
+                    </td>
+
+                    <td>
+                        <a href="/admin/editTeachingDepartment" th:href="@{/admin/editTeachingDepartment}" class="btn btn-primary" role="button">Add Teaching Department</a>
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="courseName">Course Name:</label>
+                            <input type="text" class="form-control" id="courseName" th:field="${course.courseName}"
+                                   placeholder="Course Name"/>
+                        </div>
+                            </td>
+
+
+                    <td>
+                        <div class="form-group">
+                            <label for="courseCode">Course Code:</label>
+                            <input type="text" class="form-control" id="courseCode" th:field="${course.courseCode}"
+                                   placeholder="CSE51"/>
+                        </div>
+                        </td>
+
+
+                    <td>
+                        <div class="form-group">
+                            <label for="contactHours">Contact hours per week:</label>
+                            <input type="text" class="form-control" id="contactHours" th:field="${course.contactHours}"
+                                   placeholder="in hours"/>
+                        </div>
+                    </td>
+
+                </tr>
+
+
+
+                <tr><td></td></tr>
+                <tr>
+                    <td>
+                        <label for="courseType">Credits : </label>
+                        <div class="form-group">
+                            <td>
+                                <div class="form-group">
+                                    <label for="lectureCredits">Lecture Credits (L):</label>
+                                    <input type="text" class="form-control" id="lectureCredits" th:field="${course.lectureCredits}"
+                                           placeholder="Lecture Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="tutorialCredits">Tutorial Credits (T):</label>
+                                    <input type="text" class="form-control" id="tutorialCredits" th:field="${course.tutorialCredits}"
+                                           placeholder="Tutorial Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="practicalCredits">Practical Credits (P):</label>
+                                    <input type="text" class="form-control" id="practicalCredits" th:field="${course.practicalCredits}"
+                                           placeholder="Practical Credits"/>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <label for="totalCredits">Total Credits :</label>
+                                    <input type="text" class="form-control" id="totalCredits" th:field="${course.totalCredits}"
+                                           placeholder="Total Credits"/>
+                                </div>
+                            </td>
+
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+
+            </table>
+
+
+            <div align="center">
+                <a href="/admin/listCourse/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}" th:href="@{/admin/listCourse/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__}" class="btn btn-primary" role="button">View Courses</a>
+                <button class="btn btn-primary">Save</button>
+                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+            </div>
+
+            <!-- success-->
+            <script th:if="${successMessage}">
+                showSuccessAlert('${successMessage}', 3000);
+            </script>
+
+            <!-- error -->
+            <script th:if="${errorMessage}">
+                showErrorAlert('${errorMessage}', 3000);
+            </script>
+
+            <script th:if="${EntryAlreadyExistsError}">
+                showEntryAlreadyExistsAlert('${EntryAlreadyExistsError}', 3000);
+            </script>
+
+            <script th:if="${DeleteSuccessMessage}">
+                deleteSuccess('${DeleteSuccessMessage}', 3000);
+            </script>
+
+            <script th:if="${EntryDoesNotExistError}">
+                deleteFailure('${EntryDoesNotExistError}', 3000);
+            </script>
+
+
+            <!--old code-->
+            <!--        -->
+            <!--        <label for="day">Day:</label>-->
+            <!--        <select id="day" name="day.id">-->
+            <!--            <option th:each="day : ${days}" th:value="${day.id}" th:text="${day.name}"></option>-->
+            <!--        </select>-->
+            <!--        <br>-->
+            <!--        <label for="timeSlot">Time Slot:</label>-->
+            <!--        <select id="timeSlot" name="timeSlot.id">-->
+            <!--            <option th:each="timeSlot : ${timeSlots}" th:value="${timeSlot.id}" th:text="${timeSlot.startTime} + ' - ' + ${timeSlot.endTime}"></option>-->
+            <!--        </select>-->
+            <!--        <br>-->
+            <!--        <div class="form-group">-->
+            <!--            <label> Course </label>-->
+            <!--            <select class="form-control" th:field="*{course}">-->
+            <!--                <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"-->
+            <!--                        id="entry.courseId"> Course </option>-->
+            <!--            </select>-->
+            <!--        </div>-->
+
+
+        </form>
+
+    </div>
+
+
+
+    </body>
+    </html>
+
+
+<!--    -->
+<!--    <title>Course</title>-->
+
+<!--    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"-->
+<!--          th:href="@{/css/bootstrap.min.css}"/>-->
+
+<!--    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>-->
+<!--    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div th:replace="fragments/header :: header"/>-->
+<!--<div class="container">-->
+<!--    <form action="/admin/courseEdit" th:action="@{/admin/courseEdit}" method="post">-->
+
+<!--    <table width="100%">-->
+<!--        <tr>-->
+
+<!--            <td align="left">-->
+<!--                <a href="/admin/listCourse" th:href="@{/admin/listCourse}" class="btn btn-primary" role="button">View Courses</a>-->
+<!--            </td>-->
+
+<!--            <td align="right">-->
+<!--                <button type="submit" class="btn btn-primary">Save</button>-->
+<!--                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>-->
+<!--            </td>-->
+
+<!--        </tr>-->
+<!--    </table>-->
+
+<!--        <table border="0" width="80%">-->
+<!--            <tr>-->
+<!--                <td><input th:type="hidden" name="courseId" th:field="${course.courseId}"/>-->
+<!--                    <div class="form-group">-->
+<!--                        <label> Program: </label>-->
+<!--                        <select class="form-control" id="program" name="program.programId">-->
+<!--                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> &nbsp;</td>-->
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label> Department: </label>-->
+<!--                        <select class="form-control" id="department" name="department.departmentId">-->
+<!--                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+
+<!--                </td>-->
+
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td><input th:type="hidden" name="courseId" th:field="${course.courseId}"/>-->
+<!--                    <div class="form-group">-->
+<!--                        <label> Semester: </label>-->
+<!--                        <select class="form-control" id="semester" name="semester.semId">-->
+<!--                            <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> &nbsp;</td>-->
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="contactHours">Course Duration</label>-->
+<!--                        <input type="text" class="form-control" id="contactHours" th:field="${course.contactHours}"-->
+<!--                               placeholder="Course Duration"/>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td><input th:type="hidden" name="courseId" th:field="${course.courseId}"/>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="courseCode">Course Code</label>-->
+<!--                        <input type="text" class="form-control" id="courseCode" th:field="${course.courseCode}"-->
+<!--                               placeholder="Course Code"/>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> </td>-->
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="courseName">Course Name</label>-->
+<!--                        <input type="text" class="form-control" id="courseName" th:field="${course.courseName}"-->
+<!--                               placeholder="Course Name"/>-->
+<!--                    </div>-->
+<!--                </td>-->
+
+
+<!--            </tr>-->
+<!--        </table>-->
+<!--    </form>-->
+<!--</div>-->
+<!--<div th:replace="fragments/footer :: footer"/>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+----------------------------------------------------------------
+coursecontroller as above
+package com.ras.cms.controller;
+
+import com.ras.cms.domain.*;
+import com.ras.cms.service.academicyear.AcademicYearService;
+import com.ras.cms.service.batch.BatchService;
+import com.ras.cms.service.batchyeardeptprogramsem.BatchYearDeptProgramSemService;
+import com.ras.cms.service.department.DepartmentService;
+import com.ras.cms.service.course.CourseService;
+import com.ras.cms.service.program.ProgramService;
+import com.ras.cms.service.semester.SemesterService;
+import com.ras.cms.service.teachingdepartment.TeachingDepartmentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+
+/**
+ * Created by Surya on 12-Jun-18.
+ */
+@Controller
+@RequestMapping("/admin")
+public class CourseController {
+
+    @Autowired
+    CourseService courseService;
+
+    @Autowired
+    DepartmentService departmentService;
+
+    @Autowired
+    ProgramService programService;
+
+    @Autowired
+    SemesterService semesterService;
+
+    @Autowired
+    BatchService batchService;
+
+    @Autowired
+    AcademicYearService academicYearService;
+    @Autowired
+    BatchYearDeptProgramSemService batchYearDeptProgramSemService;
+
+    @Autowired
+    TeachingDepartmentService teachingDepartmentService;
+
+    @GetMapping(value = "/listCourse/{id}")
+    public String courseList(Model model, @PathVariable(required = false, name = "id") Long id) {
+        List<Course> entries = courseService.getEntriesByBatchYearDeptProgramSemId(id);
+        model.addAttribute("id", id);
+
+        BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
+        if (batchYearDeptProgramSem != null) {
+            List<Course> courses = courseService.getCoursesByDepartmentAndSemester(batchYearDeptProgramSem.getDepartment(), batchYearDeptProgramSem.getSemester());
+            model.addAttribute("courses", courses);
+            model.addAttribute("batchYearDeptProgramSemView", batchYearDeptProgramSem);
+
+            // Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours
+            Long totalLectureCredits = courses.stream().mapToLong(Course::getLectureCredits).sum();
+            Long totalTutorialCredits = courses.stream().mapToLong(Course::getTutorialCredits).sum();
+            Long totalPracticalCredits = courses.stream().mapToLong(Course::getPracticalCredits).sum();
+            Long totalTotalCredits = courses.stream().mapToLong(Course::getTotalCredits).sum();
+            Long totalContactHours = courses.stream().mapToLong(Course::getContactHours).sum();
+
+            model.addAttribute("courses", courses);
+            //model.addAttribute("teachingDepartments",teachingDepartmentService.findAll());
+            model.addAttribute("totalLectureCredits", totalLectureCredits);
+            model.addAttribute("totalTutorialCredits", totalTutorialCredits);
+            model.addAttribute("totalPracticalCredits", totalPracticalCredits);
+            model.addAttribute("totalTotalCredits", totalTotalCredits);
+            model.addAttribute("totalContactHours", totalContactHours);
+        } else {
+            model.addAttribute("courses", courseService.findAll());
+        }
+
+        //model.addAttribute("courseList", courseService.findAll());
+        return "/courseList";
+    }
+
+    @GetMapping("/selectCourse")
+    public String selectCourse(Model model) {
+
+        List<Batch> batches = batchService.findAll();
+        List<AcademicYear> academicYears = academicYearService.findAll();
+        List<Department> departments = departmentService.findAll();
+        List<Program> programs = programService.findAll();
+        List<Semester> semesters = semesterService.findAll();
+
+        model.addAttribute("batches", batches);
+        model.addAttribute("academicYears", academicYears);
+        model.addAttribute("departments", departments);
+        model.addAttribute("programs", programs);
+        model.addAttribute("semesters", semesters);
+
+        model.addAttribute("batchYearDeptProgramSem", new BatchYearDeptProgramSem());
+
+        return "/courseSelection";
+    }
+
+    @GetMapping("/getPrograms")
+    public List<Program> getProgramsByDepartment(@RequestParam Long departmentId) {
+        // Implement your logic to fetch programs by department.
+
+        Department department = departmentService.findOne(departmentId);
+        List<Program> programs = programService.getProgramsByDepartment(department);
+        System.out.println(programs);
+        return programs;
+    }
+
+    @PostMapping("/selectCourse")
+    public String selectandsubmitCourse(Model model, BatchYearDeptProgramSem batchYearDeptProgramSem, RedirectAttributes redirectAttributes) {
+
+        if (batchYearDeptProgramSemService.existsEntry(batchYearDeptProgramSem)) {
+            redirectAttributes.addFlashAttribute("message", "Entry already exists.");
+            BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
+            return "redirect:/admin/courseEdit?id=" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId();
+        } else {
+            try {
+                batchYearDeptProgramSemService.saveEntry(batchYearDeptProgramSem);
+                try {
+                    BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findOne(batchYearDeptProgramSem.getBatchYearDeptProgramSemId());
+                    model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSem1);
+                    return "redirect:/admin/courseEdit?id=" + batchYearDeptProgramSem.getBatchYearDeptProgramSemId();
+                } catch (Exception e) {
+                }
+            } catch (Exception e) {
+            }
+        }
+        return "/403";
+    }
+
+
+    @GetMapping(value = {"/courseEdit", "/courseEdit/{courseId}"})
+    public String courseEdit(Model model, @RequestParam(required = false, name = "id") Long id, @PathVariable(required = false, name="courseId") Long courseId) {
+        if (null != id) {
+            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(id));
+        } else {
+            model.addAttribute("batchYearDeptProgramSem1", new BatchYearDeptProgramSem());
+        }
+
+       // BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
+if(courseId!=null){
+    model.addAttribute("course", courseService.findOne(courseId));
+    Course course1 = courseService.findOne(courseId);
+    Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
+    model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(batchYearDeptProgramSemId));
+}
+else {
+    model.addAttribute("course", new Course());
+}
+
+        model.addAttribute("departments", departmentService.findAll());
+        model.addAttribute("programs", programService.findAll());
+        model.addAttribute("semesters", semesterService.findAll());
+        model.addAttribute("teachingDepartments", teachingDepartmentService.findAll());
+
+
+       // model.addAttribute("courseEntry", new Course());
+        return "/courseEdit";
+    }
+
+    @PostMapping(value = "/courseEdit")
+    public String courseEdit(Model model, Course course, BatchYearDeptProgramSem batchYearDeptProgramSem1, RedirectAttributes attributes, @RequestParam Long batchYearDeptProgramSemId) {
+//        System.out.println(course.getCourseId());
+//
+//        try {
+//                // Update an existing course
+//
+//                // Retrieve the existing course from the database using its ID
+//                Course existingCourse = courseService.findOne(course.getCourseId());
+//
+//                if (existingCourse != null) {
+//                    existingCourse.setBatchYearDeptProgramSemId(batchYearDeptProgramSem1.getBatchYearDeptProgramSemId());
+//                    existingCourse.setDepartment(batchYearDeptProgramSem1.getDepartment());
+//                    existingCourse.setProgram(batchYearDeptProgramSem1.getProgram());
+//                    existingCourse.setSemester(batchYearDeptProgramSem1.getSemester());
+//                    existingCourse.setBatch(batchYearDeptProgramSem1.getBatch());
+//                    existingCourse.setAcademicYear(batchYearDeptProgramSem1.getAcademicYear());
+//
+//                    courseService.saveCourse(existingCourse);
+//                    attributes.addFlashAttribute("successMessage", "Course saved successfully");
+//
+//                }
+//                else{
+//                    System.out.println(" no existing course");
+//                }
+//
+//        }
+//        catch (Exception e){
+//            attributes.addFlashAttribute("errorMessage", "Course couldn't be saved!");
+//        }
+
+                try {
+            // Check if an entry already exists for the given parameters, if yes set the batch,program etc values to course and save
+            boolean entryExists = courseService.doesEntryExist(batchYearDeptProgramSemId, course.getContactHours(), course.getCourseCode(), course.getCourseName(), course.getTeachingDepartment(), course.getCourseType(), course.getLectureCredits(), course.getTutorialCredits(), course.getPracticalCredits(), course.getTotalCredits());
+
+            if (!entryExists) {
+                course.setBatchYearDeptProgramSemId(batchYearDeptProgramSem1.getBatchYearDeptProgramSemId());
+                course.setDepartment(batchYearDeptProgramSem1.getDepartment());
+                course.setProgram(batchYearDeptProgramSem1.getProgram());
+                course.setSemester(batchYearDeptProgramSem1.getSemester());
+                course.setBatch(batchYearDeptProgramSem1.getBatch());
+                course.setAcademicYear(batchYearDeptProgramSem1.getAcademicYear());
+
+                courseService.saveCourse(course);
+                System.out.println("Success");
+                // model.addAttribute("alertType", "success");
+                attributes.addFlashAttribute("successMessage", "Course saved successfully");
+            } else {
+                attributes.addFlashAttribute("EntryAlreadyExistsError", "Sorry! already there is an entry exists");
+            }
+
+        } catch (Exception e) {
+            System.out.println("fail");
+            System.out.println(e);
+            // model.addAttribute("alertType", "danger");
+            attributes.addFlashAttribute("errorMessage", "Course couldn't be saved!");
+
+        }
+        return "redirect:/admin/courseEdit?id=" + batchYearDeptProgramSemId;
+    }
+
+
+    @GetMapping(value="/deleteCourse/{courseId}")
+    public String courseDelete(Model model, @PathVariable(required = true, name = "courseId") Long courseId, RedirectAttributes attributes, BatchYearDeptProgramSem batchYearDeptProgramSem) {
+        Course course1 = courseService.findOne(courseId);
+        Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
+
+        courseService.deleteCourse(courseId);
+       attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
+
+        //model.addAttribute("courses", courseService.findAll());
+     return "redirect:/admin/listCourse/" + batchYearDeptProgramSemId;
+    }
+}
+
+
+
+--------------------------------------------------------------------
+ajax, depedant dropdown, bard
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dependent Dropdown Example</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Dependent Dropdown Example</h1>
+
+    <select id="department">
+        <option value="">Select Department</option>
+        <th:block th:each="department : ${departments}">
+            <option th:value="${department.id}" th:text="${department.name}"></option>
+        </th:block>
+    </select>
+
+    <select id="employee">
+        <option value="">Select Employee</option>
+    </select>
+
+    <script>
+        $(document).ready(function() {
+            $("#department").change(function() {
+                var departmentId = $(this).val();
+
+                $.ajax({
+                    url: "/employees/" + departmentId,
+                    method: "GET",
+                    success: function(data) {
+                        $("#employee").empty();
+
+                        $("#employee").append("<option value=''>Select Employee</option>");
+
+                        for (var i = 0; i < data.length; i++) {
+                            $("#employee").append("<option value='" + data[i].id + "'>" + data[i].name + "</option>");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+Use code with caution. Learn more
+JavaScript and Ajax:
+
+The JavaScript code in the Thymeleaf template uses Ajax to fetch the list of employees for the selected department. When the user selects a department from the first dropdown, the JavaScript code sends an AJAX request to the /employees/{departmentId} endpoint. The server then returns a list of employees for the selected department. The JavaScript code then populates the second dropdown with the list of employees.
+
+Example usage:
+
+Start the Springboot application.
+Open a web browser and navigate to http://localhost:8080/departments.
+Select a department from the first dropdown.
+The second dropdown will be populated with the list of employees for the selected department.
+I hope this example is helpful!
+
+
+------------------------------------------------------------------------
+old courseController:
+
+package com.ras.cms.controller;
+
+import com.ras.cms.domain.Course;
+import com.ras.cms.service.department.DepartmentService;
+import com.ras.cms.service.course.CourseService;
+import com.ras.cms.service.program.ProgramService;
+import com.ras.cms.service.semester.SemesterService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * Created by Surya on 12-Jun-18.
+ */
+@Controller
+@RequestMapping("/admin")
+public class CourseController {
+
+    @Autowired
+    CourseService courseService;
+
+    @Autowired
+    DepartmentService departmentService;
+
+    @Autowired
+    ProgramService programService;
+
+    @Autowired
+    SemesterService semesterService;
+
+    @GetMapping(value="/listCourse")
+    public String courseList(Model model) {
+        model.addAttribute("courseList", courseService.findAll());
+        return "/courseList";
+    }
+
+    @GetMapping(value={"/courseEdit","/courseEdit/{id}"})
+    public String courseEdit(Model model, @PathVariable(required = false, name = "id") Long id) {
+        if (null != id) {
+            model.addAttribute("course", courseService.findOne(id));
+        } else {
+            model.addAttribute("course", new Course());
+        }
+        model.addAttribute("departments",departmentService.findAll());
+        model.addAttribute("programs",programService.findAll());
+        model.addAttribute("semesters",semesterService.findAll());
+        return "/courseEdit";
+    }
+
+    @PostMapping(value="/courseEdit")
+    public String courseEdit(Model model, Course course) {
+        courseService.saveCourse(course);
+        model.addAttribute("courseList", courseService.findAll());
+        return "/courseList";  //   /courseList
+    }
+
+    @GetMapping(value="/deleteCourse/{id}")
+    public String courseDelete(Model model, @PathVariable(required = true, name = "id") Long id) {
+        courseService.deleteCourse(id);
+        model.addAttribute("courseList", courseService.findAll());
+        return "/courseList";
+    }
+}
+
+
+
+
+--------------------
+
+in timeTableEdit for earlier alignments of buttons 8/10/2023
+ <tr>
+                <td align="left">
+                    <a href="/admin/listTT/${departmentSemSec1.departmentSemSecId}" th:href="@{/admin/listTT/__${departmentSemSec1.departmentSemSecId}__}" class="btn btn-primary" role="button">View Timetable</a>
+                </td>
+
+                <td align="right">
+                    <!--                    <button class="btn btn-primary" onclick="showSuccessAlert('This is a test alert!')">alerttestbutton</button>-->
+                    <!--                    <button type="submit" class="btn btn-primary" onclick="showDynamicPopup(${alertMessage}, ${alertType})">Save</button>-->
+                    <button class="btn btn-danger" onclick="deleteEntry()">Delete</button>
+
+                    <!--                <a href="#" id="deleteLink" class="btn btn-danger" role="button">Delete</a>-->
+                    <!--                    <a href="/admin/deleteTimeTable/${departmentSemSec1.departmentSemSecId}?day=${timeTableEntry.day}&timeSlot=${timeTableEntry.timeSlot}&course=${timeTableEntry.course}" th:href="@{/admin/deleteTimeTable/__${departmentSemSec1.departmentSemSecId}__}?day=__${timeTableEntry.day}__&timeSlot=__${timeTableEntry.timeSlot}__&course=__${timeTableEntry.course}__" class="btn btn-danger" role="button">Delete</a>-->
+                    <!--                    <a href="/admin/deleteTimeTable/${departmentSemSec1.departmentSemSecId}" th:href="@{/admin/deleteTimeTable/__${departmentSemSec1.departmentSemSecId}__}" class="btn btn-danger" role="button">Delete</a>-->
+                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>

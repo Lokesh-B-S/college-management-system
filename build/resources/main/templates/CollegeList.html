@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>College List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1> College </h1>
+
+    <p>
+        <a href="/admin/CollegeEdit" th:href="@{/admin/CollegeEdit}">Create</a>
+    </p>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="College : ${CollegeList}">
+            <td th:text="${College.CollegeId}">1</td>
+            <td th:text="${College.CollegeName}">Test</td>
+            <td th:text="${College.CollegeCode}">Test</td>
+            <td th:text="${College.CollegeAddress}">Test</td>
+            <td>
+                <a href="/admin/CollegeEdit/1" th:href="@{/admin/CollegeEdit/__${College.CollegeId}__}">Edit</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/admin/addCourse/1" th:href="@{/admin/addCourse/__${College.CollegeId}__}">Add Course</a>
+                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package com.ras.cms.service.qualification;
 
-import com.ras.cms.dao.QualificationRepository;
+import com.ras.cms.repository.QualificationRepository;
 import com.ras.cms.domain.Qualification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

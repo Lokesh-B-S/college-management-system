@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Surya on 12-Jun-18.
  */
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/hod")
 public class CourseController {
 
     @Autowired
@@ -113,14 +113,14 @@ public class CourseController {
         if (batchYearDeptProgramSemService.existsEntry(batchYearDeptProgramSem)) {
             redirectAttributes.addFlashAttribute("message", "Entry already exists.");
             BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
-            return "redirect:/admin/selectCourseType?id=" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId();
+            return "redirect:/hod/selectCourseType?id=" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId();
         } else {
             try {
                 batchYearDeptProgramSemService.saveEntry(batchYearDeptProgramSem);
                 try {
                     BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findOne(batchYearDeptProgramSem.getBatchYearDeptProgramSemId());
                     model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSem1);
-                    return "redirect:/admin/selectCourseType?id=" + batchYearDeptProgramSem.getBatchYearDeptProgramSemId();
+                    return "redirect:/hod/selectCourseType?id=" + batchYearDeptProgramSem.getBatchYearDeptProgramSemId();
                 } catch (Exception e) {
                 }
             } catch (Exception e) {
@@ -149,7 +149,7 @@ public class CourseController {
 
 
             BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
-            return "redirect:/admin/courseEdit/" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId() + "/" + courseType.getTypeOfCourse() ;
+            return "redirect:/hod/courseEdit/" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId() + "/" + courseType.getTypeOfCourse() ;
 //return "courseTypeSelect";
     }
 
@@ -224,7 +224,7 @@ CourseType courseType = courseTypeService.getCourseTypeByTypeOfCourse(typeOfCour
             attributes.addFlashAttribute("errorMessage", "Course couldn't be saved!");
 
         }
-        return "redirect:/admin/courseEdit/" + batchYearDeptProgramSemId + "/" + courseType.getTypeOfCourse();
+        return "redirect:/hod/courseEdit/" + batchYearDeptProgramSemId + "/" + courseType.getTypeOfCourse();
 //        return "redirect:/admin/courseEdit?id=" + batchYearDeptProgramSemId;
     }
 
@@ -238,6 +238,6 @@ CourseType courseType = courseTypeService.getCourseTypeByTypeOfCourse(typeOfCour
        attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
 
         //model.addAttribute("courses", courseService.findAll());
-     return "redirect:/admin/listCourse/" + batchYearDeptProgramSemId;
+     return "redirect:/hod/listCourse/" + batchYearDeptProgramSemId;
     }
 }

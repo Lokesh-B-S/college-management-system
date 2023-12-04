@@ -1,6 +1,6 @@
 package com.ras.cms.service.course;
 
-import com.ras.cms.dao.CourseRepository;
+import com.ras.cms.repository.CourseRepository;
 import com.ras.cms.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

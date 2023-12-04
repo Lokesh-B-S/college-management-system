@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Course</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+
+    <form action="/hod/selectCourse" th:action="@{/hod/selectCourse}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+
+<!--            <label>-->
+<!--                <input type="radio" name="options" value="option1" /> Option 1-->
+<!--            </label>-->
+<!--            <label>-->
+<!--                <input type="radio" name="options" value="option2" /> Option 2-->
+<!--            </label>-->
+
+
+<!--        <div class="content" id="contentOption1" style="display: none">-->
+<!--            &lt;!&ndash; Lines 10 to 20 &ndash;&gt;-->
+<!--            <p>Content for Option 1 - Line 10</p>-->
+<!--            <p>Content for Option 1 - Line 11</p>-->
+<!--            &lt;!&ndash; ... continue content for Option 1 ... &ndash;&gt;-->
+<!--            <p>Content for Option 1 - Line 20</p>-->
+<!--        </div>-->
+
+<!--        <div class="content" id="contentOption2" style="display: none">-->
+<!--            &lt;!&ndash; Lines 20 to 40 &ndash;&gt;-->
+<!--            <p>Content for Option 2 - Line 20</p>-->
+<!--            <p>Content for Option 2 - Line 21</p>-->
+<!--            &lt;!&ndash; ... continue content for Option 2 ... &ndash;&gt;-->
+<!--            <p>Content for Option 2 - Line 40</p>-->
+<!--        </div>-->
+
+
+        <table width="100%">
+            <tr>
+                <td align="left">
+                    <a href="/hod/editBatch" th:href="@{/hod/editBatch}" class="btn btn-primary" role="button">Add Batch</a>
+                </td>
+                <td align="left">
+                    <a href="/hod/editAcademicYear" th:href="@{/hod/editAcademicYear}" class="btn btn-primary" role="button">Add Academic Year</a>
+                </td>
+
+                <td align="right">
+                    <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+
+        <table border="0" width="80%">
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label>Select Batch: </label>
+                        <select class="form-control" id="batchId" name="batch.batchId" >  //th:field="*{department}"
+                            <option th:each="batch : ${batches}" th:value="${batch.batchId}" th:text="${batch.batchName}"
+                                    id="selection.batchId"> Batch </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+                <td>
+                    <div class="form-group">
+                        <label>Select Academic Year: </label>
+                        <select class="form-control" id="id" name="academicYear.id" >  //th:field="*{department}"
+                            <option th:each="academicYear : ${academicYears}" th:value="${academicYear.id}" th:text="${academicYear.year}"
+                                    id="selection.id"> Academic Year </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+            </tr>
+
+            <tr>
+                <td>
+                     <div class="form-group">
+                        <label>Select Department: </label>
+                        <select class="form-control" id="department" name="department.departmentId" >  //th:field="*{department}"
+                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"
+                                    id="selection.departmentId"> Department </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td>
+                    <!--                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>-->
+                    <div class="form-group">
+                        <label>Select Program: </label>
+                        <select class="form-control" id="program" name="program.programId">
+                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td>
+                    <!--                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>-->
+                    <div class="form-group">
+                        <label>Select Semester: </label>
+                        <select class="form-control" id="semester" name="semester.semId">
+                            <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+            </tr>
+
+        </table>
+
+    </form>
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+
+<!---dynamic--------->
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $('#department').on('change', function() {-->
+<!--            var selectedDepartmentId = $(this).val();-->
+<!--            if(selectedDepartmentId){-->
+<!--                fetchPrograms(selectedDepartmentId);-->
+<!--              }-->
+<!--        });-->
+
+<!--    function fetchPrograms(departmentId){-->
+<!--    $.ajax({-->
+<!--        url: '/getPrograms',-->
+<!--        method: 'GET',-->
+<!--        data: {departmentId: departmentId},-->
+<!--        success: function(data) {-->
+<!--            //clear initially-->
+<!--            $('#program').empty();-->
+
+
+<!--//data here is the array of program objects recieved from server based on the ajax request.-->
+<!--//index is the index of the items in array-->
+<!--//program below is the items in the array-->
+<!--            $.each(data, function(index, program){-->
+<!--                $('#program').append( '<option value="' + program.programId + '">' + program.programName + '</option'>)-->
+<!--            });-->
+<!--        },-->
+<!--        error: function() {-->
+<!--            console.error('Error fetching programs');-->
+<!--        }-->
+
+<!--    });-->
+<!--    }-->
+<!--    });-->
+<!--</script>-->
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+radioButtons.forEach(function (radioButton) {
+radioButton.addEventListener('change', function () {
+const selectedValue = this.value;
+
+// Hide all content blocks
+document.querySelectorAll('.content').forEach(function (block) {
+block.style.display = 'none';
+});
+
+// Show the selected content block
+const selectedContent = document.getElementById(`content${selectedValue}`);
+if (selectedContent) {
+selectedContent.style.display = 'block';
+}
+});
+});
+});
+</script>
+</body>
+</html>

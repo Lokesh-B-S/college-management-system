@@ -1,6 +1,6 @@
 package com.ras.cms.service.department;
 
-import com.ras.cms.dao.DepartmentRepository;
+import com.ras.cms.repository.DepartmentRepository;
 import com.ras.cms.domain.Department;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +33,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void deleteDepartment(Long id) {
         departmentRepository.deleteById(id);
     }
+
+    @Override
+    public Department findByDepartmentName(String departmentName){return departmentRepository.findByDepartmentName(departmentName);
+    }
+
 
     //public Department findByDepartmentName(Department department){return departmentRepository.}
 }

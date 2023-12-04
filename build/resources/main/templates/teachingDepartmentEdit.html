@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Teaching Departments</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <form action="/hod/editTeachingDepartment" th:action="@{/hod/editTeachingDepartment}" method="post">
+
+        <table width="100%">
+            <tr>
+                <td align="left">
+                    <a href="/hod/listTeachingDepartments" th:href="@{/hod/listTeachingDepartments}" class="btn btn-primary" role="button">View Teaching Departments</a>
+                </td>
+
+                <td align="right">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" th:href="@{/}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+
+        <table border="0" width="80%">
+            <tr>
+<!--                for dropdown reference in future-->
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label> Department: </label>-->
+<!--                        <select class="form-control" id="department" name="department.departmentId">-->
+<!--                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> &nbsp;</td>-->
+                <td><input th:type="hidden" name="teachingDepartmentId" th:field="${teachingDepartment.teachingDepartmentId}"/>
+
+                <td>
+                    <div class="form-group">
+                        <label for="teachingDepartmentName">Teaching Department Name:</label>
+                        <input type="text" class="form-control" id="teachingDepartmentName" name="teachingDepartmentName" th:field="${teachingDepartment.teachingDepartmentName}"
+                               placeholder="Ex:- Mathematics "/>
+                    </div>
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                <div class="form-group">
+                    <label for="teachingDepartmentCode">Teaching Department Code/Short Name</label>
+                    <input type="text" class="form-control" id="teachingDepartmentCode" name="teachingDepartmentCode" th:field="${teachingDepartment.teachingDepartmentCode}"
+                           placeholder="Ex:- MAT "/>
+                </div>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

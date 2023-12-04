@@ -1,0 +1,146 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <div th:fragment="header-css">
+        <!-- this is header-css -->
+        <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"
+              href="../../../css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" href="../../../css/main.css"/>
+    </div>
+</head>
+<body>
+<div th:fragment="header">
+    <!-- this is header -->
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" th:href="@{/}">CMS App</a>
+            </div>
+            <font face="Trebuchet ms" color="#f3f72a">
+                <span class="pull-right" sec:authorize="isAuthenticated()">
+                    <span sec:authentication="name"></span>
+                    <span  sec:authentication="principal.authorities"></span>
+                    <a class="navbar-link" th:href="@{/logout}">Sign Out</a>
+                </span>
+            </font>
+
+            <div sec:authorize="isAuthenticated()">
+<!--                This content is only shown to authenticated users.-->
+            </div>
+
+
+<!--            <div sec:authorize="hasRole('College_ADMIN')">-->
+<!--           <div th:if="${#authorization.expression('hasRole(''College_ADMIN'')')}">-->
+            <div th:if="${#request.isUserInRole('PRINCIPAL')}">
+                <div id="admin-navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a th:href="@{/admin/CollegeEdit}">College</a></li>
+                        <li><a th:href="@{/admin/listDepartment}">Department</a></li>
+                        <li><a th:href="@{/admin/listPrograms}">Program</a></li>
+                        <li><a th:href="@{/admin/selectCourse}">Course</a></li>
+                        <li><a th:href="@{/admin/selectOpenElective}">Open Elective</a></li>
+                        <li><a th:href="@{/admin/studentEdit}">Register Student</a></li>
+                        <li><a th:href="@{/admin/listStudent}">Students List</a></li>
+                        <li><a th:href="@{/admin/editFaculty}">Faculty</a></li>-->
+                       <li><a th:href="@{/admin/courseFacultyEdit}">Course-Faculty Allotment</a></li>
+                        <li><a th:href="@{/admin/selectTimeTable}">Time Table</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <div th:if="${#request.isUserInRole('DEPT_HEAD')}">
+                <div id="hod-navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+<!--                        <li><a th:href="@{/admin/CollegeEdit}">College</a></li>-->
+<!--                        <li><a th:href="@{/admin/departmentEdit}">Department</a></li>-->
+<!--                        <li><a th:href="@{/admin/editProgram}">Program</a></li>-->
+                        <li><a th:href="@{/hod/selectCourse}">Course</a></li>
+                        <li><a th:href="@{/hod/selectOpenElective}">Open Elective</a></li>
+<!--                        <li><a th:href="@{/admin/studentEdit}">Register Student</a></li>-->
+                        <li><a th:href="@{/hod/listStudent}">Students List</a></li>
+                        <li><a th:href="@{/hod/listFaculty}">Faculty</a></li>-->
+                        <li><a th:href="@{/hod/courseFacultyEdit}">Course-Faculty Allotment</a></li>
+                        <li><a th:href="@{/hod/selectTimeTable}">Time Table</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+<!--            <div sec:authorize="hasRole('STUDENT')">-->
+<!--       <div th:if="${#authorization.expression('hasRole(''STUDENT'')')}" >-->
+            <div th:if="${#request.isUserInRole('STUDENT')}">
+                <div id="student-navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+<!--                        <li><a th:href="@{/student/studentEdit}">Register Student</a></li>-->
+                        <li><a th:href="@{/student/listStudent}">Students List</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <div th:if="${#request.isUserInRole('DEPT_LECTURER')}">
+                <div id="faculty-navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <!--                        <li><a th:href="@{/student/studentEdit}">Register Student</a></li>-->
+                        <li><a th:href="@{/faculty/listFaculty}">Faculty List</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+<!--            <div>-->
+<!--                User Roles: <span sec:authentication="principal.authorities"></span>-->
+<!--            </div>-->
+
+<!--            general code -->
+<!--            <div id="navbar" class="collapse navbar-collapse">-->
+<!--                <ul class="nav navbar-nav">-->
+<!--                    <li><a th:href="@{/admin/CollegeEdit}">College</a></li>-->
+<!--                    <li><a th:href="@{/admin/departmentEdit}">Department</a></li>-->
+<!--                    <li><a th:href="@{/admin/editProgram}">Program</a></li>-->
+<!--                    <li><a th:href="@{/admin/selectCourse}">Course</a></li>-->
+<!--                    <li><a th:href="@{/admin/selectOpenElective}">Open Elective</a></li>-->
+<!--                    <li><a th:href="@{/studentEdit}">Register Student</a></li>-->
+<!--                    <li><a th:href="@{/listStudent}">Students List</a></li>-->
+<!--                    <li><a th:href="@{/admin/editFaculty}">Faculty</a></li>-->
+<!--                    <li><a th:href="@{/admin/courseFacultyEdit}">Course-Faculty Allotment</a></li>-->
+<!--&lt;!&ndash;                    <li><a th:href="@{/admin/editTimeSlot}">Add Time Slots</a></li>&ndash;&gt;-->
+<!--                    <li><a th:href="@{/admin/selectTimeTable}">Time Table</a></li>-->
+
+<!--                </ul>-->
+<!--            </div>-->
+
+
+
+            <!--            <div id="navbar" class="collapse navbar-collapse">-->
+<!--                <ul class="nav navbar-nav">-->
+<!--                    <li class="dropdown">-->
+<!--                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>-->
+<!--                        <ul class="dropdown-menu">-->
+<!--                            <li><a th:href="@{/admin/CollegeEdit}">College</a></li>-->
+<!--                            <li><a th:href="@{/admin/departmentEdit}">Department</a></li>-->
+<!--                            <li><a th:href="@{/admin/courseEdit}">Course</a></li>-->
+<!--                            <li><a th:href="@{/admin/editFaculty}">Faculty</a></li>-->
+<!--                            <li><a th:href="@{/admin/courseFacultyEdit}">Course-Faculty Allotment</a></li>-->
+<!--                            <li><a th:href="@{/admin/editTimeSlot}">Add Time Slots</a></li>-->
+<!--                            <li><a th:href="@{/admin/selectTimeTable}">Time Table</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li class="dropdown">-->
+<!--                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Student <b class="caret"></b></a>-->
+<!--                        <ul class="dropdown-menu">-->
+<!--                            <li><a th:href="@{/studentEdit}">Register Student</a></li>-->
+<!--                            <li><a th:href="@{/listStudent}">Students List</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+
+
+
+
+<!--                </ul>-->
+<!--            </div>-->
+        </div>
+    </nav>
+</div>
+</body>
+</html>

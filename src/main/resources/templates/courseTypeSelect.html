@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/><!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org"
+          xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Course Type</title>
+
+        <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+              th:href="@{/css/bootstrap.min.css}"/>
+
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+
+
+
+
+
+        <!-- Include jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+    </head>
+    <body>
+    <div th:replace="fragments/header :: header"/>
+
+    <div class="container">
+
+        <table width="100%">
+            <tr>
+                <th th:text="'Academic Year: ' + ${batchYearDeptProgramSem1.academicYear.year}" style="font-size: 15px;">Academic Year</th>
+                <th th:text="'Batch: ' + ${batchYearDeptProgramSem1.batch.batchName}" style="font-size: 15px;">Batch</th>
+                <th th:text="'Semester: ' + ${batchYearDeptProgramSem1.semester.sem}" style="font-size: 15px;">Semester</th>
+            </tr>
+            <tr>
+                <th th:text="'Department: ' + ${batchYearDeptProgramSem1.department.departmentName}" style="font-size: 15px;">Department</th>
+                <th th:text="'Programme: ' + ${batchYearDeptProgramSem1.program.programName}" style="font-size: 15px;">
+                <th th:text="'Term: '" style="font-size: 15px;">Term</th>
+
+
+
+            </tr>
+            <tr><td></td></tr>
+        </table>
+        <hr>
+
+        <form action="/hod/selectCourseType" th:action="@{/hod/selectCourseType}" th:object="${courseType}" method="post">
+
+            <table border="0" width="80%">
+                <tr> <td> </td></tr>
+                <tr>
+                    <td>
+                        <input th:type="hidden" name="batchYearDeptProgramSemId" th:field="${batchYearDeptProgramSem1.batchYearDeptProgramSemId}"/>
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.batch.batchId}" name="batch">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.academicYear.id}" name="academicYear">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.department.departmentId}" name="department">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.program.programId}" name="program">
+                        <input type="hidden" th:value="${batchYearDeptProgramSem1.semester.semId}" name="semester">
+
+                        <div class="form-group">
+                            <label>Select Course Type : </label>
+                            <br>
+
+                            <td>
+                                <div class="form-group">
+<!--                                    <label>Select Teaching Department: </label>-->
+                                    <select class="form-control" id="courseType" name="courseType">
+                                        <option th:each="courseType : ${courseTypes}" th:value="${courseType.courseTypeId}" th:text="${courseType.typeOfCourse}"></option>
+                                    </select>
+                                </div>
+                            </td>
+
+<!--                            <div align="left">-->
+
+<!--&lt;!&ndash;                                th:field="*{course.courseType}"&ndash;&gt;-->
+<!--                                <input type="radio" th:field="${courseType}" name="courseType" value="'Theory'" id="courseType"/>-->
+<!--                                <label th:text="'Regular Theory'">Theory</label>-->
+
+
+<!--                                <input type="radio" th:field="${courseType}" name="courseType" value="'Lab'"/>-->
+<!--                                <label th:text="'Regular Laboratory'">Lab</label>-->
+
+
+<!--                                <input type="radio" th:field="${courseType}" name="courseType" value="'Professional Elective'"/>-->
+<!--                                <label th:text="'Professional Elective'">Professional Elective</label>-->
+
+
+<!--                                <input type="radio" th:field="${courseType}" name="courseType" value="'Open Elective'"/>-->
+<!--                                <label th:text="'Open Elective'">Open Elective</label>-->
+<!--                            </div>-->
+                        </div>
+
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+
+
+
+            </table>
+
+
+            <div align="center">
+                <a href="/hod/listCourse/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}" th:href="@{/hod/listCourse/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__}" class="btn btn-primary" role="button">View Courses</a>
+<!--                <a th:href="@{/admin/courseEdit/__${batchYearDeptProgramSem1.batchYearDeptProgramSemId}__/__${courseType}__}">Proceed</a>-->
+
+                                <button class="btn btn-primary" >Proceed</button>
+                <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+            </div>
+
+        </form>
+
+
+<!--        <script>-->
+<!--            document.addEventListener("DOMContentLoaded", function () {-->
+<!--                const radioButtons = document.querySelectorAll('input[name="courseType"]');-->
+<!--                const proceedLink = document.querySelector("a");-->
+
+<!--                radioButtons.forEach(function (radioButton) {-->
+<!--                    radioButton.addEventListener("change", function () {-->
+<!--                        if (this.checked) {-->
+<!--                            const selectedCourseType = this.value;-->
+<!--                            proceedLink.setAttribute("th:href", `/admin/courseEdit/${batchYearDeptProgramSem1.batchYearDeptProgramSemId}/selectedCourseType`);-->
+<!--                        }-->
+<!--                    });-->
+<!--                });-->
+<!--            });-->
+<!--        </script>-->
+    </div>
+    </body>
+    </html>

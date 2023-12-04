@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Allotment List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1> Allotment </h1>
+
+    <p>
+        <a th:if="${#request.isUserInRole('PRINCIPAL')}"  th:href="@{/admin/courseFacultyEdit}">Create</a>
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}"  th:href="@{/hod/courseFacultyEdit}">Create</a>
+
+    </p>
+
+    <table  class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Course</th>
+            <th>Faculty</th>
+            <th>Program</th>
+            <th>Department</th>
+            <th>Semester</th>
+            <th>Section</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="courseFaculty : ${courseFacultyList}">
+            <td th:text="${courseFaculty.courseFacultyId}">1</td>
+            <td th:text="${courseFaculty.course.courseName}">Test</td>
+            <td th:text="${courseFaculty.faculty.name}">Test</td>
+            <td th:text="${courseFaculty.program.programName}">Test</td>
+            <td th:text="${courseFaculty.department.departmentName}">Test</td>
+            <td th:text="${courseFaculty.semester.sem}">Test</td>
+            <td th:text="${courseFaculty.section.sec}">Test</td>
+            <td>
+                <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/courseFacultyEdit/1" th:href="@{/admin/courseFacultyEdit/__${courseFaculty.courseFacultyId}__}">Edit</a>
+                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/courseFacultyEdit/1" th:href="@{/hod /courseFacultyEdit/__${courseFaculty.courseFacultyId}__}">Edit</a>
+                &nbsp;&nbsp;
+                <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/deleteCourseFaculty/1" th:href="@{/admin/deleteCourseFaculty/__${courseFaculty.courseFacultyId}__}">Delete</a>
+                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteCourseFaculty/1" th:href="@{/hod/deleteCourseFaculty/__${courseFaculty.courseFacultyId}__}">Delete</a>
+
+                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

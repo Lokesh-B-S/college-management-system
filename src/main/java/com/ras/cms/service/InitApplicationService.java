@@ -8,6 +8,7 @@ import com.ras.cms.service.section.SectionService;
 import com.ras.cms.service.semester.SemesterService;
 import com.ras.cms.service.state.StateService;
 //import com.ras.cms.service.timeslot.TimeSlotService;
+import com.ras.cms.service.termService.TermService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ public class InitApplicationService implements ApplicationRunner {
     @Autowired
     private CourseTypeService courseTypeService;
 
+    @Autowired
+    private TermService termService;
+
 //    @Autowired
 //    private TimeSlotService timeSlotService;
     public void run(ApplicationArguments applicationArguments) {
@@ -54,7 +58,8 @@ public class InitApplicationService implements ApplicationRunner {
 
         if(roleService.findAll().size() == 0) {
             roleService.saveRole(new Role("SITE_ADMIN", "Site Administrator"));
-            roleService.saveRole(new Role("College_ADMIN", "College Administrator"));
+//            roleService.saveRole(new Role("College_ADMIN", "College Administrator"));
+            roleService.saveRole(new Role("PRINCIPAL", "Principal"));
             roleService.saveRole(new Role("COURSE_ADMIN", "Course Administrator"));
             roleService.saveRole(new Role("DEPT_ADMIN", "Department Administrator"));
             roleService.saveRole(new Role("DEPT_HEAD", "Head of Department"));
@@ -146,8 +151,14 @@ public class InitApplicationService implements ApplicationRunner {
             courseTypeService.saveCourseType(new CourseType("Open Elective 2"));
         }
 
+        if(termService.findAll().isEmpty()) {
+            termService.saveTerm(new Term("1-Jan-2023 to 10-Apr-2023"));
+            termService.saveTerm(new Term("1-Sep-2023 to 10-Dec-2023"));
+        }
 
-        // Log a message when initialization is complete
+
+
+            // Log a message when initialization is complete
         LOGGER.info("Initialization complete.");
     }
 }

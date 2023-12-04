@@ -1,6 +1,6 @@
 package com.ras.cms.service.college;
 
-import com.ras.cms.dao.CollegeRepository;
+import com.ras.cms.repository.CollegeRepository;
 import com.ras.cms.domain.College;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

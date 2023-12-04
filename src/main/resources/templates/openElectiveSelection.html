@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Open Elective</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+<!--    th:action="@{/admin/selectOpenElective}"-->
+    <form th:action="@{${#request.isUserInRole('PRINCIPAL')} ? '/admin/selectOpenElective' : '/hod/selectOpenElective'}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+        <table width="100%">
+            <tr>
+                <td align="left">
+                    <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editBatch" th:href="@{/hod/editBatch}" class="btn btn-primary" role="button">Add Batch</a>
+                </td>
+                <td align="left">
+                    <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editAcademicYear" th:href="@{/hod/editAcademicYear}" class="btn btn-primary" role="button">Add Academic Year</a>
+                </td>
+
+                <td align="right">
+                    <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+
+        <table border="0" width="80%">
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label>Select Batch: </label>
+                        <select class="form-control" id="batchId" name="batch.batchId" >
+                            <option th:each="batch : ${batches}" th:value="${batch.batchId}" th:text="${batch.batchName}"
+                                    id="selection.batchId"> Batch </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+                <td>
+                    <div class="form-group">
+                        <label>Select Academic Year: </label>
+                        <select class="form-control" id="id" name="academicYear.id" >
+                            <option th:each="academicYear : ${academicYears}" th:value="${academicYear.id}" th:text="${academicYear.year}"
+                                    id="selection.id"> Academic Year </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+            </tr>
+
+            <tr>
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label>Select Department: </label>-->
+<!--                        <select class="form-control" id="department" name="department.departmentId" >  //th:field="*{department}"-->
+<!--                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"-->
+<!--                                    id="selection.departmentId"> Department </option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> &nbsp</td>-->
+
+<!--                <td>-->
+<!--                    &lt;!&ndash;                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>&ndash;&gt;-->
+<!--                    <div class="form-group">-->
+<!--                        <label>Select Program: </label>-->
+<!--                        <select class="form-control" id="program" name="program.programId">-->
+<!--                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> &nbsp</td>-->
+
+                <td>
+                    <!--                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>-->
+                    <div class="form-group">
+                        <label>Select Semester: </label>
+                        <select class="form-control" id="semester" name="semester.semId">
+                            <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td>
+                    <!--                <td><input th:type="hidden" name="departmentId" th:field="${department.departmentId}"/>-->
+                    <div class="form-group">
+                        <label>Select Term: </label>
+                        <select class="form-control" id="term" name="term.id">
+                            <option th:each="term : ${terms}" th:value="${term.id}" th:text="${term.termDate}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+            </tr>
+
+        </table>
+
+    </form>
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+</body>
+</html>

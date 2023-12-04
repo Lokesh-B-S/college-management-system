@@ -1,6 +1,6 @@
 package com.ras.cms.service.role;
 
-import com.ras.cms.dao.RoleRepository;
+import com.ras.cms.repository.RoleRepository;
 import com.ras.cms.domain.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

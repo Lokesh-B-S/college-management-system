@@ -1,6 +1,6 @@
 package com.ras.cms.service.address;
 
-import com.ras.cms.dao.AddressRepository;
+import com.ras.cms.repository.AddressRepository;
 import com.ras.cms.domain.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

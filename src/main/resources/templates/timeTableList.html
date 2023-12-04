@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Time Table</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+
+
+    <script>
+        function goBack() {
+          window.history.back();
+        }
+    </script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+
+<div class="container">
+<!--    <h2>Time Table</h2>-->
+
+
+    <table width="1000">
+        <tr>
+            <th align="left" th:text="'Department: ' + ${departmentSemSec.department.departmentName}" >Department</th>
+            <th align="center" th:text="'Semester: ' + ${departmentSemSec.semester.sem}" >Semester</th>
+            <th align="right" th:text="'Section: ' + ${departmentSemSec.section.sec}" >Section</th>
+        </tr>
+        <tr><td></td></tr>
+    </table>
+    <hr>
+    <p>
+        <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
+        <a href="/hod/editTimeTable?id=${id}" th:href="@{/hod/editTimeTable?id=__${id}__}">Add more</a>
+    </p>
+
+        <!--   Actual Time Table-->
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th></th>
+            <th style="text-align:center" th:each="timeSlot : ${timeSlots}" th:text="${timeSlot.startTime} + ' - ' + ${timeSlot.endTime}"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="day : ${days}">
+            <td style="text-align:center" th:text="${day.name}"></td>
+            <td th:each="timeSlot : ${timeSlots}">
+<!--            <td th:each="entry : ${entries}" th:text="${entry.timeSlot.startTime}"></td>-->
+                <div th:each="entry : ${entries}">   <!--till here dont touch -->
+
+                                <div style="text-align:center" th:if="${entry?.day?.name == day.name && entry?.timeSlot?.startTime == timeSlot?.startTime}">
+                                    <span th:text="${entry?.course?.courseCode}"></span>
+                                    <div th:each="allotment : ${allotments}" th:if="${entry?.course?.courseName == allotment?.course?.courseName}">
+                                        <!-- Display faculty's short name if available,if not available it just doesn't show up -->
+                                        <span th:text="'(' + ${allotment?.faculty?.shortName} + ')'"></span>
+                                    </div>
+                                </div>
+
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+<br><br>
+</div>
+
+
+
+<div class="container" >
+<table class="table table-bordered">
+    <tbody>
+        <tr style="text-align:center">
+            <th rowspan="2">Course Code</th>
+            <th rowspan="2">Course Name</th>
+            <th colspan="2">Faculty</th>
+        </tr>
+        <tr style="text-align:center">
+            <th>Short Name</th>
+            <th>Full Name</th>
+        </tr>
+
+    <tr th:each="course : ${courses}">  <!--  style="text-align:center" works in this line-->
+        <td th:text="${course?.courseCode}"></td>
+        <td th:text="${course?.courseName}"></td>
+        <td th:each="allotment : ${allotments}" th:if="${course?.courseName == allotment?.course?.courseName}" th:text="${allotment.faculty.shortName}"></td>
+        <td th:each="allotment : ${allotments}" th:if="${course?.courseName == allotment?.course?.courseName}" th:text="${allotment.faculty.name}"></td>
+    </tr>
+    </tbody>
+</table>
+
+
+    <!--    Print  -->
+    <div align="center">
+        <button id="printButton">Print</button>
+        <script>
+            document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+            });
+        </script>
+    </div>
+
+
+</div>
+
+
+<!--<tr th:each="entry : ${entries}">-->
+<!--    <td th:text="${entry?.course?.courseCode}"></td>-->
+<!--    <td th:text="${entry?.course?.courseName}"></td>-->
+    <!--        <td th:if="${entry?.course?.courseName == allotments?.course?.courseName}" th:text="${allotments.faculty.name}"></td>-->
+
+
+
+    <!--<div th:each="entry : ${entries}">-->
+<!--    <span th:if="${entry?.day?.name == day.name }" th:text="${entry?.course?.courseName}"></span>-->
+<!--    <span th:unless="${entry?.day?.name == day.name}">NIL</span>-->
+<!--</div>-->
+
+
+
+
+
+
+
+<!--<div class="container">-->
+<!--<table>-->
+<!--    <tr>-->
+<!--        <th>Day</th>-->
+<!--        <th>Timeslot</th>-->
+<!--        <th>Course</th>-->
+<!--    </tr>-->
+
+<!--        <tr th:each="entry : ${entries}">-->
+<!--            <td th:if="${entry.day != null}" th:text="${entry.day.name}"></td>-->
+<!--            <td th:text="${entry.timeSlot.startTime} + ' - ' + ${entry.timeSlot.endTime}"></td>-->
+<!--            <td th:text="${entry.course.courseName}"></td>-->
+<!--        </tr>-->
+
+
+<!--</table>-->
+<!--</div>-->
+
+</body>
+</html>

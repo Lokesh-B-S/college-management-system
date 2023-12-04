@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Time Slots List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1> Time Slots </h1>
+
+    <p>
+        <a href="/hod/editTimeSlot" th:href="@{/hod/editTimeSlot}">Create</a>
+    </p>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Timeslot Id </th>
+            <th>Department </th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="timeSlot : ${timeSlotList}">
+            <td th:text="${timeSlot.id}">1</td>
+            <td th:text="${timeSlot.department.departmentName}">Test</td>
+            <td th:text="${timeSlot.startTime}">Test</td>
+            <td th:text="${timeSlot.endTime}">Test</td>
+
+            <td>
+                <a href="/hod/editTimeSlot/1" th:href="@{/hod/editTimeSlot/__${timeSlot.id}__}">Edit</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/hod/deleteTimeSlot/1" th:href="@{/hod/deleteTimeSlot/__${timeSlot.id}__}">Delete</a>
+                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

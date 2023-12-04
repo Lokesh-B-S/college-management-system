@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Faculty List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1> Faculties </h1>
+
+    <p>
+        <a href="/admin/editFaculty" th:href="@{/admin/editFaculty}">Create</a>
+    </p>
+
+    <table  class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Faculty name</th>
+            <th scope="col">Short name</th>
+            <th scope="col">Designation</th>
+            <th scope="col">Highest qualification</th>
+            <th scope="col">Specialization</th>
+            <th scope="col">Teaching Experience</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="faculty : ${facultyList}">
+            <td th:text="${faculty.id}">1</td>
+            <td th:text="${faculty.name}">Test</td>
+            <td th:text="${faculty.shortName}">Test</td>
+            <td th:text="${faculty.designation}">Test</td>
+            <td th:text="${faculty.highestQualification}">Test</td>
+            <td th:text="${faculty.specialization}">Test</td>
+            <td th:text="${faculty.teachingExperience}">Test</td>
+
+            <td>
+                <a href="/admin/editFaculty/1" th:href="@{/admin/editFaculty/__${faculty.id}__}">Edit</a>
+                <a href="/admin/deleteFaculty/1" th:href="@{/admin/deleteFaculty/__${faculty.id}__}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+
+
+
+
+

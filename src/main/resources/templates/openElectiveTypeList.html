@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Open Elective Types</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1>Open Elective Types</h1>
+
+    <p>
+        <a href="/hod/editOpenElectiveType" th:href="@{/hod/editOpenElectiveType}">Create</a>
+    </p>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Open Elective Type </th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="openElectiveType : ${openElectiveTypeList}">
+            <td th:text="${openElectiveType.id}">1</td>
+            <td th:text="${openElectiveType.typeOfOpenElective}">Test</td>
+            <td>
+<!--                <a href="/admin/editOpenElectiveType/1" th:href="@{/admin/editOpenElectiveType/__${openElectiveType.id}__}">Edit</a>-->
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/hod/deleteOpenElectiveType/1" th:href="@{/hod/deleteOpenElectiveType/__${openElectiveType.id}__}">Delete</a>
+                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

@@ -46,4 +46,6 @@ dependencies {
 	//newly added dependancies to resolve package not found issues
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'junit:junit:4.13.1'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }

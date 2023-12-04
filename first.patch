@@ -1,0 +1,63 @@
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision 1ae84813a7465460a80ffe63a9a88fb5f46a6ccf)
++++ b/build.gradle	(date 1693223239811)
+@@ -1,6 +1,6 @@
+ buildscript {
+ 	ext {
+-		springBootVersion = '2.0.3.RELEASE'
++		springBootVersion = '2.6.3'
+ 	}
+ 	repositories {
+ 		mavenCentral()
+@@ -17,24 +17,33 @@
+ 
+ group = 'com.ras.cms'
+ version = '0.0.1-SNAPSHOT'
+-sourceCompatibility = 1.8
++sourceCompatibility = 11
+ 
+ repositories {
+ 	mavenCentral()
+ }
+ 
+ dependencies {
+-	compile('org.springframework.boot:spring-boot-starter-actuator')
+-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+-	compile('org.springframework.boot:spring-boot-starter-security')
+-	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+-	compile('org.springframework.boot:spring-boot-starter-web')
+-	compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
+-	compile group: 'org.springframework.data', name: 'spring-data-rest-hal-browser', version: '3.0.8.RELEASE'
+-	compile group: 'com.google.guava', name: 'guava', version: 'r05'
+-	runtime('org.springframework.boot:spring-boot-devtools')
++	implementation 'org.springframework.boot:spring-boot-starter-actuator'
++	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
++	implementation 'org.springframework.boot:spring-boot-starter-security'
++	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
++	implementation 'org.springframework.boot:spring-boot-starter-web'
++	implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
++	implementation group: 'org.springframework.data', name: 'spring-data-rest-hal-browser', version: '3.0.8.RELEASE'
++	implementation group: 'com.google.guava', name: 'guava', version: 'r05'
++	//runtimeOnly 'org.springframework.boot:spring-boot-devtools'   #earlier
++	implementation 'org.springframework.boot:spring-boot-devtools'   //new
++
+ 	//runtime('org.hsqldb:hsqldb')
+-	runtime('com.h2database:h2')
+-	testCompile('org.springframework.boot:spring-boot-starter-test')
+-	testCompile('org.springframework.security:spring-security-test')
++	//runtimeOnly 'com.h2database:h2'     #changed
++	implementation 'mysql:mysql-connector-java:8.0.33'   //changed
++
++	testImplementation 'org.springframework.boot:spring-boot-starter-test'
++	testImplementation 'org.springframework.security:spring-security-test'
++
++
++	//newly added dependancies to resolve package not found issues
++	implementation 'javax.validation:validation-api:2.0.1.Final'
++	testImplementation 'junit:junit:4.13.2'
+ }

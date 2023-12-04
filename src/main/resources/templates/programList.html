@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Programs List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <h1> Programs </h1>
+
+    <p>
+        <a href="/admin/programs/addnew" th:href="@{/admin/programs/addnew}">Add Program</a>
+    </p>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Program Id </th>
+            <th>Program Name </th>
+            <th>Program Code</th>
+            <th>Department</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="program : ${programList}">
+            <td th:text="${program.programId}">1</td>
+            <td th:text="${program.programName}">Test</td>
+            <td th:text="${program.programCode}">Test</td>
+            <td th:text="${program.department.departmentName}">Test</td>
+            <td>
+<!--                <a href="/admin/editProgram/1" th:href="@{/admin/editProgram/__${program.programId}__}">Edit</a>-->
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/admin/deleteProgram/1" th:href="@{/admin/deleteProgram/__${program.programId}__}">Delete</a>
+                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

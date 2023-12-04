@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>College</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+
+
+    <script th:inline="javascript">
+        function redirectToForm() {
+            window.location.href = '/admin/editTimeTable';
+        }
+    </script>
+
+    <style>
+        /* Custom styles for centering the box */
+        .center-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: 30%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+
+<!--<input th:type="hidden" name="branchSemSecId" th:field="${branchSemSec1.branchSemSecId}"/>-->
+<!--<input type="hidden" th:value="${branchSemSec1.branch.branchId}" name="branch">-->
+<!--<input type="hidden" th:value="${branchSemSec1.semester.semId}" name="semester">-->
+<!--<input type="hidden" th:value="${branchSemSec1.section.sectionId}" name="section">-->
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="center-box">
+
+                        <div th:if="${alertMessage}" th:class="'alert alert-' + ${alertType}">
+                             <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="redirectToForm()">
+                                <span aria-hidden="true">&nbsp; &times;</span>
+                             </button>
+                            <span th:text="${alertMessage}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

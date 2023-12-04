@@ -1,6 +1,6 @@
 package com.ras.cms.service.user;
 
-import com.ras.cms.dao.UserRepository;
+import com.ras.cms.repository.UserRepository;
 import com.ras.cms.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

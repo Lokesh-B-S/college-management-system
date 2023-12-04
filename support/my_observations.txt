@@ -1,0 +1,170 @@
+References:-
+
+teaching department ->(referred from) batch
+OpenElectiveType ->(referred from) CourseType
+Openelecive controller ->(referred from) academic year controller
+
+
+--------------------------------
+
+
+dont include input tag (of id for example) in the html page where you are still working to collect details, use it in other page
+
+
+
+//my observations
+
+dont try to retrieve the id of a row by passing other fields to service directly, it may show errors in runtime
+instead take it to a variable (example branchSemSec) by passing the fields and then try fetching id as variable.branchSemSecId;
+ex:
+ if (branchSemSecService.existsEntry(branchSemSec)) {
+            redirectAttributes.addFlashAttribute("message", "Entry already exists.");
+            BranchSemSec branchSemSec1 = branchSemSecService.findRow(branchSemSec);
+            return "redirect:/admin/editTimeTable?id=" + branchSemSec1.getBranchSemSecId();
+
+
+
+in database, sometimes even after deleting and commit, the deleted rows reappear
+try like:- where id between 3 and 300 (it works) or even sometimes where id=3
+
+
+
+
+
+if there is an error saying persistenceExcpetion:
+and annotations to column names in entity, example @ManyToOne for "private Branch branch"
+
+
+
+Error:
+2023-09-20 11:16:51.959 ERROR 19124 --- [io-8080-exec-10] o.h.engine.jdbc.spi.SqlExceptionHelper   : Cannot add or update a child row: a foreign key constraint fails (`cms_db`.`time_table_entry`, CONSTRAINT `FK5sldqkoa5ftuh4wnefvpd0blf` FOREIGN KEY (`time_slot_id`) REFERENCES `old_time_slot` (`id`))
+
+Solution:
+in database(MySQl)it will sometimes be still referencing the old table if you have created any alternative table to it
+hence drop that foreign key constraint and try again.
+NOTE: from the referencing table, DROP FK first and then DROP column and then try again.
+
+
+
+---------
+Error:
+PersistenceExcpetion
+Solution:
+Add annotations to fields in entity(example @ManyToOne)
+----------
+
+Error: Caused by: org.hibernate.AnnotationException: @OneToOne or @ManyToOne on com.ras.cms.domain.Batch.batchName references an unknown entity: java.lang.String
+Solution: Dont mark @ManyToOne for other fields which are not foriegn values (example batchName)
+---------
+
+Error:Field batchService in com.ras.cms.controller.BatchController required a bean of type 'com.ras.cms.service.batch.BatchService' that could not be found.
+Soultion:-
+check if you have mentioned BatchServiceImpl implements BatchService
+---------
+
+findAllByBranchAndSemesterAndSection(this is to fetch mutliple rows)
+findByBranchAndSemesterAndSection(returns single entity or null if not found)
+--------------
+note:-
+for 2 fields it is findAllByBranchAndSemester
+for 3 fields it is findAllByBranchAndSemesterAndSection
+----------------
+
+
+Error: Failed to convert value of type 'java.lang.String' to required type 'com.ras.cms.domain.AcademicYear'; nested exception is org.springframework.core.convert.ConversionFailedException: Failed to convert from type [java.lang.String] to type [java.lang.Long] for value '2021-22'; nested exception is java.lang.NumberFormatException: For input string: "2021-22"
+Solution:dont try to do: in getMapping and postMapping and service , check for the object, pass the datatype instead of object if not working
+refer academicYear for this.
+LAtest solution:- Dont create ambiguous variable names (example: academicYear as both object and variable name)
+----------------
+
+
+
+Error: (in javascript for TT entry delete functionality)
+editTimeTable?id=1:98 Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
+
+reason:
+<!--                    <a href="#" id="deleteLink" class="btn btn-danger" role="button">Delete</a>-->
+(in script)
+ // Attach the deleteEntry function to the click event of the delete link
+       // document.getElementById("deleteLink").addEventListener("click", deleteEntry);
+
+solution:
+         <button class="btn btn-danger" onclick="deleteEntry()">Delete</button>
+
+
+
+
+for multiple courses:
+add course also in DoesEntryExist(branchSemSecId,day,timeslot)
+
+
+
+
+----------------
+table-striped in <table> for getting stripped rows
+----------------
+
+select * from course_faculty;
+
+ALTER TABLE time_table_entry DROP FOREIGN KEY FKnocrltojbwqshoojhhwa1u7sr;
+
+ALTER TABLE course_faculty DROP COLUMN branch_branch_id;
+
+
+update course set department_department_id=1 where course_id<23;
+
+select * from batch_year_dept_program_sem;
+select * from course;
+
+delete from course where department_department_id =1 ;
+delete from course_faculty where course_faculty_id between 5 and 6;
+delete from course where course_id in(42,43,45,46,47);
+
+update course set teaching_department_teaching_department_id=1 where course_id between 39 and 49;
+
+update program set department_department_id=3 where program_id=6;
+select * from program;
+
+
+
+
+----------------------
+// Calculate the sums
+int totalLectureCredits = courses.stream().mapToInt(Course::getLectureCredits).sum();
+int totalTutorialCredits = courses.stream().mapToInt(Course::getTutorialCredits).sum();
+int totalPracticalCredits = courses.stream().mapToInt(Course::getPracticalCredits).sum();
+int totalTotalCredits = courses.stream().mapToInt(Course::getTotalCredits).sum();
+int totalContactHours = courses.stream().mapToInt(Course::getContactHours).sum();
+
+model.addAttribute("totalLectureCredits", totalLectureCredits);
+model.addAttribute("totalTutorialCredits", totalTutorialCredits);
+model.addAttribute("totalPracticalCredits", totalPracticalCredits);
+model.addAttribute("totalTotalCredits", totalTotalCredits);
+model.addAttribute("totalContactHours", totalContactHours);
+
+
+--------------------------
+incase if you are getting new row added after edit
+check if have missed <input type=hidden ${techingDept.id} in teachingdeptedit.html
+
+---------------------------
+incase the value from html is null in controller,
+ check with the name="abcd" in the input of that html
+ example : name="courseType" better than name="courseType.courseTypeId"
+
+---------------------------
+Caused by: java.lang.IllegalStateException: Ambiguous mapping. Cannot map 'openElectiveController' method
+solution: check if any same method names in controllers.
+
+-------------------------------
+Error: 'p' tried to access /hod/openElectiveType
+Solution: check the order of urls in getmapping and postmapping
+also check the particular html page in 'form' attribute.
+
+--------------------------------
+Always note that the @ManyToOne or other such annotations are used for Entities connected to each other (like private Department department), not for the normal strings like (private String department)
+
+--------------------------------
+Dynamic:
+Use @RestController instead of @Controller in controller(ex: programController) for dynamic rows implementation
+Flow: MainController -> HTML page -> ProgramController -> repo

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>College</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/bootstrap.min.css" />
+
+    <!-- Include Alertify.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
+
+    <script>
+        // Initialize Alertify.js
+        alertify.set('notifier', 'position', 'top-right'); // Adjust notification position as needed
+    </script>
+
+    <script>
+        // Function to display a success alert
+  function showSuccessAlert(message, timeout) {
+    alertify.success('Entry added successfully');
+    if (timeout) {
+        setTimeout(function () {
+            alertify.dismissAll(); // Close the alert after the specified timeout
+        }, timeout);
+    }
+    console.log('Alert displayed!');
+  }
+
+  // Function to display an error alert
+  function showErrorAlert(message, timeout) {
+    alertify.error('oops! there was error while adding');
+    if (timeout) {
+        setTimeout(function () {
+            alertify.dismissAll(); // Close the alert after the specified timeout
+        }, timeout);
+    }
+  }
+
+     function showEntryAlreadyExistsAlert(message, timeout) {
+    alertify.error('Sorry Already an entry exists, Please delete the entry and try again');
+    if (timeout) {
+        setTimeout(function () {
+            alertify.dismissAll(); // Close the alert after the specified timeout
+        }, timeout);
+    }
+  }
+
+    function deleteSuccess(message, timeout) {
+    alertify.success('entry deleted successfully');
+    if (timeout) {
+        setTimeout(function () {
+            alertify.dismissAll(); // Close the alert after the specified timeout
+        }, timeout);
+    }
+  }
+
+    function deleteFailure(message, timeout) {
+    alertify.error('failed to delete');
+    if (timeout) {
+        setTimeout(function () {
+            alertify.dismissAll(); // Close the alert after the specified timeout
+        }, timeout);
+    }
+  }
+    </script>
+
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!--    <script>-->
+<!--        $(document).ready(function () {-->
+<!--            // Attach the click event to the "Delete" link-->
+<!--            $("#deleteLink").click(function (e) {-->
+<!--                e.preventDefault(); // Prevent the link from navigating-->
+
+<!--                var departmentSemSecId = $("input[name='departmentSemSecId']").val();-->
+<!--                var selectedDay = $("#day").val();-->
+<!--                var selectedTimeSlot = $("#timeSlot").val();-->
+<!--                var selectedCourse = $("#course").val();-->
+
+<!--                // Construct the URL for the delete action-->
+<!--                var deleteUrl = "/admin/deleteTimeTable/" + departmentSemSecId;-->
+
+<!--                // Perform the delete request with Ajax-->
+<!--                $.ajax({-->
+<!--                    type: "DELETE",-->
+<!--                    url: deleteUrl,-->
+<!--                    data: {-->
+<!--                        day: selectedDay,-->
+<!--                        timeSlot: selectedTimeSlot,-->
+<!--                        course: selectedCourse,-->
+<!--                    },-->
+<!--                    success: function (data) {-->
+<!--                        // Handle success, e.g., show an alert or update the page-->
+<!--                        //deleteSuccess(data, 3000);-->
+<!--                        console.log("Entry deleted successfully");-->
+<!--                    },-->
+<!--                    error: function (error) {-->
+<!--                        // Handle error, e.g., show an error message-->
+<!--                       // deleteFailure(data, 3000);-->
+<!--                        console.error("Failed to delete the entry");-->
+<!--                    },-->
+<!--                });-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
+
+
+    <!--delete time table entry-->
+    <script type="text/javascript">
+        function deleteEntry() {
+            var departmentSemSecId = document.querySelector('[name="departmentSemSecId"]').value; // Get the value from the hidden input field
+            var selectedDay = document.getElementById("day").value;
+            var selectedTimeSlot = document.getElementById("timeSlot").value;
+            var selectedCourse = document.getElementById("course").value;
+
+            // Construct the delete URL
+            var deleteUrl = "/admin/deleteTimeTable/" + departmentSemSecId + "?day=" + selectedDay + "&timeSlot=" + selectedTimeSlot + "&course=" + selectedCourse;
+
+            // Navigate to the delete URL
+            window.location.href = deleteUrl;
+        }
+
+        // Attach the deleteEntry function to the click event of the delete link
+       // document.getElementById("deleteLink").addEventListener("click", deleteEntry);
+    </script>
+
+
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+
+    <table width="100%">
+
+        <tr>
+            <th th:text="'Department: ' + ${departmentSemSec.department.departmentName}" >Department</th>
+            <th th:text="'Semester: ' + ${departmentSemSec.semester.sem}" >Semester</th>
+            <th th:text="'Section: ' + ${departmentSemSec.section.sec}" >Section</th>
+        </tr>
+
+        <tr><td></td></tr>
+    </table>
+
+    <hr>
+
+    <form action="/hod/editTimeTable" th:action="@{/hod/editTimeTable}"  method="post">
+
+
+        <table border="0" width="80%">
+            <tr>
+                <td>
+                    <input th:type="hidden" name="departmentSemSecId" th:field="${departmentSemSec1.departmentSemSecId}"/>
+<!--                    //database works without this too, but needed for redirecting to editTimeTable with same id-->
+                    <input type="hidden" th:value="${departmentSemSec1.department.departmentId}" name="department">
+                    <input type="hidden" th:value="${departmentSemSec1.semester.semId}" name="semester">
+                    <input type="hidden" th:value="${departmentSemSec1.section.sectionId}" name="section">
+                    <div class="form-group">
+                        <label> Day: </label>
+                        <select class="form-control" id="day" name="day.id">
+                            <option th:each="day : ${days}" th:value="${day.id}" th:text="${day.name}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+
+                <td>
+                    <div class="form-group">
+                        <label> Time Slot: </label>
+                        <select class="form-control" id="timeSlot" name="timeSlot.id">
+                            <option th:each="timeSlot : ${timeSlots}" th:value="${timeSlot.id}" th:text="${timeSlot.startTime} + ' - ' + ${timeSlot.endTime}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td>
+                    <div class="form-group">
+                        <label> Course </label>
+                        <select class="form-control" id="course" name="course.courseId"> //earlier th:field="*{course}" //same name as th:each= name : .......
+                            <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseCode} +' - '+ ${course.courseName}"
+                                 > Course </option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+
+        <div align="center">
+            <a href="/hod/listTT/${departmentSemSec1.departmentSemSecId}" th:href="@{/hod/listTT/__${departmentSemSec1.departmentSemSecId}__}" class="btn btn-primary" role="button">View Timetable</a>
+            <button class="btn btn-primary">Save</button>
+            <button class="btn btn-danger" onclick="deleteEntry()">Delete</button>
+            <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+        </div>
+
+        <!-- success-->
+        <script th:if="${successMessage}">
+            showSuccessAlert('${successMessage}', 3000);
+        </script>
+
+        <!-- error -->
+        <script th:if="${errorMessage}">
+            showErrorAlert('${errorMessage}', 3000);
+        </script>
+
+        <script th:if="${EntryAlreadyExistsError}">
+            showEntryAlreadyExistsAlert('${EntryAlreadyExistsError}', 3000);
+        </script>
+
+        <script th:if="${DeleteSuccessMessage}">
+            deleteSuccess('${DeleteSuccessMessage}', 3000);
+        </script>
+
+        <script th:if="${EntryDoesNotExistError}">
+            deleteFailure('${EntryDoesNotExistError}', 3000);
+        </script>
+
+
+        <!--old code-->
+<!--        -->
+<!--        <label for="day">Day:</label>-->
+<!--        <select id="day" name="day.id">-->
+<!--            <option th:each="day : ${days}" th:value="${day.id}" th:text="${day.name}"></option>-->
+<!--        </select>-->
+<!--        <br>-->
+<!--        <label for="timeSlot">Time Slot:</label>-->
+<!--        <select id="timeSlot" name="timeSlot.id">-->
+<!--            <option th:each="timeSlot : ${timeSlots}" th:value="${timeSlot.id}" th:text="${timeSlot.startTime} + ' - ' + ${timeSlot.endTime}"></option>-->
+<!--        </select>-->
+<!--        <br>-->
+<!--        <div class="form-group">-->
+<!--            <label> Course </label>-->
+<!--            <select class="form-control" th:field="*{course}">-->
+<!--                <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"-->
+<!--                        id="entry.courseId"> Course </option>-->
+<!--            </select>-->
+<!--        </div>-->
+
+
+    </form>
+
+</div>
+
+
+
+</body>
+</html>

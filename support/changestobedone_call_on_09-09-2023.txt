@@ -1,0 +1,119 @@
+program- be,btech,mtech...
+branch- cs,ec...
+course- maths,ML,AI,C++....
+
+
+department - cs
+Program - BE computer science, BE Information science, MTech Data science,MTech computer science, Phd CS
+course - physics , chemistry
+
+
+other departments(non-teaching): library, sports etc
+
+
+
+if clg admin or hod etc logs in, based on that the courses to be displayed in timetable selection.
+
+already a subject is present should appear if more than one preexisting course is selected.(check if anything like addifabsent is available in crudrepo)
+
+program specific timeslots to be appeared on timetable.
+(for that need to create master table, where for example 9-10,10-11....belongs to branch id 001, 7-8,8-9..so belongs to branch id 002,
+only that particular timeslots has to be appeared in th of timetable view)
+
+
+
+sem select, faculty select, time - attendance
+should display the list of students for that course, condition that if student not opted that course should show NA instead of present or absent
+
+
+
+
+
+
+
+student can opt out a subject, if so another table to be created to
+studentwise per semester i should know how many subjects i should display
+student id, course id, sem id (to be collected for which subj i am not opting)
+not opted details should be by admin to mark the student as not opted for that subject in sepearte table
+
+
+
+
+
+Note: commit always for dml statements in mysql
+
+
+
+//works done
+
+resolved issue with passing id from selectTimeTable to editTimeTable
+listTT to display based on the branchsemsec, instead of a constant one
+created Program
+added timeSlot Selection :- to add the timeslots manually
+also displayed only particular branch related timeslots in dropdown
+made timetable output to show only particular branch related timeslots instead of all
+added program and branch columns(dropdowns) in course table - DONE
+show the particular branch related courses dropdown in editTimetable page - DONE
+branch table had course field which was unnecessary and replaced by program
+associated course with faculty in a new table and also view them
+displayed faculty along with course in timetable output
+(for that hint is check courses in editTimetable, it is coming based on only branch which is worng,it should be based on semester too.
+display all those that appear in courses in editTT in listTT to avoid repeats)
+alert
+only single course adding in editTT (else alert the user that if you want to add this entry delete the previous entry)
+added delete button and also with alerts too
+
+multiple courses avoided in timetable completely (unique)
+faculty shortname in table as well as below table(one extra column)
+
+
+
+
+
+//things to do now
+
+branch rename as department - DONE
+department -> divisions -> program, others ->
+
+course -> Add/select batch -> semester & academic year -> courses
+batch example: 1NH19, 1NH15,...    - DONE
+
+timetable -> department/ program/ semester/ batch/ section/ (inside)
+note;- (display above details in editTimeTable)
+
+
+
+
+
+trying to change the navbar dropdown (custom.js technique is not working)
+if we delete faculty in viewfaculty which is in use in other page say timetable it shows error for deleting. Avoid it
+
+
+
+show edit and delete for the course added to TT (hint give links instead of text format for courses in TT for admin login atleast)
+
+
+
+ <th th:if="${entry.course.courseCode != #vars.prevCode}" th:text="${entry.course.courseCode}"></th>
+        <th th:if="${entry.course.courseName != #vars.prevName}" th:text="${entry.course.courseName}"></th>
+
+        <!-- Update #vars.prevCode and #vars.prevName for the next iteration -->
+        <th:block th:with="#vars.prevCode=${entry.course.courseCode}, #vars.prevName=${entry.course.courseName}"></th:block>
+
+
+
+
+
+----
+safer side codes:
+
+//below line is for only course display-->
+<div style="text-align:center" th:if="${entry?.day?.name == day.name && entry?.timeSlot?.startTime == timeSlot?.startTime}" th:text="${entry?.course?.courseCode}">-->
+---
+
+//course and faculty names in timetable cells to an extent:
+<div style="text-align:center" th:if="${entry?.day?.name == day.name && entry?.timeSlot?.startTime == timeSlot?.startTime}">
+                        <div th:each="allotment : ${allotments}" th:if="${entry?.course?.courseName == allotment?.course?.courseName}">
+                            <span th:text="${entry?.course?.courseCode} + ' - (' + ${allotment?.faculty?.shortName} + ')'"></span>
+                        </div>
+                    </div>

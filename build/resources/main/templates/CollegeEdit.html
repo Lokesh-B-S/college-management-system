@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>College</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<div class="container">
+    <form action="/admin/CollegeEdit" th:action="@{/admin/CollegeEdit}" method="post">
+
+    <table width="100%">
+        <tr>
+            <td align="left">
+                <a href="/admin/listCollege" th:href="@{/admin/listCollege}" class="btn btn-primary" role="button">View Colleges</a>
+            </td>
+
+
+            <td align="right">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="#" th:href="@{/}" class="btn btn-danger" role="button">Cancel</a>
+            </td>
+        </tr>
+    </table>
+
+        <table border="0" width="80%">
+            <tr>
+                <td><input th:type="hidden" name="CollegeId" th:field="${College.CollegeId}"/>
+                    <div class="form-group">
+                        <label for="CollegeName">College Name</label>
+                        <input type="text" class="form-control" id="CollegeName" th:field="${College.CollegeName}"
+                               placeholder="College Name"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="CollegeCode">College Code</label>
+                        <input type="text" class="form-control" id="CollegeCode" th:field="${College.CollegeCode}"
+                               placeholder="College Code"/>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="form-group">
+                        <label for="CollegeAddress"> Address </label>
+                        <input type="text" class="form-control" id="CollegeAddress" th:field="${College.CollegeAddress}"
+                               placeholder=" Address "/>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label">Existing Courses</label>
+            <div class="col-lg-10">
+                <div th:each="course : ${courses}">
+                    <span th:text="${course.courseId}" /> - <span th:text="${course.courseName}" />
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

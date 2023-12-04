@@ -18,9 +18,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/about","/actuator/**").permitAll()
                 .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**","/js/*.min*").permitAll()
-                .antMatchers("/admin/**").hasAnyRole("College_ADMIN")
+                .antMatchers("/admin/**").hasAnyRole("PRINCIPAL")
                 .antMatchers("/user/**").hasAnyRole("USER")
+                .antMatchers("/hod/**").hasAnyRole("DEPT_HEAD")
                 .antMatchers("/student/**").hasAnyRole("STUDENT")
+                .antMatchers("/faculty/**").hasAnyRole("DEPT_LECTURER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -63,9 +65,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser("u").password("{noop}p").roles("SITE_ADMIN")
                 .and()
-                .withUser("a").password("{noop}p").roles("College_ADMIN")    //user //password //admin //password
+                .withUser("p").password("{noop}p").roles("PRINCIPAL")    //user //password //admin //password
                 .and()
-                .withUser("s").password("{noop}p").roles("STUDENT");
+                .withUser("hodcse").password("{noop}p").roles("DEPT_HEAD")
+                .and()
+                .withUser("hodmech").password("{noop}p").roles("DEPT_HEAD")
+                .and()
+                .withUser("hodiem").password("{noop}p").roles("DEPT_HEAD")
+                .and()
+                .withUser("hodise").password("{noop}p").roles("DEPT_HEAD")
+                .and()
+                .withUser("s1").password("{noop}p").roles("STUDENT")
+                .and()
+                .withUser("s2").password("{noop}p").roles("STUDENT")
+                .and()
+                .withUser("s3").password("{noop}p").roles("STUDENT")
+                .and()
+                .withUser("s4").password("{noop}p").roles("STUDENT")
+                .and()
+                .withUser("s5").password("{noop}p").roles("STUDENT")
+                .and()
+                .withUser("f1").password("{noop}p").roles("DEPT_LECTURER")
+                .and()
+                .withUser("f2").password("{noop}p").roles("DEPT_LECTURER")
+                .and()
+                .withUser("f3").password("{noop}p").roles("DEPT_LECTURER");
 
     }
 }
