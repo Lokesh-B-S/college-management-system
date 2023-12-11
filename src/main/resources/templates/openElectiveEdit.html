@@ -96,7 +96,7 @@
 <!--                <th th:text="'Department: ' " style="font-size: 15px;">Department</th>-->
                 <th th:text="'Department: ' + ${department.departmentName}" style="font-size: 15px;" >Department</th>
                 <th th:text="'Term: ' + ${batchYearSemTerm1.term.termDate}" style="font-size: 15px;">Term</th>
-                <th th:text="'Open Elective Type: ' + ${openElectiveType.typeOfOpenElective}" style="font-size: 15px;">OpenElectiveType</th>
+<!--                <th th:text="'Open Elective Type: ' + ${openElective.openElectiveType.typeOfOpenElective}" style="font-size: 15px;">OpenElectiveType</th>-->
 
             </tr>
             <tr><td></td></tr>
@@ -121,7 +121,7 @@
 
 
                         <!--                        <input type="radio" th:field="*{course.courseType}" name="courseType" value="'Theory'" id="courseType"/>-->
-                        <input type="hidden" th:field="${openElectiveType.typeOfOpenElective}" th:value="${openElectiveType.typeOfOpenElective}" name="openElectiveType"/>
+<!--                        <input type="hidden" th:field="${openElectiveType.typeOfOpenElective}" th:value="${openElectiveType.typeOfOpenElective}" name="openElectiveType"/>-->
 
                         <div class="form-group">
                             <!--                            <label>Select Teaching Dept. : </label>-->
@@ -213,16 +213,27 @@
                 <tr><td></td></tr>
 
                 <tr>
-                    <td> <label>Total number of batches : </label> </td>
-
                     <td>
-
                         <div class="form-group">
-                            <input type="text" class="form-control" id="courseBatchesCount" th:field="${openElective.courseBatchesCount}"
-                                   placeholder="0"/>
+                            <label>Select openElective Type. : </label>
+                            <select class="form-control" id="openElectiveType" name="openElectiveType.id">
+                                <option th:each="openElectiveType : ${openElectiveTypes}" th:value="${openElectiveType.id}" th:text="${openElectiveType.typeOfOpenElective} "></option>
+                            </select>
                         </div>
                     </td>
                 </tr>
+
+<!--                <tr>-->
+<!--                    <td> <label>Total number of batches : </label> </td>-->
+
+<!--                    <td>-->
+
+<!--                        <div class="form-group">-->
+<!--                            <input type="text" class="form-control" id="courseBatchesCount" th:field="${openElective.courseBatchesCount}"-->
+<!--                                   placeholder="0"/>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                </tr>-->
                 <tr><td></td></tr>
 
 
@@ -232,7 +243,7 @@
 
 
             <div align="center">
-                <a href="/hod/listOpenElective/${batchYearSemTerm1.batchYearSemTermId}/${openElectiveType.typeOfOpenElective}" th:href="@{/hod/listOpenElective/__${batchYearSemTerm1.batchYearSemTermId}__/__${openElectiveType.typeOfOpenElective}__}" class="btn btn-primary" role="button">View Open Elective Courses</a>
+                <a href="/hod/listOpenElective/${batchYearSemTerm1.batchYearSemTermId}/" th:href="@{/hod/listOpenElective/__${batchYearSemTerm1.batchYearSemTermId}__}" class="btn btn-primary" role="button">View Open Elective Courses</a>
                 <button class="btn btn-primary">Save</button>
                 <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
             </div>

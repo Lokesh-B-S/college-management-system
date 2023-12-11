@@ -10,7 +10,8 @@ public interface OpenElectiveService {
     List<OpenElective> findAll();
     OpenElective findOne(Long id);
 
-    List<OpenElective> getOpenElectivesByBatchYearSemTermIdAndCourseType(Long batchYearSemTermId, String typeOfOpenElective);
+    List<OpenElective> getOpenElectivesByBatchYearSemTermIdAndOpenElectiveType(Long batchYearSemTermId, OpenElectiveType electiveType);
+    List<OpenElective> getOpenElectivesByBatchYearSemTermId(Long batchYearSemTermId);
 
     OpenElective saveOpenElective(OpenElective openElective);
 
@@ -21,7 +22,7 @@ public interface OpenElectiveService {
 //    Long getBatchYearDeptProgramSemId(Long courseId);
 
 
-    boolean doesEntryExist(Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
+    boolean doesEntryExist(Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, OpenElectiveType openElectiveType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
     //boolean doesEntryExist(Long departmentSemSecId, Day day, TimeSlotSelection timeSlot, Course course);
 
     //OpenElective getEntry(Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);

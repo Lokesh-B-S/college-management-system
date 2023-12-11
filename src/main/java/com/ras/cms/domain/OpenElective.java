@@ -1,6 +1,7 @@
 package com.ras.cms.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 
 @Entity
 public class OpenElective {
@@ -24,9 +25,12 @@ public class OpenElective {
     @ManyToOne
     private TeachingDepartment teachingDepartment;
 
+    @ManyToOne
+    private OpenElectiveType openElectiveType;
+
 
     private Long courseBatchesCount;
-    private String courseType;
+    //private String courseType;
     private Long contactHours; // in Years
     private String courseCode;
     private String courseName;
@@ -100,13 +104,13 @@ public class OpenElective {
         this.teachingDepartment = teachingDepartment;
     }
 
-    public String getCourseType() {
-        return courseType;
-    }
-
-    public void setCourseType(String courseType) {
-        this.courseType = courseType;
-    }
+//    public String getCourseType() {
+//        return courseType;
+//    }
+//
+//    public void setCourseType(String courseType) {
+//        this.courseType = courseType;
+//    }
 
     public Long getContactHours() {
         return contactHours;
@@ -186,5 +190,13 @@ public class OpenElective {
 
     public void setTerm(Term term) {
         this.term = term;
+    }
+
+    public OpenElectiveType getOpenElectiveType() {
+        return openElectiveType;
+    }
+
+    public void setOpenElectiveType(OpenElectiveType openElectiveType) {
+        this.openElectiveType = openElectiveType;
     }
 }

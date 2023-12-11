@@ -42,7 +42,7 @@ public class DepartmentRestController {
 
 
     @PostMapping(value = "/admin/departments", consumes = "application/json", produces = "application/json")
-    public List<Department> updatePrograms(final @RequestBody List<DepartmentUpdateDAO> list) {
+    public List<Department> updateDepartments(final @RequestBody List<DepartmentUpdateDAO> list) {
         List<Department> toDelete = list.stream().filter(o -> o.getAction() == DepartmentUpdateDAO.Action.DELETE)
                 .map(DepartmentUpdateDAO::getData).collect(Collectors.toList());
         List<Department> toUpdate = list.stream().filter(o -> o.getAction() == DepartmentUpdateDAO.Action.UPDATE)

@@ -10,8 +10,10 @@ public interface OpenElectiveRepository extends JpaRepository<OpenElective, Long
 
    // List<OpenElective> findByBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId);
 
-    boolean existsByBatchYearSemTermIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(
-            Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
+    boolean existsByBatchYearSemTermIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndOpenElectiveTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(
+            Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, OpenElectiveType openElectiveType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
+
+
 
 //    OpenElective findByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(
 //            Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
@@ -20,6 +22,7 @@ public interface OpenElectiveRepository extends JpaRepository<OpenElective, Long
 
 //    Long findBatchYearDeptProgramSemIdByOpenElectiveId(Long openElectiveId);
 
-    List<OpenElective> findAllByBatchYearSemTermIdAndCourseType(Long batchYearSemTermId, String typeOfOpenElective);
+    List<OpenElective> findAllByBatchYearSemTermIdAndOpenElectiveType(Long batchYearSemTermId, OpenElectiveType electiveType);
+    List<OpenElective> findAllByBatchYearSemTermId(Long batchYearSemTermId);
 
 }

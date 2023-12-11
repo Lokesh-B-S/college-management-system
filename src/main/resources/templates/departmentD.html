@@ -56,7 +56,7 @@
     <button type="button" class="btn btn-success add-row">Add Department</button>
     <button type="button" class="btn btn-success save">Save</button>
     <button type="button" class="btn btn-secondary refresh">Refresh</button>
-    <a href="/admin/listDepartment" class="btn btn-primary view">Detailed View</a>
+    <a href="/admin/listDepartment" th:href="{/admin/listDepartment}" class="btn btn-primary view">Detailed View</a>
     <a href="/" class="btn btn-primary home">Home</a>
 
 </div>
@@ -137,6 +137,7 @@
           var rowData = { departmentId: row.attr("data-id") };
           var keys = ["college", "departmentName", "departmentCode"];
 
+        //may be collegeVal not needed check once
         var collegeVal = row.find("select").val(); // Extract the dropdown value separately
 
         row.find("input, select").each(function (idx) {

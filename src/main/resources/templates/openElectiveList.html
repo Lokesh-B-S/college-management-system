@@ -17,7 +17,7 @@
 
     <p>
         <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
-        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/selectOpenElectiveType?id=${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/selectOpenElectiveType?id=__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectiveEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectiveEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>
     </p>
 
     <table  class="table table-bordered">
@@ -48,9 +48,9 @@
         </thead>
         <tbody>
         <tr style="text-align:center">
-            <th rowspan="2" class="text-center">Course Id</th>
+            <th rowspan="2" class="text-center">Sl no.</th>
             <th rowspan="2" class="text-center">Added By Dept.</th>
-            <th rowspan="2" class="text-center">Course Type</th>
+            <th rowspan="2" class="text-center">OpenElective Type</th>
             <th rowspan="2" class="text-center">Course Code</th>
             <th rowspan="2" class="text-center">Course Name</th>
             <th rowspan="2" class="text-center">Teaching Department</th>
@@ -65,10 +65,10 @@
             <th>Total</th>
         </tr>
 
-        <tr th:each="allDeptOpenElective : ${AllDeptOpenElectives}">
-            <td th:text="${allDeptOpenElective.openElectiveId}" class="text-center">1</td>
+        <tr th:each="allDeptOpenElective, rowStat : ${AllDeptOpenElectives}">
+            <td th:text="${rowStat.count}" class="text-center">1</td>
             <td th:text="${allDeptOpenElective.department.departmentCode}" class="text-center">1</td>
-            <td th:text="${allDeptOpenElective.courseType}" class="text-center">1</td>
+            <td th:text="${allDeptOpenElective.openElectiveType.typeOfOpenElective}" class="text-center">1</td>
             <td th:text="${allDeptOpenElective.courseCode}" class="text-center">Test</td>
             <td th:text="${allDeptOpenElective.courseName}" class="text-center">Test</td>
             <td th:text="${allDeptOpenElective.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
@@ -125,7 +125,9 @@
 
     <p>
         <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
-        <a href="/hod/selectOpenElectiveType?id=${batchYearSemTermView.batchYearSemTermId}" th:href="@{/hod/selectOpenElectiveType?id=__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectives/addnew/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectives/addnew/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>
+<!--        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectiveEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectiveEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>-->
+
     </p>
 
     <table  class="table table-bordered">
@@ -155,11 +157,11 @@
         </thead>
         <tbody>
         <tr style="text-align:center">
-            <th rowspan="2" class="text-center">Course Id</th>
+            <th rowspan="2" class="text-center">Sl no.</th>
             <th rowspan="2" class="text-center">Added By Dept.</th>
-            <th rowspan="2" class="text-center">Course Type</th>
-            <th rowspan="2" class="text-center">Course Code</th>
-            <th rowspan="2" class="text-center">Course Name</th>
+            <th rowspan="2" class="text-center">OpenElective Type</th>
+            <th rowspan="2" class="text-center">OE Course Code</th>
+            <th rowspan="2" class="text-center">OE Course Name</th>
             <th rowspan="2" class="text-center">Teaching Department</th>
             <th colspan="4" class="text-center">Credits</th>
             <th rowspan="2" class="text-center">Contact Hours/ week</th>
@@ -172,10 +174,10 @@
             <th>Total</th>
         </tr>
 
-        <tr th:each="allDeptOpenElective : ${AllDeptOpenElectives}">
-            <td th:text="${allDeptOpenElective.openElectiveId}" class="text-center">1</td>
+        <tr th:each="allDeptOpenElective, rowStat : ${AllDeptOpenElectives}">
+            <td th:text="${rowStat.count}" class="text-center">1</td>
             <td th:text="${allDeptOpenElective.department.departmentCode}" class="text-center">1</td>
-            <td th:text="${allDeptOpenElective.courseType}" class="text-center">1</td>
+            <td th:text="${allDeptOpenElective.openElectiveType.typeOfOpenElective}" class="text-center">1</td>
             <td th:text="${allDeptOpenElective.courseCode}" class="text-center">Test</td>
             <td th:text="${allDeptOpenElective.courseName}" class="text-center">Test</td>
             <td th:text="${allDeptOpenElective.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>

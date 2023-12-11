@@ -168,3 +168,45 @@ Always note that the @ManyToOne or other such annotations are used for Entities 
 Dynamic:
 Use @RestController instead of @Controller in controller(ex: programController) for dynamic rows implementation
 Flow: MainController -> HTML page -> ProgramController -> repo
+
+--------------------------------
+GIT
+
+git status (if you want to see the files that are changed)
+
+git branch :- ensure its lokesh branch and not master
+git add . :- to add all files to stage
+git commit -m "CMS#21 - committing file named"
+git push origin lokesh
+(authorize the request in gitlab in browser: Lokesh-B-S-001 and Loki@2023)
+
+------------------------------------
+To fetch the part of data from an html page to controller:
+Note:
+use @RequestParam
+name attribute must match in both
+ensure name=openElectiveType and not like name=openElectiveType.id in both html page and controller post method
+use it in POST
+required=false is necessary to avoid diff URL conflict in post
+
+
+refer this:
+ @PostMapping({"hod/selectOpenElective", "/admin/selectOpenElective"})
+    public String selectandsubmitOpenElectiveCourse(Model model, Authentication authentication,
+                                                    BatchYearSemTerm batchYearSemTerm, RedirectAttributes redirectAttributes, HttpServletRequest request,
+                                                    @RequestParam(required= false, name="openElectiveType") Long openElectiveTypeId) {
+
+       System.out.println(openElectiveTypeId);
+
+-----------------------------------------------
+sometimes, if the model.attribute is not visible in html page, try with if condition it works:
+<div th:if="${batchYearSemTermm}">
+        <p th:text="${batchYearSemTermm.batch.batchName}"></p>
+    </div>
+
+-------------------------------
+when writing links in <script>:
+   $.getJSON("/hod/openElectives/batchYearSemTermId", function (data) {} :- seems static, instead use
+   $.getJSON("/hod/openElectives/" + batchYearSemTermId, function (data) {}
+
+  ----------------------------

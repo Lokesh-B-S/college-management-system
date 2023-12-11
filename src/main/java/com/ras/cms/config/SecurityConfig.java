@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .withUser("p").password("{noop}p").roles("PRINCIPAL")    //user //password //admin //password
                 .and()
-                .withUser("hodcse").password("{noop}p").roles("DEPT_HEAD")
+                .withUser("h").password("{noop}p").roles("DEPT_HEAD")
                 .and()
                 .withUser("hodmech").password("{noop}p").roles("DEPT_HEAD")
                 .and()

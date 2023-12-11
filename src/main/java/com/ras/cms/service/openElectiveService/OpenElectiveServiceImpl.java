@@ -25,9 +25,15 @@ public class OpenElectiveServiceImpl implements OpenElectiveService{
     }
 
     @Override
-    public List<OpenElective> getOpenElectivesByBatchYearSemTermIdAndCourseType(Long batchYearSemTermId, String typeOfOpenElective){
-        return openElectiveRepository.findAllByBatchYearSemTermIdAndCourseType(batchYearSemTermId, typeOfOpenElective);
+    public List<OpenElective> getOpenElectivesByBatchYearSemTermIdAndOpenElectiveType(Long batchYearSemTermId, OpenElectiveType electiveType){
+        return openElectiveRepository.findAllByBatchYearSemTermIdAndOpenElectiveType(batchYearSemTermId, electiveType);
     }
+        @Override
+    public List<OpenElective> getOpenElectivesByBatchYearSemTermId(Long batchYearSemTermId){
+        return openElectiveRepository.findAllByBatchYearSemTermId(batchYearSemTermId);
+    }
+
+
 //    @Override
 //    public Long getBatchYearSemTermIdByOpenElectiveId(Long openElectiveId){return openElectiveRepository.findBatchYearSemTermIdByOpenElectiveId(openElectiveId);}
 
@@ -45,8 +51,8 @@ public class OpenElectiveServiceImpl implements OpenElectiveService{
 //        return openElectiveRepository.findByBatchYearDeptProgramSemId(batchYearDeptProgramSemId);
 //    }
 
-    public boolean doesEntryExist(Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
-        return openElectiveRepository.existsByBatchYearSemTermIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearSemTermId, contactHours,courseBatchesCount, courseCode, courseName,teachingDepartmentName, courseType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
+    public boolean doesEntryExist(Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, OpenElectiveType openElectiveType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
+        return openElectiveRepository.existsByBatchYearSemTermIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndOpenElectiveTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearSemTermId, contactHours,courseBatchesCount, courseCode, courseName,teachingDepartmentName, openElectiveType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
     }
 
     //fetching the row based on below parameters

@@ -30,7 +30,7 @@ public class DepartmentProgramFetchServiceImpl implements DepartmentProgramFetch
     public DepartmentAndProgramFetch getDepartmentAndProgramFromUserName(String userName) {
         String department = "";
         String program = "";
-        if ("hodcse".equals(userName)) {
+        if ("h".equals(userName)) {
             department = "Computer Science";
             program = "BE - computer science";
         } else if ("hodise".equals(userName)) {

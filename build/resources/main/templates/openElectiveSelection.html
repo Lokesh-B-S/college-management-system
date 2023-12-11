@@ -27,10 +27,17 @@
                 <td align="left">
                     <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editAcademicYear" th:href="@{/hod/editAcademicYear}" class="btn btn-primary" role="button">Add Academic Year</a>
                 </td>
+                <td align="left">
+                    <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editOpenElectiveType" th:href="@{/hod/editOpenElectiveType}" class="btn btn-primary" role="button">Add OpenElective Type</a>
+                </td>
+                <td align="left">
+                    <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editTeachingDepartment" th:href="@{/hod/editTeachingDepartment}" class="btn btn-primary" role="button">Add Teaching Department</a>
+                </td>
+
 
                 <td align="right">
                     <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">Proceed</button>
                     <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
                 </td>
             </tr>
@@ -106,6 +113,20 @@
                     </div>
                 </td>
                 <td> &nbsp</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group" th:if="${#request.isUserInRole('PRINCIPAL')}">
+                        <label>Select OpenElective Type: </label>
+                        <select class="form-control" id="openElectiveType" name="openElectiveType">
+                            <option th:each="openElectiveType : ${openElectiveTypes}" th:value="${openElectiveType.id}" th:text="${openElectiveType.typeOfOpenElective}"></option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td></td>
             </tr>
 
         </table>
