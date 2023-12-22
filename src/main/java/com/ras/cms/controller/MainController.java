@@ -44,27 +44,39 @@ public class MainController {
             System.out.println(batchYearSemTermId);
 
             BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.findOne(batchYearSemTermId);
-            System.out.println(batchYearSemTerm.getBatchYearSemTermId());
-            System.out.println(batchYearSemTerm.getBatch().getBatchName());
-            System.out.println(batchYearSemTerm.getAcademicYear().getYear());
-            System.out.println(batchYearSemTerm.getSemester().getSem());
-            System.out.println(batchYearSemTerm.getTerm().getTermDate());
-
-//            OpenElective openElective = openElectiveService.findOne(8L);
-//            System.out.println(openElective);
-//            model.addAttribute("openElective2",openElective);
             model.addAttribute("batchYearSemTerm", batchYearSemTerm);
 
             DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+            model.addAttribute("department", departmentAndProgramFetch.getDepartment());
+            model.addAttribute("program", departmentAndProgramFetch.getProgram());
+
+            //to know the type() of a variable
             System.out.println(departmentAndProgramFetch.getDepartment().getDepartmentId().getClass().getSimpleName());
             System.out.println(departmentAndProgramFetch.getProgram().getProgramId().getClass().getSimpleName());
-
+            //to fetch these ids
             //model.addAttribute("departmentId", departmentAndProgramFetch.getDepartment().getDepartmentId());
             //model.addAttribute("programId", departmentAndProgramFetch.getProgram().getProgramId());
 
+        }
+    return "OpenElectiveEditD";}
+
+
+
+
+    @GetMapping("/hod/courses/addnew/{batchYearSemTermId}")
+    public String courses(Model model,
+                                HttpServletRequest request,
+                                @PathVariable(required = false, name = "batchYearSemTermId") Long batchYearSemTermId){
+        if (null != batchYearSemTermId) {
+            System.out.println(batchYearSemTermId);
+
+            BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.findOne(batchYearSemTermId);
+            model.addAttribute("batchYearSemTerm", batchYearSemTerm);
+
+            DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
             model.addAttribute("department", departmentAndProgramFetch.getDepartment());
             model.addAttribute("program", departmentAndProgramFetch.getProgram());
 
         }
-    return "OpenElectiveEditD";}
+        return "courseEditD";}
 }

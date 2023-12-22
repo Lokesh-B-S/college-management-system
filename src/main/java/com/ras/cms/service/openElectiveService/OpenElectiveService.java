@@ -13,6 +13,8 @@ public interface OpenElectiveService {
     List<OpenElective> getOpenElectivesByBatchYearSemTermIdAndOpenElectiveType(Long batchYearSemTermId, OpenElectiveType electiveType);
     List<OpenElective> getOpenElectivesByBatchYearSemTermId(Long batchYearSemTermId);
 
+    List<OpenElective> getOpenElectivesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department);
+
     OpenElective saveOpenElective(OpenElective openElective);
 
    // List<OpenElective> getEntriesByBatchYearDeptProgramSemId(Long BatchYearDeptProgramSemId);

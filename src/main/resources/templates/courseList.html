@@ -12,12 +12,12 @@
 </head>
 <body>
 <div th:replace="fragments/header :: header"/>
-<div class="container">
-<!--    <h1> Courses </h1>-->
+<div class="container" th:if="${#request.isUserInRole('PRINCIPAL')}">
+    <!--    <h1> Courses </h1>-->
 
     <p>
         <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
-        <a href="/hod/selectCourseType?id=${batchYearDeptProgramSemView.batchYearDeptProgramSemId}}" th:href="@{/hod/selectCourseType?id=__${batchYearDeptProgramSemView.batchYearDeptProgramSemId}__}">Add more</a>
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/courseEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/courseEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>
     </p>
 
     <table  class="table table-bordered">
@@ -29,26 +29,27 @@
             </th>
         </tr>
 
+        <!--        <tr>-->
+        <!--            <th colspan="11"  style="font-size: 30px;"  class="text-center"></th>-->
+        <!--        </tr>-->
+        <!--        <tr>-->
+        <!--            <th colspan="11" style="font-size: 25px;"  class="text-center"></th>-->
+        <!--        </tr>-->
         <tr>
-            <th colspan="11" th:text="'Department of ' + ${batchYearDeptProgramSemView.department.departmentName}" style="font-size: 30px;"  class="text-center">Department</th>
-           </tr>
-        <tr>
-            <th colspan="11" th:text="'Programme: ' + ${batchYearDeptProgramSemView.program.programName}" style="font-size: 25px;"  class="text-center">Program</th>
-            </tr>
-        <tr>
-            <th colspan="5" th:text="'Batch: ' + ${batchYearDeptProgramSemView.batch.batchName}" style="font-size: 20px;"  class="text-center">Batch</th>
-            <th colspan="7" th:text="'Academic Year: ' + ${batchYearDeptProgramSemView.academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+            <th colspan="5" th:text="'Batch: ' + ${batchYearSemTermView.batch.batchName}" style="font-size: 20px;"  class="text-center">Batch</th>
+            <th colspan="7" th:text="'Academic Year: ' + ${batchYearSemTermView.academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
         </tr>
         <tr>
-            <th colspan="5" th:text="'Semester: ' + ${batchYearDeptProgramSemView.semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
-            <th colspan="7" th:text="'Term: '" style="font-size: 20px;" class="text-center">Term</th>
+            <th colspan="5" th:text="'Semester: ' + ${batchYearSemTermView.semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+            <th colspan="7" th:text="'Term: ' + ${batchYearSemTermView.term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
         </tr>
 
 
         </thead>
         <tbody>
         <tr style="text-align:center">
-            <th rowspan="2" class="text-center">Course Id</th>
+            <th rowspan="2" class="text-center">Sl no.</th>
+            <th rowspan="2" class="text-center">Added By Dept.</th>
             <th rowspan="2" class="text-center">Course Type</th>
             <th rowspan="2" class="text-center">Course Code</th>
             <th rowspan="2" class="text-center">Course Name</th>
@@ -64,104 +65,166 @@
             <th>Total</th>
         </tr>
 
-        <tr th:each="course : ${courses}">
-            <td th:text="${course.courseId}" class="text-center">1</td>
-            <td th:text="${course.courseType}" class="text-center">1</td>
-            <td th:text="${course.courseCode}" class="text-center">Test</td>
-            <td th:text="${course.courseName}" class="text-center">Test</td>
-            <td th:text="${course.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
-            <td th:text="${course.lectureCredits}" class="text-center">Test</td>
-            <td th:text="${course.tutorialCredits}" class="text-center">Test</td>
-            <td th:text="${course.practicalCredits}" class="text-center">Test</td>
-            <td th:text="${course.totalCredits}" class="text-center">Test</td>
-            <td th:text="${course.contactHours}" class="text-center">Test</td>
+        <tr th:each="allDeptCourse, rowStat : ${AllDeptCourses}">
+            <td th:text="${rowStat.count}" class="text-center">1</td>
+            <td th:text="${allDeptCourse.department.departmentCode}" class="text-center">1</td>
+            <td th:text="${allDeptCourse.courseType.typeOfCourse}" class="text-center">1</td>
+            <td th:text="${allDeptCourse.courseCode}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.courseName}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.lectureCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.tutorialCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.practicalCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.totalCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.contactHours}" class="text-center">Test</td>
 
-<!--            <td th:text="${course.program.programName}">Test</td>-->
-<!--            <td th:text="${course.department.departmentName}">Test</td>-->
-<!--            <td th:text="${course.semester.sem}">Test</td>-->
             <td>
-<!--                <a href="/admin/courseEdit/1" th:href="@{/admin/courseEdit/__${course.courseId}__}">Edit</a>-->
-&nbsp;&nbsp;
-                <a href="/hod/deleteCourse/1" th:href="@{/hod/deleteCourse/__${course.courseId}__}">Delete</a>
-
-                <!--<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>-->
+                <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/deleteCourse/1" th:href="@{/admin/deleteCourse/__${allDeptCourse.courseId}__}">Delete</a>
+                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteCourse/1" th:href="@{/hod/deleteCourse/__${allDeptCourse.courseId}__}">Delete</a>
             </td>
         </tr>
-        <tr>
-            <th class="text-center">Total</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+        <!--        <tr>-->
+        <!--            <th class="text-center">Total</th>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
 
-            <th th:text="${totalLectureCredits}" class="text-center">0</th>
-            <th th:text="${totalTutorialCredits}" class="text-center">0</th>
-            <th th:text="${totalPracticalCredits}" class="text-center">0</th>
-            <th th:text="${totalTotalCredits}" class="text-center">0</th>
-            <th th:text="${totalContactHours}" class="text-center">0</th>
-
-
-        </tr>
+        <!--            <th th:text="${totalLectureCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalTutorialCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalPracticalCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalTotalCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalContactHours}" class="text-center">0</th>-->
+        <!--        </tr>-->
         </tbody>
     </table>
 
 
-<!--    Print  -->
+    <!--    Print  -->
     <div align="center">
-    <button id="printButton">Print</button>
-    <script>
-        document.getElementById("printButton").addEventListener("click", function() {
-        window.print();
-        });
-    </script>
+        <button id="printButton1">Print</button>
+        <script>
+            document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+            });
+        </script>
     </div>
 
 
-<!--    <table  class="table table-striped table-bordered">-->
-<!--        <thead>-->
-
-<!--        <tr style="text-align:center">-->
-<!--            <th rowspan="2">Course Id</th>-->
-<!--            <th rowspan="2">Course Code</th>-->
-<!--            <th rowspan="2">Course Name</th>-->
-<!--            <th rowspan="2">Teaching Department</th>-->
-<!--            <th colspan="4">Credits</th>-->
-<!--            <th rowspan="2">Contact Hours</th>-->
-<!--            <th rowspan="2">Actions</th>-->
-<!--        </tr>-->
-<!--        <tr style="text-align:center">-->
-<!--            <th>L</th>-->
-<!--            <th>T</th>-->
-<!--            <th>P</th>-->
-<!--            <th>Total</th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--        <tr th:each="course : ${courses}">-->
-<!--            <td th:text="${course.courseId}">1</td>-->
-<!--            <td th:text="${course.courseCode}">Test</td>-->
-<!--            <td th:text="${course.courseName}">Test</td>-->
-<!--            <td th:text="${course.department.departmentName}">Test</td>-->
-<!--            <td th:text="${course.lectureCredits}">Test</td>-->
-<!--            <td th:text="${course.tutorialCredits}">Test</td>-->
-<!--            <td th:text="${course.practicalCredits}">Test</td>-->
-<!--            <td th:text="${course.totalCredits}">Test</td>-->
-<!--            <td th:text="${course.contactHours}">Test</td>-->
-
-<!--            &lt;!&ndash;            <td th:text="${course.program.programName}">Test</td>&ndash;&gt;-->
-<!--            &lt;!&ndash;            <td th:text="${course.department.departmentName}">Test</td>&ndash;&gt;-->
-<!--            &lt;!&ndash;            <td th:text="${course.semester.sem}">Test</td>&ndash;&gt;-->
-<!--            <td>-->
-<!--                <a href="/admin/courseEdit/1" th:href="@{/admin/courseEdit/__${course.courseId}__}">Edit</a>-->
-<!--                &nbsp;&nbsp;-->
-<!--                <a href="/admin/deleteCourse/1" th:href="@{/admin/deleteCourse/__${course.courseId}__}">Delete</a>-->
-
-<!--                &lt;!&ndash;<a href="/subjectTypeDelete/1" th:href="@{/subjectTypeDelete/__${subjectType.subjectTypeId}__}">Delete</a>&ndash;&gt;-->
-<!--            </td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--    </table>-->
 </div>
+
+
+
+
+
+
+
+
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+    <p>
+        <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/courses/addnew/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/courses/addnew/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>
+        <!--        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectiveEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectiveEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>-->
+
+    </p>
+
+    <table  class="table table-bordered">
+        <thead>
+
+        <tr>
+            <th colspan="11" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                class="text-center">College
+            </th>
+        </tr>
+
+        <!--        <tr>-->
+        <!--            <th colspan="11" style="font-size: 30px;"  class="text-center"></th>-->
+        <!--        </tr>-->
+        <!--        <tr>-->
+        <!--            <th colspan="11"  style="font-size: 25px;"  class="text-center"></th>-->
+        <!--        </tr>-->
+        <tr>
+            <th colspan="5" th:text="'Batch: ' + ${batchYearSemTermView.batch.batchName}" style="font-size: 20px;"  class="text-center">Batch</th>
+            <th colspan="7" th:text="'Academic Year: ' + ${batchYearSemTermView.academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+        </tr>
+        <tr>
+            <th colspan="5" th:text="'Semester: ' + ${batchYearSemTermView.semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+            <th colspan="7" th:text="'Term: ' + ${batchYearSemTermView.term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+        </tr>
+
+        </thead>
+        <tbody>
+        <tr style="text-align:center">
+            <th rowspan="2" class="text-center">Sl no.</th>
+            <th rowspan="2" class="text-center">Added By Dept.</th>
+            <th rowspan="2" class="text-center">Course Type</th>
+            <th rowspan="2" class="text-center">Course Code</th>
+            <th rowspan="2" class="text-center">Course Name</th>
+            <th rowspan="2" class="text-center">Teaching Department</th>
+            <th colspan="4" class="text-center">Credits</th>
+            <th rowspan="2" class="text-center">Contact Hours/ week</th>
+            <!--            <th rowspan="2" class="text-center">Actions</th>-->
+        </tr>
+        <tr style="text-align:center">
+            <th>L</th>
+            <th>T</th>
+            <th>P</th>
+            <th>Total</th>
+        </tr>
+
+        <tr th:each="allDeptCourse, rowStat : ${AllDeptCourses}">
+            <td th:text="${rowStat.count}" class="text-center">1</td>
+            <td th:text="${allDeptCourse.department.departmentCode}" class="text-center">1</td>
+            <td th:text="${allDeptCourse.courseType.typeOfCourse}" class="text-center">1</td>
+            <td th:text="${allDeptCourse.courseCode}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.courseName}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.lectureCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.tutorialCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.practicalCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.totalCredits}" class="text-center">Test</td>
+            <td th:text="${allDeptCourse.contactHours}" class="text-center">Test</td>
+
+            <!--            delete option disabled for HOD-->
+            <!--            <td>&nbsp;&nbsp;-->
+            <!--                <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/deleteOpenElective/1" th:href="@{/admin/deleteOpenElective/__${allDeptOpenElective.openElectiveId}__}">Delete</a>-->
+            <!--                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteOpenElective/1" th:href="@{/hod/deleteOpenElective/__${allDeptOpenElective.openElectiveId}__}">Delete</a>-->
+            <!--            </td>-->
+        </tr>
+
+        <!--        //Total code - for future-->
+        <!--        <tr>-->
+        <!--            <th class="text-center">Total</th>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+
+        <!--            <th th:text="${totalLectureCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalTutorialCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalPracticalCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalTotalCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalContactHours}" class="text-center">0</th>-->
+        <!--        </tr>-->
+        </tbody>
+    </table>
+
+
+    <!--    Print  -->
+    <div align="center">
+        <button id="printButton2">Print</button>
+        <script>
+            document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+            });
+        </script>
+    </div>
+
+
+</div>
+
 <div th:replace="fragments/footer :: footer"/>
 </body>
 </html>

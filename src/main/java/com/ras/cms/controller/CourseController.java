@@ -4,25 +4,27 @@ import com.ras.cms.domain.*;
 import com.ras.cms.service.academicyear.AcademicYearService;
 import com.ras.cms.service.batch.BatchService;
 import com.ras.cms.service.batchyeardeptprogramsem.BatchYearDeptProgramSemService;
+import com.ras.cms.service.batchyearsemterm.BatchYearSemTermService;
+import com.ras.cms.service.course.CourseService;
 import com.ras.cms.service.coursetype.CourseTypeService;
 import com.ras.cms.service.department.DepartmentService;
-import com.ras.cms.service.course.CourseService;
+import com.ras.cms.service.departmentProgramFetch.DepartmentProgramFetchService;
 import com.ras.cms.service.program.ProgramService;
 import com.ras.cms.service.semester.SemesterService;
 import com.ras.cms.service.teachingdepartment.TeachingDepartmentService;
+import com.ras.cms.service.termService.TermService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-/**
- * Created by Surya on 12-Jun-18.
- */
 @Controller
-@RequestMapping("/hod")
+//@RequestMapping("/admin")
 public class CourseController {
 
     @Autowired
@@ -51,76 +53,116 @@ public class CourseController {
     @Autowired
     TeachingDepartmentService teachingDepartmentService;
 
+    @Autowired
+    BatchYearSemTermService batchYearSemTermService;
+
+    @Autowired
+    TermService termService;
+
+    @Autowired
+    DepartmentProgramFetchService departmentProgramFetchService;
 
 
-    @GetMapping(value = "/listCourse/{id}")
-    public String courseList(Model model, @PathVariable(required = false, name = "id") Long id) {
-        List<Course> entries = courseService.getEntriesByBatchYearDeptProgramSemId(id);
-        model.addAttribute("id", id);
+    @GetMapping(value = {"/admin/listCourse/{batchYearSemTermId}/{courseTypeId}", "/hod/listCourse/{batchYearSemTermId}"})
+    public String courseList(Model model, HttpServletRequest request, Authentication authentication,
+                                         @PathVariable(required = false, name = "batchYearSemTermId") Long batchYearSemTermId,
+                                         @PathVariable(required = false, name = "courseTypeId") Long courseTypeId)
+    {
 
-        BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
-        if (batchYearDeptProgramSem != null) {
-            List<Course> courses = courseService.getCoursesByDepartmentAndSemester(batchYearDeptProgramSem.getDepartment(), batchYearDeptProgramSem.getSemester());
-            model.addAttribute("courses", courses);
-            model.addAttribute("batchYearDeptProgramSemView", batchYearDeptProgramSem);
+        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+        Department dep = departmentAndProgramFetch.getDepartment();
 
-            // Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours
-            Long totalLectureCredits = courses.stream().mapToLong(Course::getLectureCredits).sum();
-            Long totalTutorialCredits = courses.stream().mapToLong(Course::getTutorialCredits).sum();
-            Long totalPracticalCredits = courses.stream().mapToLong(Course::getPracticalCredits).sum();
-            Long totalTotalCredits = courses.stream().mapToLong(Course::getTotalCredits).sum();
-            Long totalContactHours = courses.stream().mapToLong(Course::getContactHours).sum();
+        if (null != batchYearSemTermId) {
+            BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.findOne(batchYearSemTermId);
+            model.addAttribute("batchYearSemTermView", batchYearSemTerm);
 
-            model.addAttribute("courses", courses);
-            //model.addAttribute("teachingDepartments",teachingDepartmentService.findAll());
-            model.addAttribute("totalLectureCredits", totalLectureCredits);
-            model.addAttribute("totalTutorialCredits", totalTutorialCredits);
-            model.addAttribute("totalPracticalCredits", totalPracticalCredits);
-            model.addAttribute("totalTotalCredits", totalTotalCredits);
-            model.addAttribute("totalContactHours", totalContactHours);
-        } else {
-            model.addAttribute("courses", courseService.findAll());
+            if (request.isUserInRole("PRINCIPAL")) {
+
+                if (courseTypeId != null) {
+                    CourseType courseType = courseTypeService.findOne(courseTypeId); // Fetch the CourseType
+                    if (courseType != null) {
+                        List<Course> AllDeptCourses = courseService.getCoursesByBatchYearSemTermIdAndCourseType(batchYearSemTermId, courseType);
+                        model.addAttribute("AllDeptCourses", AllDeptCourses);
+                    }
+                    else{
+                        System.out.println("course type not found");
+                    }
+                }
+            }
+            else  if (request.isUserInRole("DEPT_HEAD")) {
+
+                List<Course> AllDeptCourses = courseService.getCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, dep);
+                model.addAttribute("AllDeptCourses", AllDeptCourses);
+
+                //Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours
+                Long totalLectureCredits = AllDeptCourses.stream().mapToLong(Course::getLectureCredits).sum();
+                Long totalTutorialCredits = AllDeptCourses.stream().mapToLong(Course::getTutorialCredits).sum();
+                Long totalPracticalCredits = AllDeptCourses.stream().mapToLong(Course::getPracticalCredits).sum();
+                Long totalTotalCredits = AllDeptCourses.stream().mapToLong(Course::getTotalCredits).sum();
+                Long totalContactHours = AllDeptCourses.stream().mapToLong(Course::getContactHours).sum();
+
+                model.addAttribute("totalLectureCredits", totalLectureCredits);
+                model.addAttribute("totalTutorialCredits", totalTutorialCredits);
+                model.addAttribute("totalPracticalCredits", totalPracticalCredits);
+                model.addAttribute("totalTotalCredits", totalTotalCredits);
+                model.addAttribute("totalContactHours", totalContactHours);
+            }
+
         }
-
-        //model.addAttribute("courseList", courseService.findAll());
         return "/courseList";
+
     }
 
-    @GetMapping("/selectCourse")
-    public String selectCourse(Model model) {
+    @GetMapping({"/admin/selectCourse", "hod/selectCourse"})
+    public String selectCoursebasicFields(Model model) {
 
         List<Batch> batches = batchService.findAll();
         List<AcademicYear> academicYears = academicYearService.findAll();
-        List<Department> departments = departmentService.findAll();
-        List<Program> programs = programService.findAll();
         List<Semester> semesters = semesterService.findAll();
+        List<Term> terms = termService.findAll();
+        List<CourseType> courseTypes = courseTypeService.findAll();
 
         model.addAttribute("batches", batches);
         model.addAttribute("academicYears", academicYears);
-        model.addAttribute("departments", departments);
-        model.addAttribute("programs", programs);
         model.addAttribute("semesters", semesters);
+        model.addAttribute("terms", terms);
+        model.addAttribute("courseTypes", courseTypes);
 
-        model.addAttribute("batchYearDeptProgramSem", new BatchYearDeptProgramSem());
-
+        model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
         return "/courseSelection";
     }
 
 
-    @PostMapping("/selectCourse")
-    public String selectandsubmitCourse(Model model, BatchYearDeptProgramSem batchYearDeptProgramSem, RedirectAttributes redirectAttributes) {
+    @PostMapping({"hod/selectCourse", "/admin/selectCourse"})
+    public String selectandsubmitCourse(Model model, Authentication authentication,
+                                                    BatchYearSemTerm batchYearSemTerm, RedirectAttributes redirectAttributes, HttpServletRequest request,
+                                                    @RequestParam(required= false, name="courseType") Long courseTypeId) {
 
-        if (batchYearDeptProgramSemService.existsEntry(batchYearDeptProgramSem)) {
+        System.out.println(courseTypeId);
+        if (batchYearSemTermService.existsEntry(batchYearSemTerm)) {
             redirectAttributes.addFlashAttribute("message", "Entry already exists.");
-            BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
-            return "redirect:/hod/selectCourseType?id=" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId();
+            BatchYearSemTerm batchYearSemTerm1 = batchYearSemTermService.findRow(batchYearSemTerm);
+
+            if (request.isUserInRole("PRINCIPAL")) {
+                return "redirect:/admin/listCourse/" + batchYearSemTerm1.getBatchYearSemTermId() + "/" + courseTypeId ;
+            }
+            else if(request.isUserInRole("DEPT_HEAD")){
+                return "redirect:/hod/listCourse/" + batchYearSemTerm1.getBatchYearSemTermId();
+            }
         } else {
             try {
-                batchYearDeptProgramSemService.saveEntry(batchYearDeptProgramSem);
+                batchYearSemTermService.saveEntry(batchYearSemTerm);
                 try {
-                    BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findOne(batchYearDeptProgramSem.getBatchYearDeptProgramSemId());
-                    model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSem1);
-                    return "redirect:/hod/selectCourseType?id=" + batchYearDeptProgramSem.getBatchYearDeptProgramSemId();
+                    BatchYearSemTerm batchYearSemTerm1 = batchYearSemTermService.findOne(batchYearSemTerm.getBatchYearSemTermId());
+                    model.addAttribute("batchYearSemTerm1", batchYearSemTerm1);
+                    if (request.isUserInRole("PRINCIPAL")) {
+                        return "redirect:/admin/listCourse/" + batchYearSemTerm1.getBatchYearSemTermId() + "/" + courseTypeId ;
+                    } else if (request.isUserInRole("DEPT_HEAD")) {
+                        //if i had to use openElectiveEdit(non dynamic)
+//                        return "redirect:/hod/openElectiveEdit/" + batchYearSemTerm.getBatchYearSemTermId();
+                        return "redirect:/hod/listCourse/" + batchYearSemTerm1.getBatchYearSemTermId();
+
+                    }
                 } catch (Exception e) {
                 }
             } catch (Exception e) {
@@ -129,83 +171,62 @@ public class CourseController {
         return "/403";
     }
 
-    @GetMapping("/selectCourseType")
-    public String selectCourseType(Model model, @RequestParam(required = false, name = "id") Long id) {
-        if (null != id) {
-            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(id));
+
+    @GetMapping(value = {"/hod/courseEdit", "/hod/courseEdit/{courseId}", "/hod/courseEdit/{batchYearSemTermId}"})
+    public String CourseEdit(Model model, HttpServletRequest request,
+                                         @RequestParam(required = false, name = "id") Long id,
+                                         @PathVariable(required = false, name="courseId") Long courseId,
+                                         @PathVariable(required = false, name = "batchYearSemTermId") Long batchYearSemTermId)
+    {
+
+        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+        model.addAttribute("department", departmentAndProgramFetch.getDepartment());
+        model.addAttribute("program", departmentAndProgramFetch.getProgram());
+
+
+        if (null != batchYearSemTermId) {
+            model.addAttribute("batchYearSemTerm1", batchYearSemTermService.findOne(batchYearSemTermId));
         } else {
-            model.addAttribute("batchYearDeptProgramSem1", new BatchYearDeptProgramSem());
+            model.addAttribute("batchYearSemTerm1", new BatchYearSemTerm());
         }
 
-        List<CourseType> courseTypes = courseTypeService.findAll();
-        model.addAttribute("courseTypes", courseTypes);
-        return "courseTypeSelect";
-    }
-
-    @PostMapping("/selectCourseType")
-    public String selectandsubmitCourseType(Model model,@ModelAttribute CourseType courseType, BatchYearDeptProgramSem batchYearDeptProgramSem, RedirectAttributes redirectAttributes) {
-
-        System.out.println(courseType.getCourseTypeId() +  courseType.getTypeOfCourse());
-
-
-            BatchYearDeptProgramSem batchYearDeptProgramSem1 = batchYearDeptProgramSemService.findRow(batchYearDeptProgramSem);
-            return "redirect:/hod/courseEdit/" + batchYearDeptProgramSem1.getBatchYearDeptProgramSemId() + "/" + courseType.getTypeOfCourse() ;
-//return "courseTypeSelect";
-    }
-
-
-    @GetMapping(value = {"/courseEdit", "/courseEdit/{courseId}", "/courseEdit/{batchYearDeptProgramSemId}/{courseType}"})
-    public String courseEdit(Model model, @RequestParam(required = false, name = "id") Long id,
-                             @PathVariable(required = false, name="courseId") Long courseId,
-                             @PathVariable(required = false, name = "batchYearDeptProgramSemId") Long batchYearDeptProgramId,
-                             @PathVariable(required = false, name="courseType") String typeOfCourse) {
-       System.out.println(typeOfCourse);
-        if (null != batchYearDeptProgramId) {
-            model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(batchYearDeptProgramId));
-        } else {
-            model.addAttribute("batchYearDeptProgramSem1", new BatchYearDeptProgramSem());
+        // BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
+        if(courseId!=null){
+            model.addAttribute("course", courseService.findOne(courseId));
+            Course course1 = courseService.findOne(courseId);
+            Long batchYearSemTermId1 = course1.getBatchYearSemTermId();
+            model.addAttribute("batchYearSemTerm1", batchYearSemTermService.findOne(batchYearSemTermId1));
+        }
+        else {
+            model.addAttribute("course", new Course());
         }
 
-       // BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
-if(courseId!=null){
-    model.addAttribute("course", courseService.findOne(courseId));
-    Course course1 = courseService.findOne(courseId);
-    Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
-    model.addAttribute("batchYearDeptProgramSem1", batchYearDeptProgramSemService.findOne(batchYearDeptProgramSemId));
-}
-else {
-    model.addAttribute("course", new Course());
-}
-
-CourseType courseType = courseTypeService.getCourseTypeByTypeOfCourse(typeOfCourse);
-
-        model.addAttribute("courseType", courseType);
-        model.addAttribute("departments", departmentService.findAll());
-        model.addAttribute("programs", programService.findAll());
-        model.addAttribute("semesters", semesterService.findAll());
+        model.addAttribute("courseTypes", courseTypeService.findAll());
         model.addAttribute("teachingDepartments", teachingDepartmentService.findAll());
 
-
-        System.out.println(courseType.getTypeOfCourse() + " in get");
-       // model.addAttribute("courseEntry", new Course());
         return "/courseEdit";
     }
 
-    @PostMapping(value = "/courseEdit")
-    public String courseEdit(Model model,@ModelAttribute CourseType courseType, Course course, BatchYearDeptProgramSem batchYearDeptProgramSem1, RedirectAttributes attributes, @RequestParam Long batchYearDeptProgramSemId) {
+    @PostMapping(value = "/hod/courseEdit")
+    public String CourseEdit(Model model,
+                                         HttpServletRequest request,
+                                         @ModelAttribute CourseType courseType, Course course, BatchYearSemTerm batchYearSemTerm1, RedirectAttributes attributes, @RequestParam Long batchYearSemTermId) {
 
-                try {
+        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+
+        try {
             // Check if an entry already exists for the given parameters, if yes set the batch,program etc values to course and save
-            boolean entryExists = courseService.doesEntryExist(batchYearDeptProgramSemId, course.getContactHours(),course.getCourseBatchesCount(), course.getCourseCode(), course.getCourseName(), course.getTeachingDepartment(), course.getCourseType(), course.getLectureCredits(), course.getTutorialCredits(), course.getPracticalCredits(), course.getTotalCredits());
+            boolean entryExists = courseService.doesEntryExist(batchYearSemTermId, course.getContactHours(),course.getCourseBatchesCount(), course.getCourseCode(), course.getCourseName(), course.getTeachingDepartment(), course.getCourseType(), course.getLectureCredits(), course.getTutorialCredits(), course.getPracticalCredits(), course.getTotalCredits());
 
             if (!entryExists) {
-                course.setBatchYearDeptProgramSemId(batchYearDeptProgramSem1.getBatchYearDeptProgramSemId());
-                course.setDepartment(batchYearDeptProgramSem1.getDepartment());
-                course.setProgram(batchYearDeptProgramSem1.getProgram());
-                course.setSemester(batchYearDeptProgramSem1.getSemester());
-                course.setBatch(batchYearDeptProgramSem1.getBatch());
-                course.setAcademicYear(batchYearDeptProgramSem1.getAcademicYear());
-               course.setCourseType(courseType.getTypeOfCourse());
+                course.setBatchYearSemTermId(batchYearSemTerm1.getBatchYearSemTermId());
+                course.setDepartment(departmentAndProgramFetch.getDepartment());
+                course.setProgram(departmentAndProgramFetch.getProgram());
+                course.setSemester(batchYearSemTerm1.getSemester());
+                course.setTerm(batchYearSemTerm1.getTerm());
+                course.setBatch(batchYearSemTerm1.getBatch());
+                course.setAcademicYear(batchYearSemTerm1.getAcademicYear());
+                //course.setCourseType(courseType.getTypeOfCourse());
 
                 System.out.println(courseType.getTypeOfCourse() + " in post");
                 courseService.saveCourse(course);
@@ -224,20 +245,30 @@ CourseType courseType = courseTypeService.getCourseTypeByTypeOfCourse(typeOfCour
             attributes.addFlashAttribute("errorMessage", "Course couldn't be saved!");
 
         }
-        return "redirect:/hod/courseEdit/" + batchYearDeptProgramSemId + "/" + courseType.getTypeOfCourse();
+        return "redirect:/hod/courseEdit/" + batchYearSemTermId;
 //        return "redirect:/admin/courseEdit?id=" + batchYearDeptProgramSemId;
     }
 
 
-    @GetMapping(value="/deleteCourse/{courseId}")
-    public String courseDelete(Model model, @PathVariable(required = true, name = "courseId") Long courseId, RedirectAttributes attributes, BatchYearDeptProgramSem batchYearDeptProgramSem) {
+
+    @GetMapping(value={"/hod/deleteCourse/{courseId}","/admin/deleteCourse/{courseId}"})
+    public String CourseDeleteHOD(Model model, @PathVariable(required = true, name = "courseId") Long courseId, RedirectAttributes attributes, BatchYearSemTerm batchYearSemTerm, HttpServletRequest request) {
         Course course1 = courseService.findOne(courseId);
-        Long batchYearDeptProgramSemId = course1.getBatchYearDeptProgramSemId();
+        Long batchYearSemTermId = course1.getBatchYearSemTermId();
+        Long courseTypeId = course1.getCourseType().getCourseTypeId();
 
         courseService.deleteCourse(courseId);
-       attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
+        attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
 
-        //model.addAttribute("courses", courseService.findAll());
-     return "redirect:/hod/listCourse/" + batchYearDeptProgramSemId;
+        if(request.isUserInRole("DEPT_HEAD")) {
+            return "redirect:/hod/listCourse/" + batchYearSemTermId ;
+        }
+        else if(request.isUserInRole("PRINCIPAL")) {
+            return "redirect:/admin/listCourse/" + batchYearSemTermId + "/" + courseTypeId;
+        }
+
+        return "/403";
     }
+
+
 }

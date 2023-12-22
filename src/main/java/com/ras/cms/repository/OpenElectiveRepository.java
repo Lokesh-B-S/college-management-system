@@ -25,4 +25,6 @@ public interface OpenElectiveRepository extends JpaRepository<OpenElective, Long
     List<OpenElective> findAllByBatchYearSemTermIdAndOpenElectiveType(Long batchYearSemTermId, OpenElectiveType electiveType);
     List<OpenElective> findAllByBatchYearSemTermId(Long batchYearSemTermId);
 
+    List<OpenElective> findAllByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department);
+
 }

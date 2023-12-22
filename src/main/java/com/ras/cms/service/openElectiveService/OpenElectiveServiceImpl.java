@@ -5,6 +5,7 @@ import com.ras.cms.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.OneToOne;
 import java.util.List;
 
 @Service
@@ -31,6 +32,11 @@ public class OpenElectiveServiceImpl implements OpenElectiveService{
         @Override
     public List<OpenElective> getOpenElectivesByBatchYearSemTermId(Long batchYearSemTermId){
         return openElectiveRepository.findAllByBatchYearSemTermId(batchYearSemTermId);
+    }
+
+    @Override
+    public List<OpenElective> getOpenElectivesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department){
+        return openElectiveRepository.findAllByBatchYearSemTermIdAndDepartment(batchYearSemTermId, department);
     }
 
 

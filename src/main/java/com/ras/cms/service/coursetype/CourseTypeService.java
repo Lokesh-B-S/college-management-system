@@ -8,7 +8,11 @@ public interface CourseTypeService {
 
     List<CourseType> findAll();
 
+    CourseType findOne(Long id);
+
     CourseType getCourseTypeByTypeOfCourse(String typeOfCourse);
 
     CourseType saveCourseType(CourseType courseType);
+
+    void deleteCourseType(Long id);
 }

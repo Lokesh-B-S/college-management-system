@@ -9,17 +9,22 @@ public interface CourseService {
     Course findOne(Long id);
     Course saveCourse(Course course);
 
-    List<Course> getEntriesByBatchYearDeptProgramSemId(Long BatchYearDeptProgramSemId);
+    List<Course> getCoursesByBatchYearSemTermIdAndCourseType(Long batchYearSemTermId, CourseType courseType);
+    List<Course> getCoursesByBatchYearSemTermId(Long batchYearSemTermId);
 
-    Long getBatchYearDeptProgramSemIdByCourseId(Long courseId);
+//    List<Course> getEntriesByBatchYearDeptProgramSemId(Long BatchYearDeptProgramSemId);
+
+  //  Long getBatchYearDeptProgramSemIdByCourseId(Long courseId);
 
 //    Long getBatchYearDeptProgramSemId(Long courseId);
 
+    boolean doesEntryExist(Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, CourseType courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
 
-    boolean doesEntryExist(Long batchYearDeptProgramSemId, Long contactHours, Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
-    //boolean doesEntryExist(Long departmentSemSecId, Day day, TimeSlotSelection timeSlot, Course course);
+    //boolean doesEntryExist(Long batchYearDeptProgramSemId, Long contactHours, Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, CourseType courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
 
-    Course getEntry(Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
+  //  Course getEntry(Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, CourseType courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
+
+    List<Course> getCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department);
 
     void deleteCourse(Long id);
 

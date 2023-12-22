@@ -23,8 +23,22 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findById(id).get();
     }
 
+
     @Override
-    public Long getBatchYearDeptProgramSemIdByCourseId(Long courseId){return courseRepository.findBatchYearDeptProgramSemIdByCourseId(courseId);}
+    public List<Course> getCoursesByBatchYearSemTermIdAndCourseType(Long batchYearSemTermId, CourseType courseType){
+        return courseRepository.findAllByBatchYearSemTermIdAndCourseType(batchYearSemTermId, courseType);
+    }
+    @Override
+    public List<Course> getCoursesByBatchYearSemTermId(Long batchYearSemTermId){
+        return courseRepository.findAllByBatchYearSemTermId(batchYearSemTermId);
+    }
+    @Override
+    public List<Course> getCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department){
+        return courseRepository.findAllByBatchYearSemTermIdAndDepartment(batchYearSemTermId, department);
+    }
+
+//    @Override
+//    public Long getBatchYearDeptProgramSemIdByCourseId(Long courseId){return courseRepository.findBatchYearDeptProgramSemIdByCourseId(courseId);}
 
 //    @Override
 //    public Long getBatchYearDeptProgramSemId(Long courseId){return courseRepository.findBatchYearDeptProgramSemId(courseId);}
@@ -35,19 +49,19 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.save(course);
     }
 
-    @Override
-    public List<Course> getEntriesByBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId){
-        return courseRepository.findByBatchYearDeptProgramSemId(batchYearDeptProgramSemId);
+//    @Override
+//    public List<Course> getEntriesByBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId){
+//        return courseRepository.findByBatchYearDeptProgramSemId(batchYearDeptProgramSemId);
+//    }
+
+    public boolean doesEntryExist(Long batchYearSemTermId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, CourseType courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
+        return courseRepository.existsByBatchYearSemTermIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearSemTermId, contactHours,courseBatchesCount, courseCode, courseName,teachingDepartmentName, courseType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
     }
 
-    public boolean doesEntryExist(Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
-        return courseRepository.existsByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearDeptProgramSemId, contactHours,courseBatchesCount, courseCode, courseName,teachingDepartmentName, courseType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
-    }
-
-    //fetching the row based on below parameters
-    public Course getEntry(Long batchYearDeptProgramSemId, Long contactHours, Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, String courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
-        return courseRepository.findByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearDeptProgramSemId, contactHours,courseBatchesCount, courseCode, courseName, teachingDepartmentName, courseType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
-    }
+//    //fetching the row based on below parameters
+//    public Course getEntry(Long batchYearDeptProgramSemId, Long contactHours, Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, CourseType courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits) {
+//        return courseRepository.findByBatchYearDeptProgramSemIdAndContactHoursAndCourseBatchesCountAndCourseCodeAndCourseNameAndTeachingDepartmentAndCourseTypeAndLectureCreditsAndTutorialCreditsAndPracticalCreditsAndTotalCredits(batchYearDeptProgramSemId, contactHours,courseBatchesCount, courseCode, courseName, teachingDepartmentName, courseType, lectureCredits, tutorialCredits, practicalCredits, totalCredits);
+//    }
 
     @Override
     public void deleteCourse(Long id) {

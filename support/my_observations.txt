@@ -172,6 +172,8 @@ Flow: MainController -> HTML page -> ProgramController -> repo
 --------------------------------
 GIT
 
+(ensure app is not running)
+
 git status (if you want to see the files that are changed)
 
 git branch :- ensure its lokesh branch and not master

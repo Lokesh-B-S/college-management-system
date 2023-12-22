@@ -19,12 +19,16 @@ public class Course {
     private Batch batch;
     @ManyToOne
     private AcademicYear academicYear;
+
+    @ManyToOne
+    private Term term;
     @ManyToOne
     private TeachingDepartment teachingDepartment;
 
-
+    @ManyToOne
+    private CourseType courseType;
     private Long courseBatchesCount;
-    private String courseType;
+   // private String courseType;
     private Long contactHours; // in Years
     private String courseCode;
     private String courseName;
@@ -35,8 +39,17 @@ public class Course {
     private Long practicalCredits;
     private Long totalCredits;
 
+   // private Long batchYearDeptProgramSemId;
 
-    private Long batchYearDeptProgramSemId;
+    private Long batchYearSemTermId;
+
+    public Long getBatchYearSemTermId() {
+        return batchYearSemTermId;
+    }
+
+    public void setBatchYearSemTermId(Long batchYearSemTermId) {
+        this.batchYearSemTermId = batchYearSemTermId;
+    }
 
     public Program getProgram() {
         return program;
@@ -102,6 +115,14 @@ public class Course {
         this.batch = batch;
     }
 
+    public Term getTerm() {
+        return term;
+    }
+
+    public void setTerm(Term term) {
+        this.term = term;
+    }
+
     public AcademicYear getAcademicYear() {
         return academicYear;
     }
@@ -118,11 +139,11 @@ public class Course {
         this.courseBatchesCount = courseBatchesCount;
     }
 
-    public String getCourseType() {
+    public CourseType getCourseType() {
         return courseType;
     }
 
-    public void setCourseType(String courseType) {
+    public void setCourseType(CourseType courseType) {
         this.courseType = courseType;
     }
 
@@ -166,11 +187,11 @@ public class Course {
         this.teachingDepartment = teachingDepartment;
     }
 
-    public Long getBatchYearDeptProgramSemId() {
-        return batchYearDeptProgramSemId;
-    }
-
-    public void setBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId) {
-        this.batchYearDeptProgramSemId = batchYearDeptProgramSemId;
-    }
+//    public Long getBatchYearDeptProgramSemId() {
+//        return batchYearDeptProgramSemId;
+//    }
+//
+//    public void setBatchYearDeptProgramSemId(Long batchYearDeptProgramSemId) {
+//        this.batchYearDeptProgramSemId = batchYearDeptProgramSemId;
+//    }
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Course Types</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <form action="/hod/editCourseType" th:action="@{/hod/editCourseType}" method="post">
+
+        <table width="100%">
+            <tr>
+                <td align="left">
+                    <a href="/hod/listCourseTypes" th:href="@{/hod/listCourseTypes}" class="btn btn-primary" role="button">View Course Types</a>
+                </td>
+
+                <td align="right">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" th:href="@{/}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+
+        <table border="0" width="80%">
+            <tr>
+                <td><input th:type="hidden" name="id" th:field="${courseType.courseTypeId}"/>
+                <td>
+                    <div class="form-group">
+                        <label for="typeOfCourse">Select Course Type:</label>
+                        <input type="text" class="form-control" id="typeOfCourse" name="courseType" th:field="${courseType.typeOfCourse}"
+                               placeholder="Ex:- A,B,C... "/>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
