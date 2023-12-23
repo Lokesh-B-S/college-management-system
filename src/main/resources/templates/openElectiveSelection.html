@@ -117,12 +117,12 @@
 
             <tr>
                 <td>
-                    <div class="form-group" th:if="${#request.isUserInRole('PRINCIPAL')}">
+<!--                    <div class="form-group" th:if="${#request.isUserInRole('PRINCIPAL')}">-->
                         <label>Select OpenElective Type: </label>
                         <select class="form-control" id="openElectiveType" name="openElectiveType">
                             <option th:each="openElectiveType : ${openElectiveTypes}" th:value="${openElectiveType.id}" th:text="${openElectiveType.typeOfOpenElective}"></option>
                         </select>
-                    </div>
+
                 </td>
                 <td> &nbsp</td>
 

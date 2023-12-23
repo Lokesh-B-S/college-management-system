@@ -92,7 +92,7 @@ public class OpenElectiveViewController {
 //        return department;
 //    }
 
-    @GetMapping(value = {"/admin/listOpenElective/{batchYearSemTermId}/{openElectiveTypeId}", "/hod/listOpenElective/{batchYearSemTermId}"})
+    @GetMapping(value = {"/admin/listOpenElective/{batchYearSemTermId}/{openElectiveTypeId}", "/hod/listOpenElective/{batchYearSemTermId}/{openElectiveTypeId}"})
     public String openElectiveCourseList(Model model, HttpServletRequest request, Authentication authentication,
                                          @PathVariable(required = false, name = "batchYearSemTermId") Long batchYearSemTermId,
                                         @PathVariable(required = false, name = "openElectiveTypeId") Long openElectiveTypeId)
@@ -103,7 +103,7 @@ public class OpenElectiveViewController {
             BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.findOne(batchYearSemTermId);
             model.addAttribute("batchYearSemTermView", batchYearSemTerm);
 
-                if (request.isUserInRole("PRINCIPAL")) {
+
 
                     if (openElectiveTypeId != null) {
                         OpenElectiveType electiveType = openElectiveTypeService.findOne(openElectiveTypeId); // Fetch the OpenElectiveType
@@ -115,56 +115,27 @@ public class OpenElectiveViewController {
                             System.out.println("elective type not found");
                         }
                     }
-                }
-                else  if (request.isUserInRole("DEPT_HEAD")) {
-                    List<OpenElective> AllDeptOpenElectives = openElectiveService.getOpenElectivesByBatchYearSemTermId(batchYearSemTermId);
-                    model.addAttribute("AllDeptOpenElectives", AllDeptOpenElectives);
 
-                    //Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours
-                    Long totalLectureCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getLectureCredits).sum();
-                    Long totalTutorialCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getTutorialCredits).sum();
-                    Long totalPracticalCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getPracticalCredits).sum();
-                    Long totalTotalCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getTotalCredits).sum();
-                    Long totalContactHours = AllDeptOpenElectives.stream().mapToLong(OpenElective::getContactHours).sum();
+//
+//                    List<OpenElective> AllDeptOpenElectives = openElectiveService.getOpenElectivesByBatchYearSemTermId(batchYearSemTermId);
+//                    model.addAttribute("AllDeptOpenElectives", AllDeptOpenElectives);
 
-                    model.addAttribute("totalLectureCredits", totalLectureCredits);
-                    model.addAttribute("totalTutorialCredits", totalTutorialCredits);
-                    model.addAttribute("totalPracticalCredits", totalPracticalCredits);
-                    model.addAttribute("totalTotalCredits", totalTotalCredits);
-                    model.addAttribute("totalContactHours", totalContactHours);
-                }
+                    //Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours at the end
+//                    Long totalLectureCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getLectureCredits).sum();
+//                    Long totalTutorialCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getTutorialCredits).sum();
+//                    Long totalPracticalCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getPracticalCredits).sum();
+//                    Long totalTotalCredits = AllDeptOpenElectives.stream().mapToLong(OpenElective::getTotalCredits).sum();
+//                    Long totalContactHours = AllDeptOpenElectives.stream().mapToLong(OpenElective::getContactHours).sum();
+//
+//                    model.addAttribute("totalLectureCredits", totalLectureCredits);
+//                    model.addAttribute("totalTutorialCredits", totalTutorialCredits);
+//                    model.addAttribute("totalPracticalCredits", totalPracticalCredits);
+//                    model.addAttribute("totalTotalCredits", totalTotalCredits);
+//                    model.addAttribute("totalContactHours", totalContactHours);
+
 
             }
             return "/openElectiveList";
-//        List<OpenElective> entries = openElectiveService.getEntriesByBatchYearDeptProgramSemId(id);
-//        model.addAttribute("id", id);
-//
-//        BatchYearDeptProgramSem batchYearDeptProgramSem = batchYearDeptProgramSemService.findOne(id);
-//        if (batchYearDeptProgramSem != null) {
-//            List<OpenElective> openElectives = openElectiveService.getCoursesByDepartmentAndSemester(batchYearDeptProgramSem.getDepartment(), batchYearDeptProgramSem.getSemester());
-//            model.addAttribute("openElectives", openElectives);
-//            model.addAttribute("batchYearDeptProgramSemView", batchYearDeptProgramSem);
-//
-//            // Calculate the total sum of lectureCredits, tutorialCredits, practicalCredits, totalCredits, and contactHours
-//            Long totalLectureCredits = openElectives.stream().mapToLong(OpenElective::getLectureCredits).sum();
-//            Long totalTutorialCredits = openElectives.stream().mapToLong(OpenElective::getTutorialCredits).sum();
-//            Long totalPracticalCredits = openElectives.stream().mapToLong(OpenElective::getPracticalCredits).sum();
-//            Long totalTotalCredits = openElectives.stream().mapToLong(OpenElective::getTotalCredits).sum();
-//            Long totalContactHours = openElectives.stream().mapToLong(OpenElective::getContactHours).sum();
-//
-//            model.addAttribute("openElectives", openElectives);
-//            //model.addAttribute("teachingDepartments",teachingDepartmentService.findAll());
-//            model.addAttribute("totalLectureCredits", totalLectureCredits);
-//            model.addAttribute("totalTutorialCredits", totalTutorialCredits);
-//            model.addAttribute("totalPracticalCredits", totalPracticalCredits);
-//            model.addAttribute("totalTotalCredits", totalTotalCredits);
-//            model.addAttribute("totalContactHours", totalContactHours);
-//        } else {
-//            model.addAttribute("openElectives", openElectiveService.findAll());
-//        }
-//
-//        //model.addAttribute("courseList", openElectiveService.findAll());
-//        return "/openElectiveList";
     }
 
     @GetMapping({"/admin/selectOpenElective", "hod/selectOpenElective"})
@@ -203,7 +174,7 @@ public class OpenElectiveViewController {
             }
             else if(request.isUserInRole("DEPT_HEAD")){
 //                return "redirect:/hod/selectOpenElectiveType?id=" + batchYearSemTerm1.getBatchYearSemTermId();
-                return "redirect:/hod/listOpenElective/" + batchYearSemTerm1.getBatchYearSemTermId();
+                return "redirect:/hod/listOpenElective/" + batchYearSemTerm1.getBatchYearSemTermId() + "/" + openElectiveTypeId;
 //                return "redirect:/hod/openElectiveEdit/" + batchYearSemTerm1.getBatchYearSemTermId();
 
             }
@@ -218,7 +189,7 @@ public class OpenElectiveViewController {
                     } else if (request.isUserInRole("DEPT_HEAD")) {
                         //if i had to use openElectiveEdit(non dynamic)
 //                        return "redirect:/hod/openElectiveEdit/" + batchYearSemTerm.getBatchYearSemTermId();
-                        return "redirect:/hod/listOpenElective/" + batchYearSemTerm1.getBatchYearSemTermId();
+                        return "redirect:/hod/listOpenElective/" + batchYearSemTerm1.getBatchYearSemTermId() + "/" + openElectiveTypeId;
 
                     }
                 } catch (Exception e) {
@@ -228,42 +199,6 @@ public class OpenElectiveViewController {
         }
         return "/403";
     }
-
-//    @GetMapping({"hod/selectOpenElectiveType", "/admin/selectOpenElectiveType"})
-//    public String selectOpenElectiveCourseType(Model model,
-//                                               HttpServletRequest request,
-//                                               @RequestParam(required = false, name = "id") Long id) {
-//
-//        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
-//        model.addAttribute("department", departmentAndProgramFetch.getDepartment());
-//        model.addAttribute("program", departmentAndProgramFetch.getProgram());
-//
-//        if (null != id) {
-//            model.addAttribute("batchYearSemTerm1", batchYearSemTermService.findOne(id));
-//        } else {
-//            model.addAttribute("batchYearSemTerm1", new BatchYearSemTerm());
-//        }
-//
-//        List<OpenElectiveType> openElectiveTypes = openElectiveTypeService.findAll();
-//        model.addAttribute("openElectiveTypes", openElectiveTypes);
-//        return "openElectiveTypeSelect";
-//    }
-
-//    @PostMapping({"hod/selectOpenElectiveType","/admin/selectOpenElectiveType"})
-//    public String selectandsubmitOpenElectiveCourseType(Model model,@ModelAttribute OpenElectiveType openElectiveType, BatchYearSemTerm batchYearSemTerm, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-//
-//        System.out.println(openElectiveType.getId() +  openElectiveType.getTypeOfOpenElective());
-//        BatchYearSemTerm batchYearSemTerm1 = batchYearSemTermService.findRow(batchYearSemTerm);
-//
-//
-//        if(request.isUserInRole("PRINCIPAL")){
-//            return "redirect:/admin/listOpenElective/" + batchYearSemTerm1.getBatchYearSemTermId() + "/" + openElectiveType.getTypeOfOpenElective() ;
-//        }
-//        else if(request.isUserInRole("DEPT_HEAD")){
-//            return "redirect:/hod/openElectiveEdit/" + batchYearSemTerm1.getBatchYearSemTermId() + "/" + openElectiveType.getTypeOfOpenElective() ;
-//        }
-//      return "/403";
-//    }
 
 
     @GetMapping(value = {"/hod/openElectiveEdit", "/hod/openElectiveEdit/{openElectiveId}", "/hod/openElectiveEdit/{batchYearSemTermId}"})

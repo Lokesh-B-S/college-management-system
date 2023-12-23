@@ -81,15 +81,24 @@
         </thead>
         <tbody></tbody>
     </table>
-    <button type="button" class="btn btn-success add-row">Add OpenElective</button>
-    <button type="button" class="btn btn-success save">Save</button>
-    <button type="button" class="btn btn-secondary refresh">Refresh</button>
-    <a href="/hod/listOpenElective/${batchYearSemTerm.batchYearSemTermId}/" th:href="@{/hod/listOpenElective/__${batchYearSemTerm.batchYearSemTermId}__}" class="btn btn-primary view">Detailed View</a>
-    <a href="/" class="btn btn-primary home">Home</a>
+
+    <div align="center">
+        <button type="button" class="btn btn-secondary refresh" onclick="goBack()">Previous</button>
+        <button type="button" class="btn btn-success add-row">Add OpenElective</button>
+        <button type="button" class="btn btn-success save">Save</button>
+        <button type="button" class="btn btn-secondary refresh">Refresh</button>
+        <a href="/hod/selectOpenElective/" th:href="@{/hod/selectOpenElective/}" class="btn btn-primary view">Select again</a>
+        <!--    <a href="/hod/listOpenElective/${batchYearSemTerm.batchYearSemTermId}/" th:href="@{/hod/listOpenElective/__${batchYearSemTerm.batchYearSemTermId}__}" class="btn btn-primary view">Detailed View</a>-->
+        <a href="/" class="btn btn-primary home">Home</a>
+
+    </div>
 
 </div>
 
 <script>
+    function goBack(){
+        window.history.back();
+    }
 
     function addRow(tbody, openElectiveId, id, courseCode, courseName, teachingDepartmentId, lectureCredits, tutorialCredits, practicalCredits, totalCredits, contactHours, className) {
 
