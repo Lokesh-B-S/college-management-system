@@ -33,8 +33,8 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findAllByBatchYearSemTermId(batchYearSemTermId);
     }
     @Override
-    public List<Course> getCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department){
-        return courseRepository.findAllByBatchYearSemTermIdAndDepartment(batchYearSemTermId, department);
+    public List<Course> getCoursesByBatchYearSemTermIdAndDepartmentAndProgram(Long batchYearSemTermId, Department department, Program program){
+        return courseRepository.findAllByBatchYearSemTermIdAndDepartmentAndProgram(batchYearSemTermId, department, program);
     }
 
 //    @Override

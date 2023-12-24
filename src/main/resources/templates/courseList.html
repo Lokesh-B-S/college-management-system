@@ -65,22 +65,22 @@
             <th>Total</th>
         </tr>
 
-        <tr th:each="allDeptCourse, rowStat : ${AllDeptCourses}">
+        <tr th:each="courseList, rowStat : ${coursesList}">
             <td th:text="${rowStat.count}" class="text-center">1</td>
-            <td th:text="${allDeptCourse.department.departmentCode}" class="text-center">1</td>
-            <td th:text="${allDeptCourse.courseType.typeOfCourse}" class="text-center">1</td>
-            <td th:text="${allDeptCourse.courseCode}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.courseName}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.lectureCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.tutorialCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.practicalCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.totalCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.contactHours}" class="text-center">Test</td>
+            <td th:text="${courseList.department.departmentCode}" class="text-center">1</td>
+            <td th:text="${courseList.courseType.typeOfCourse}" class="text-center">1</td>
+            <td th:text="${courseList.courseCode}" class="text-center">Test</td>
+            <td th:text="${courseList.courseName}" class="text-center">Test</td>
+            <td th:text="${courseList.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
+            <td th:text="${courseList.lectureCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.tutorialCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.practicalCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.totalCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.contactHours}" class="text-center">Test</td>
 
             <td>
-                <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/deleteCourse/1" th:href="@{/admin/deleteCourse/__${allDeptCourse.courseId}__}">Delete</a>
-                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteCourse/1" th:href="@{/hod/deleteCourse/__${allDeptCourse.courseId}__}">Delete</a>
+                <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/deleteCourse/1" th:href="@{/admin/deleteCourse/__${courseList.courseId}__}">Delete</a>
+                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteCourse/1" th:href="@{/hod/deleteCourse/__${courseList.courseId}__}">Delete</a>
             </td>
         </tr>
         <!--        <tr>-->
@@ -99,16 +99,19 @@
         </tbody>
     </table>
 
-
-    <!--    Print  -->
     <div align="center">
-        <button id="printButton1">Print</button>
-        <script>
-            document.getElementById("printButton").addEventListener("click", function() {
-            window.print();
-            });
-        </script>
+        <a href="/admin/selectCourse/" th:href="@{/admin/selectCourse/}" class="btn btn-primary view">Select again</a>
     </div>
+
+<!--    &lt;!&ndash;    Print  &ndash;&gt;-->
+<!--    <div align="center">-->
+<!--        <button id="printButton1">Print</button>-->
+<!--        <script>-->
+<!--            document.getElementById("printButton").addEventListener("click", function() {-->
+<!--            window.print();-->
+<!--            });-->
+<!--        </script>-->
+<!--    </div>-->
 
 
 </div>
@@ -125,7 +128,7 @@
 
     <p>
         <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
-        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/courses/addnew/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/courses/addnew/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/courses/addnew/${batchYearSemTermView.batchYearSemTermId}/${program.programId}}" th:href="@{/hod/courses/addnew/__${batchYearSemTermView.batchYearSemTermId}__/__${program.programId}__}">Add more</a>
         <!--        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectiveEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectiveEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>-->
 
     </p>
@@ -142,9 +145,9 @@
         <!--        <tr>-->
         <!--            <th colspan="11" style="font-size: 30px;"  class="text-center"></th>-->
         <!--        </tr>-->
-        <!--        <tr>-->
-        <!--            <th colspan="11"  style="font-size: 25px;"  class="text-center"></th>-->
-        <!--        </tr>-->
+        <tr>
+            <th colspan="11" th:text="'Program: ' + ${program.programName}" style="font-size: 25px;"  class="text-center"></th>
+        </tr>
         <tr>
             <th colspan="5" th:text="'Batch: ' + ${batchYearSemTermView.batch.batchName}" style="font-size: 20px;"  class="text-center">Batch</th>
             <th colspan="7" th:text="'Academic Year: ' + ${batchYearSemTermView.academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
@@ -174,18 +177,18 @@
             <th>Total</th>
         </tr>
 
-        <tr th:each="allDeptCourse, rowStat : ${AllDeptCourses}">
+        <tr th:each="courseList, rowStat : ${coursesList}">
             <td th:text="${rowStat.count}" class="text-center">1</td>
-            <td th:text="${allDeptCourse.department.departmentCode}" class="text-center">1</td>
-            <td th:text="${allDeptCourse.courseType.typeOfCourse}" class="text-center">1</td>
-            <td th:text="${allDeptCourse.courseCode}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.courseName}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.lectureCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.tutorialCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.practicalCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.totalCredits}" class="text-center">Test</td>
-            <td th:text="${allDeptCourse.contactHours}" class="text-center">Test</td>
+            <td th:text="${courseList.department.departmentCode}" class="text-center">1</td>
+            <td th:text="${courseList.courseType.typeOfCourse}" class="text-center">1</td>
+            <td th:text="${courseList.courseCode}" class="text-center">Test</td>
+            <td th:text="${courseList.courseName}" class="text-center">Test</td>
+            <td th:text="${courseList.teachingDepartment.teachingDepartmentCode}" class="text-center">Test</td>
+            <td th:text="${courseList.lectureCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.tutorialCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.practicalCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.totalCredits}" class="text-center">Test</td>
+            <td th:text="${courseList.contactHours}" class="text-center">Test</td>
 
             <!--            delete option disabled for HOD-->
             <!--            <td>&nbsp;&nbsp;-->
@@ -211,16 +214,19 @@
         </tbody>
     </table>
 
-
-    <!--    Print  -->
     <div align="center">
-        <button id="printButton2">Print</button>
-        <script>
-            document.getElementById("printButton").addEventListener("click", function() {
-            window.print();
-            });
-        </script>
+        <a href="/hod/selectCourse/" th:href="@{/hod/selectCourse/}" class="btn btn-primary view">Select again</a>
     </div>
+
+<!--    &lt;!&ndash;    Print  &ndash;&gt;-->
+<!--    <div align="center">-->
+<!--        <button id="printButton2">Print</button>-->
+<!--        <script>-->
+<!--            document.getElementById("printButton").addEventListener("click", function() {-->
+<!--            window.print();-->
+<!--            });-->
+<!--        </script>-->
+<!--    </div>-->
 
 
 </div>

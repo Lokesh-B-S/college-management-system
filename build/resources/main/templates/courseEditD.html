@@ -81,199 +81,205 @@
         </thead>
         <tbody></tbody>
     </table>
+    <button type="button" class="btn btn-secondary refresh" onclick="goBack()">Previous</button>
     <button type="button" class="btn btn-success add-row">Add Course</button>
     <button type="button" class="btn btn-success save">Save</button>
     <button type="button" class="btn btn-secondary refresh">Refresh</button>
-    <a href="/hod/listCourse/${batchYearSemTerm.batchYearSemTermId}/" th:href="@{/hod/listCourse/__${batchYearSemTerm.batchYearSemTermId}__}" class="btn btn-primary view">Detailed View</a>
+    <a href="/hod/listCourse/${batchYearSemTerm.batchYearSemTermId}/${program.programId}" th:href="@{/hod/listCourse/__${batchYearSemTerm.batchYearSemTermId}__/__${program.programId}__}" class="btn btn-primary view">Detailed View</a>
     <a href="/" class="btn btn-primary home">Home</a>
 
 </div>
 
 <script>
+    function goBack(){
+            window.history.back();
+        }
 
-    function addRow(tbody, courseId, courseTypeId, courseCode, courseName, teachingDepartmentId, lectureCredits, tutorialCredits, practicalCredits, totalCredits, courseBatchesCount, contactHours, className) {
+        function addRow(tbody, courseId, courseTypeId, courseCode, courseName, teachingDepartmentId, lectureCredits, tutorialCredits, practicalCredits, totalCredits, courseBatchesCount, contactHours, className) {
 
-              var tr = $("<tr></tr>").attr("data-id", courseId);
-              //no need tr.append($("<td></td>").append($('<input type="hidden" class="form-control">').val(batchYearSemTermId)));
+                  var tr = $("<tr></tr>").attr("data-id", courseId);
+                  //no need tr.append($("<td></td>").append($('<input type="hidden" class="form-control">').val(batchYearSemTermId)));
 
-              if (className) {
-                tr.addClass(className);
-              }
+                  if (className) {
+                    tr.addClass(className);
+                  }
 
-              var courseTypeDropdown = $('<select class="form-control">');
-              $.getJSON("/hod/courseTypes", function (courseTypeData) {
-                        courseTypeData.forEach(function (courseType) {
-                            courseTypeDropdown.append($('<option>').val(courseType.courseTypeId).text(courseType.typeOfCourse));
-                         });
-                         courseTypeDropdown.val(courseTypeId);
-              });
-
-              tr.append($("<td></td>").append(courseTypeDropdown));
-
-              tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(courseCode)));
-              tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(courseName)));
-
-
-                var teachingDepartmentDropdown = $('<select class="form-control">');
-                $.getJSON("/hod/teachingDepartments", function (teachingDepartmentData) {
-                        teachingDepartmentData.forEach(function (teachingDepartment) {
-                                teachingDepartmentDropdown.append($('<option>').val(teachingDepartment.teachingDepartmentId).text(teachingDepartment.teachingDepartmentName));
-                        });
-                        teachingDepartmentDropdown.val(teachingDepartmentId);
-                });
-
-                tr.append($("<td></td>").append(teachingDepartmentDropdown));
-
-
-                tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(lectureCredits)));
-                tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(tutorialCredits)));
-                tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(practicalCredits)));
-                tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(totalCredits)));
-                tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(courseBatchesCount)));
-                tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(contactHours)));
-                tr.append($("<td></td>").append($('<button type="button" class="btn btn-danger delete-row">X</button>')));
-
-                // Append the <tr> element to the provided table body (tbody).
-                tbody.append(tr);
-    }
-
-
-
-
-
-
-      function tableRefresh() {
-
-          var tbody = $(".payments-table tbody");
-          tbody.html("Loading...");
-
-            var batchYearSemTermId = $("#batchYearSemTermId").val(); // Fetch value from the hidden input field in html
-            console.log(batchYearSemTermId);
-
-            $.getJSON("/hod/courses/" + batchYearSemTermId, function (data) {
-              tbody.html("");
-
-                     data.forEach((el) => {
-
-                          if (el.courseType && el.courseType.courseTypeId !== undefined) {
-                                //console.log(el.courseType);
-                                if (el.teachingDepartment && el.teachingDepartment.teachingDepartmentId !== undefined) {
-                                    //console.log(el.teachingDepartment);
-                                    //var batchYearSemTermId = $("#batchYearSemTermId").val();
-                                    //var batchId = $("#batchId").val();
-                                    //console.log(batchYearSemTermId);
-                                    //console.log( batchId);
-
-                                    addRow(tbody, el.courseId, el.courseType.courseTypeId, el.courseCode, el.courseName, el.teachingDepartment.teachingDepartmentId, el.lectureCredits, el.tutorialCredits, el.practicalCredits, el.totalCredits, el.courseBatchesCount, el.contactHours);
-
-                                }
-                                else
-                                {
-                                    console.log("teachingDepartment null for ", el);
-                                    console.log("ccc teachingDepartment ", el.teachingDepartment.teachingDepartmentId);
-                                    console.log("teachingDepartment obj ", el.teachingDepartment);
-                                }
-                          }
-                        else
-                        {
-                            console.log("courseType null for ", el);
-                            console.log("ccc ", el.courseType.courseTypeId);
-                            console.log("courseType obj ", el.courseType);
-                        }
-              });
-            });
-    }
-
-
-
-
-
-$("button.refresh").click(tableRefresh);
-
-$("button.add-row").click(function () {
-        var tbody = $(".payments-table tbody");
-        addRow(tbody, null, null, null, null, null, null, null, null, null, null, null, "dirty");
-});
-
-
-
-
-
-
-//when a save button is clicked:-
-        $("button.save").click(function () {
-
-                var arr = [];
-                $(".payments-table tbody tr").each(function () {
-                    var row = $(this);
-                    if (row.hasClass("dirty") || row.hasClass("deleted")) {
-
-                          //if wishing to set hidden values of "objects" like batch,semester etc, need to initialize and keep in rowdata before setting their id values.
-                          //if the hidden value is a direct value("not objects") say batchYearSemTermId field of the course table, no need initialization separatelty here
-                          var rowData = { courseId: row.attr("data-id"), batch: {}, academicYear: {}, semester: {}, term: {} , department: {}, program: {}};
-                          var keys = ["courseType", "courseCode", "courseName", "teachingDepartment", "lectureCredits", "tutorialCredits", "practicalCredits", "totalCredits", "courseBatchesCount", "contactHours"];
-
-                            row.find("input, select").each(function (idx) {
-                                   if ($(this).is("select"))
-                                   {
-                                     rowData.batchYearSemTermId = $("#batchYearSemTermId").val();
-                                     rowData.batch.batchId = {batchId : parseInt( $("#batchId").val())};
-                                     rowData.academicYear.id ={id : parseInt( $("#academicId").val())};
-                                     rowData.semester.semId = { semId: parseInt($("#semId").val())};
-                                     rowData.term.id = {id: parseInt( $("#termId").val())};
-                                     rowData.department.departmentId = {departmentId: parseInt( $("#departmentId").val())};
-                                     rowData.program.programId = {programId: parseInt( $("#programId").val())};
-
-
-                                                if (keys[idx] === "courseType")
-                                                {
-                                                     var courseTypeObject = { courseTypeId : parseInt($(this).val())};
-                                                     rowData[keys[idx]] = courseTypeObject;
-                                                }
-                                                 else if(keys[idx] === "teachingDepartment")
-                                                 {
-                                                     var teachingDepartmentObject = { teachingDepartmentId: parseInt($(this).val())}
-                                                     rowData[keys[idx]] = teachingDepartmentObject;
-                                                 }
-                                                 else
-                                                 {
-                                                     rowData[keys[idx]] = $(this).val();
-                                                 }
-                                   }
-                                   else
-                                   {
-                                             rowData.batchYearSemTermId = $("#batchYearSemTermId").val();
-                                             rowData.batch.batchId = $("#batchId").val();
-                                             rowData.academicYear.id = $("#academicId").val();
-                                             rowData.semester.semId = $("#semId").val();
-                                             rowData.term.id = $("#termId").val();
-                                             rowData.department.departmentId =  $("#departmentId").val();
-                                             rowData.program.programId = $("#programId").val();
-
-                                             rowData[keys[idx]] = $(this).val();
-                                   }
-                            });
-
-                          // Add an object to the array for this row with action and data.
-                          arr.push({
-                            action: row.hasClass("deleted") ? "DELETE" : "UPDATE",
-                            data: rowData,
-                          });
-                    }
-                });
-
-                  // Perform an AJAX POST request to send the data to the server.
-                  $.ajax({
-                    type: "POST",
-                    url: '/hod/courses',
-                    contentType: 'application/json',
-                    data: JSON.stringify(arr),
-                    success: tableRefresh,
-                    error: function(jqXHR, textStatus, errorThrown) {
-                      alert('error: ' + jqXHR.responseJSON.message);
-                    }
+                  var courseTypeDropdown = $('<select class="form-control">');
+                  $.getJSON("/hod/courseTypes", function (courseTypeData) {
+                            courseTypeData.forEach(function (courseType) {
+                                courseTypeDropdown.append($('<option>').val(courseType.courseTypeId).text(courseType.typeOfCourse));
+                             });
+                             courseTypeDropdown.val(courseTypeId);
                   });
-        });
+
+                  tr.append($("<td></td>").append(courseTypeDropdown));
+
+                  tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(courseCode)));
+                  tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(courseName)));
+
+
+                    var teachingDepartmentDropdown = $('<select class="form-control">');
+                    $.getJSON("/hod/teachingDepartments", function (teachingDepartmentData) {
+                            teachingDepartmentData.forEach(function (teachingDepartment) {
+                                    teachingDepartmentDropdown.append($('<option>').val(teachingDepartment.teachingDepartmentId).text(teachingDepartment.teachingDepartmentName));
+                            });
+                            teachingDepartmentDropdown.val(teachingDepartmentId);
+                    });
+
+                    tr.append($("<td></td>").append(teachingDepartmentDropdown));
+
+
+                    tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(lectureCredits)));
+                    tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(tutorialCredits)));
+                    tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(practicalCredits)));
+                    tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(totalCredits)));
+                    tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(courseBatchesCount)));
+                    tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(contactHours)));
+                    tr.append($("<td></td>").append($('<button type="button" class="btn btn-danger delete-row">X</button>')));
+
+                    // Append the <tr> element to the provided table body (tbody).
+                    tbody.append(tr);
+        }
+
+
+
+
+
+
+          function tableRefresh() {
+
+              var tbody = $(".payments-table tbody");
+              tbody.html("Loading...");
+
+                var batchYearSemTermId = $("#batchYearSemTermId").val(); // Fetch value from the hidden input field in html
+                console.log(batchYearSemTermId);
+
+                var programId = $("#programId").val();
+
+                $.getJSON("/hod/courses/" + batchYearSemTermId + "/" + programId, function (data) {
+                  tbody.html("");
+
+                         data.forEach((el) => {
+
+                              if (el.courseType && el.courseType.courseTypeId !== undefined) {
+                                    //console.log(el.courseType);
+                                    if (el.teachingDepartment && el.teachingDepartment.teachingDepartmentId !== undefined) {
+                                        //console.log(el.teachingDepartment);
+                                        //var batchYearSemTermId = $("#batchYearSemTermId").val();
+                                        //var batchId = $("#batchId").val();
+                                        //console.log(batchYearSemTermId);
+                                        //console.log( batchId);
+
+                                        addRow(tbody, el.courseId, el.courseType.courseTypeId, el.courseCode, el.courseName, el.teachingDepartment.teachingDepartmentId, el.lectureCredits, el.tutorialCredits, el.practicalCredits, el.totalCredits, el.courseBatchesCount, el.contactHours);
+
+                                    }
+                                    else
+                                    {
+                                        console.log("teachingDepartment null for ", el);
+                                        console.log("ccc teachingDepartment ", el.teachingDepartment.teachingDepartmentId);
+                                        console.log("teachingDepartment obj ", el.teachingDepartment);
+                                    }
+                              }
+                            else
+                            {
+                                console.log("courseType null for ", el);
+                                console.log("ccc ", el.courseType.courseTypeId);
+                                console.log("courseType obj ", el.courseType);
+                            }
+                  });
+                });
+        }
+
+
+
+
+
+    $("button.refresh").click(tableRefresh);
+
+    $("button.add-row").click(function () {
+            var tbody = $(".payments-table tbody");
+            addRow(tbody, null, null, null, null, null, null, null, null, null, null, null, "dirty");
+    });
+
+
+
+
+
+
+    //when a save button is clicked:-
+            $("button.save").click(function () {
+
+                    var arr = [];
+                    $(".payments-table tbody tr").each(function () {
+                        var row = $(this);
+                        if (row.hasClass("dirty") || row.hasClass("deleted")) {
+
+                              //if wishing to set hidden values of "objects" like batch,semester etc, need to initialize and keep in rowdata before setting their id values.
+                              //if the hidden value is a direct value("not objects") say batchYearSemTermId field of the course table, no need initialization separatelty here
+                              var rowData = { courseId: row.attr("data-id"), batch: {}, academicYear: {}, semester: {}, term: {} , department: {}, program: {}};
+                              var keys = ["courseType", "courseCode", "courseName", "teachingDepartment", "lectureCredits", "tutorialCredits", "practicalCredits", "totalCredits", "courseBatchesCount", "contactHours"];
+
+                                row.find("input, select").each(function (idx) {
+                                       if ($(this).is("select"))
+                                       {
+                                         rowData.batchYearSemTermId = $("#batchYearSemTermId").val();
+                                         rowData.batch.batchId = {batchId : parseInt( $("#batchId").val())};
+                                         rowData.academicYear.id ={id : parseInt( $("#academicId").val())};
+                                         rowData.semester.semId = { semId: parseInt($("#semId").val())};
+                                         rowData.term.id = {id: parseInt( $("#termId").val())};
+                                         rowData.department.departmentId = {departmentId: parseInt( $("#departmentId").val())};
+                                         rowData.program.programId = {programId: parseInt( $("#programId").val())};
+
+
+                                                    if (keys[idx] === "courseType")
+                                                    {
+                                                         var courseTypeObject = { courseTypeId : parseInt($(this).val())};
+                                                         rowData[keys[idx]] = courseTypeObject;
+                                                    }
+                                                     else if(keys[idx] === "teachingDepartment")
+                                                     {
+                                                         var teachingDepartmentObject = { teachingDepartmentId: parseInt($(this).val())}
+                                                         rowData[keys[idx]] = teachingDepartmentObject;
+                                                     }
+                                                     else
+                                                     {
+                                                         rowData[keys[idx]] = $(this).val();
+                                                     }
+                                       }
+                                       else
+                                       {
+                                                 rowData.batchYearSemTermId = $("#batchYearSemTermId").val();
+                                                 rowData.batch.batchId = $("#batchId").val();
+                                                 rowData.academicYear.id = $("#academicId").val();
+                                                 rowData.semester.semId = $("#semId").val();
+                                                 rowData.term.id = $("#termId").val();
+                                                 rowData.department.departmentId =  $("#departmentId").val();
+                                                 rowData.program.programId = $("#programId").val();
+
+                                                 rowData[keys[idx]] = $(this).val();
+                                       }
+                                });
+
+                              // Add an object to the array for this row with action and data.
+                              arr.push({
+                                action: row.hasClass("deleted") ? "DELETE" : "UPDATE",
+                                data: rowData,
+                              });
+                        }
+                    });
+
+                      // Perform an AJAX POST request to send the data to the server.
+                      $.ajax({
+                        type: "POST",
+                        url: '/hod/courses',
+                        contentType: 'application/json',
+                        data: JSON.stringify(arr),
+                        success: tableRefresh,
+                        error: function(jqXHR, textStatus, errorThrown) {
+                          alert('error: ' + jqXHR.responseJSON.message);
+                        }
+                      });
+            });
 
 
 
@@ -283,28 +289,26 @@ $("button.add-row").click(function () {
 
 
 
-//when a delete button is clicked:-
-        $(document).on("click", "button.delete-row", function () {
-              var row = $(this).closest("tr");
-              if (row.attr("data-id")) {
+    //when a delete button is clicked:-
+            $(document).on("click", "button.delete-row", function () {
+                  var row = $(this).closest("tr");
+                  if (row.attr("data-id")) {
 
-                      var rowData = { courseId: row.attr("data-id") };
-                                    <!--                    rowData.batchYearSemTermId = $("#batchYearSemTermId").val();-->
-                                    <!--                    rowData.batch.batchId = $("#batchId").val();-->
-                                    <!--                     rowData.academicYear.id = $("#academicId").val();-->
-                                    <!--                     rowData.semester.semId = $("#semId").val();-->
-                                    <!--                     rowData.term.id = $("#termId").val();-->
-                                    <!--                     rowData.department.departmentId =  $("#departmentId").val();-->
-                                    <!--                     rowData.program.programId = $("#programId").val();-->
+                          var rowData = { courseId: row.attr("data-id") };
+                                        <!--                    rowData.batchYearSemTermId = $("#batchYearSemTermId").val();-->
+                                        <!--                    rowData.batch.batchId = $("#batchId").val();-->
+                                        <!--                     rowData.academicYear.id = $("#academicId").val();-->
+                                        <!--                     rowData.semester.semId = $("#semId").val();-->
+                                        <!--                     rowData.term.id = $("#termId").val();-->
+                                        <!--                     rowData.department.departmentId =  $("#departmentId").val();-->
+                                        <!--                     rowData.program.programId = $("#programId").val();-->
 
-                        row.addClass("deleted");
-              }
-              else {
-                    row.remove();
-              }
-        });
-
-
+                            row.addClass("deleted");
+                  }
+                  else {
+                        row.remove();
+                  }
+            });
 
 
 
@@ -316,15 +320,17 @@ $("button.add-row").click(function () {
 
 
 
-$(document).on("change", ".payments-table tbody input", function () {
-  $(this).closest("tr").addClass("dirty");
-});
 
-$(document).on("change", ".payments-table tbody input, .payments-table tbody select", function () {
-$(this).closest("tr").addClass("dirty");
-});
 
-tableRefresh();          //initial refresh when page is loaded.
+    $(document).on("change", ".payments-table tbody input", function () {
+      $(this).closest("tr").addClass("dirty");
+    });
+
+    $(document).on("change", ".payments-table tbody input, .payments-table tbody select", function () {
+    $(this).closest("tr").addClass("dirty");
+    });
+
+    tableRefresh();          //initial refresh when page is loaded.
 </script>
 </body>
 </html>

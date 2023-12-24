@@ -24,7 +24,7 @@ public interface CourseService {
 
   //  Course getEntry(Long batchYearDeptProgramSemId, Long contactHours,Long courseBatchesCount, String courseCode, String courseName, TeachingDepartment teachingDepartmentName, CourseType courseType, Long lectureCredits, Long tutorialCredits, Long practicalCredits, Long totalCredits);
 
-    List<Course> getCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department);
+    List<Course> getCoursesByBatchYearSemTermIdAndDepartmentAndProgram(Long batchYearSemTermId, Department department, Program program);
 
     void deleteCourse(Long id);
 

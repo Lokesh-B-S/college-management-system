@@ -1,12 +1,10 @@
 package com.ras.cms.controller;
 
-import com.ras.cms.domain.BatchYearSemTerm;
-import com.ras.cms.domain.Department;
-import com.ras.cms.domain.DepartmentAndProgramFetch;
-import com.ras.cms.domain.OpenElective;
+import com.ras.cms.domain.*;
 import com.ras.cms.service.batchyearsemterm.BatchYearSemTermService;
 import com.ras.cms.service.departmentProgramFetch.DepartmentProgramFetchService;
 import com.ras.cms.service.openElectiveService.OpenElectiveService;
+import com.ras.cms.service.program.ProgramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.stereotype.Controller;
@@ -30,6 +28,9 @@ public class MainController {
 @Autowired
     DepartmentProgramFetchService departmentProgramFetchService;
 
+@Autowired
+    ProgramService programService;
+
 @GetMapping("/admin/programs/addnew")
     public String programs(Model model){return "ProgramD";}
 
@@ -48,6 +49,8 @@ public class MainController {
 
             DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
             model.addAttribute("department", departmentAndProgramFetch.getDepartment());
+
+           //note this program is functionally correct but logically wrong
             model.addAttribute("program", departmentAndProgramFetch.getProgram());
 
             //to know the type() of a variable
@@ -63,10 +66,11 @@ public class MainController {
 
 
 
-    @GetMapping("/hod/courses/addnew/{batchYearSemTermId}")
+    @GetMapping("/hod/courses/addnew/{batchYearSemTermId}/{programId}")
     public String courses(Model model,
                                 HttpServletRequest request,
-                                @PathVariable(required = false, name = "batchYearSemTermId") Long batchYearSemTermId){
+                                @PathVariable(required = false, name = "batchYearSemTermId") Long batchYearSemTermId,
+                                @PathVariable(required = false, name = "programId") Long programId){
         if (null != batchYearSemTermId) {
             System.out.println(batchYearSemTermId);
 
@@ -75,7 +79,10 @@ public class MainController {
 
             DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
             model.addAttribute("department", departmentAndProgramFetch.getDepartment());
-            model.addAttribute("program", departmentAndProgramFetch.getProgram());
+
+            Program program = programService.findOne(programId);
+            model.addAttribute("program", program);
+//            model.addAttribute("program", departmentAndProgramFetch.getProgram());
 
         }
         return "courseEditD";}

@@ -26,7 +26,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findAllByBatchYearSemTermId(Long batchYearSemTermId);
 
-    List<Course> findAllByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department);
+    List<Course> findAllByBatchYearSemTermIdAndDepartmentAndProgram(Long batchYearSemTermId, Department department, Program program);
 
 
     //Course findByCourseId(Long courseId);
