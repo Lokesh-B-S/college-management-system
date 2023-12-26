@@ -15,27 +15,28 @@
 <div class="container">
     <h1> Programs </h1>
 
-    <p>
+
+    <p th:if="${#request.isUserInRole('PRINCIPAL')}">
         <a href="/admin/programs/addnew" th:href="@{/admin/programs/addnew}">Add Program</a>
     </p>
 
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Program Id </th>
+            <th>Sl no.</th>
             <th>Program Name </th>
             <th>Program Code</th>
             <th>Department</th>
-            <th>Actions</th>
+            <th th:if="${#request.isUserInRole('PRINCIPAL')}">Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="program : ${programList}">
-            <td th:text="${program.programId}">1</td>
+        <tr th:each="program, rowStat : ${programList}">
+            <td th:text="${rowStat.count}" class="text-center">1</td>
             <td th:text="${program.programName}">Test</td>
             <td th:text="${program.programCode}">Test</td>
             <td th:text="${program.department.departmentName}">Test</td>
-            <td>
+            <td th:if="${#request.isUserInRole('PRINCIPAL')}">
 <!--                <a href="/admin/editProgram/1" th:href="@{/admin/editProgram/__${program.programId}__}">Edit</a>-->
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="/admin/deleteProgram/1" th:href="@{/admin/deleteProgram/__${program.programId}__}">Delete</a>

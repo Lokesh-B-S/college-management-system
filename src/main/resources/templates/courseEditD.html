@@ -54,6 +54,21 @@
         <!--        <p th:text="${department.departmentId}"></p>-->
         <!--        <p th:text="${program.programId}"></p>-->
 
+        <table width="100%">
+            <tr>
+                <th th:text="'Programme: ' + ${program.programName}" style="font-size: 15px;">
+                <th th:text="'Department: ' + ${department.departmentName}" style="font-size: 15px;">Department</th>
+                <th th:text="'Academic Year: ' + ${batchYearSemTerm.academicYear.year}" style="font-size: 15px;">Academic Year</th>
+            </tr>
+            <tr>
+                <th th:text="'Batch: ' + ${batchYearSemTerm.batch.batchName}" style="font-size: 15px;">Batch</th>
+                <th th:text="'Semester: ' + ${batchYearSemTerm.semester.sem}" style="font-size: 15px;">Semester</th>
+                <th th:text="'Term: ' + ${batchYearSemTerm.term.termDate}" style="font-size: 15px;">Term</th>
+            </tr>
+            <tr><td></td></tr>
+        </table>
+        <hr>
+
         <input type="hidden" id="batchYearSemTermId" th:value="${batchYearSemTerm.batchYearSemTermId}" />
         <input type="hidden" id="batchId" th:value="${batchYearSemTerm.batch.batchId}" />
         <input type="hidden" id="academicId" th:value="${batchYearSemTerm.academicYear.id}" />
