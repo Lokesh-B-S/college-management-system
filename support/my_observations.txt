@@ -212,3 +212,11 @@ when writing links in <script>:
    $.getJSON("/hod/openElectives/" + batchYearSemTermId, function (data) {}
 
   ----------------------------
+when we write both href and th:href="" , href is ignored.
+--------------------------------
+
+
+
+
+faculty registration:
+faculty ID, DoB, DoJ, Male/female, regular/temporary, category:3A,3B etc, Dept, date of leaving (no program)

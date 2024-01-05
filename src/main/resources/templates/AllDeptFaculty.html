@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>All dept faculty</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+    <!--    th:action="@{/admin/selectOpenElective}"-->
+    <form th:action="${#request.isUserInRole('PRINCIPAL') ? '/admin/selectDeptForFaculty' : '/hod/selectDeptForFaculty'}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+        <table border="0" width="80%">
+            <tr>
+
+                <td>
+                    <div class="form-group">
+                        <label for="department.departmentId"> Select Department to fetch faculties: </label> <br>
+                        <select class="form-control" id="department" name="department">
+                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"
+                                    id="department.departmentId"> department </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+            </tr>
+        </table>
+
+        <table width="100%">
+            <tr>
+                <td align="center">
+                    <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+</body>
+</html>

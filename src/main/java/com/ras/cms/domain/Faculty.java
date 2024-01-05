@@ -1,9 +1,6 @@
 package com.ras.cms.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -12,6 +9,25 @@ public class Faculty {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    String facultyIdNumber;
+
+    @ManyToOne
+    Department department;
+
+    @NotBlank
+    String dob;
+    @NotBlank
+    String dateOfJoining;
+    @NotBlank
+    String category;
+
+    String dateOfLeaving;
+
+    @NotBlank
+    String gender;
+    @NotBlank
+    String facultyType;
     @NotBlank
     String name;
 
@@ -27,6 +43,8 @@ public class Faculty {
     String specialization;
 
     int teachingExperience;
+
+    String phoneNumber;
 
     public Faculty(){ }
 
@@ -94,6 +112,79 @@ public class Faculty {
 
     public void setTeachingExperience(int teachingExperience) {
         this.teachingExperience = teachingExperience;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getDateOfJoining() {
+        return dateOfJoining;
+    }
+
+    public void setDateOfJoining(String dateOfJoining) {
+        this.dateOfJoining = dateOfJoining;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDateOfLeaving() {
+        return dateOfLeaving;
+    }
+
+    public void setDateOfLeaving(String dateOfLeaving) {
+        this.dateOfLeaving = dateOfLeaving;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getFacultyType() {
+        return facultyType;
+    }
+
+    public void setFacultyType(String facultyType) {
+        this.facultyType = facultyType;
+    }
+
+
+
+    public Department getDepartment() {
+        return department;
+    }
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public String getFacultyIdNumber() {
+        return facultyIdNumber;
+    }
+
+    public void setFacultyIdNumber(String facultyIdNumber) {
+        this.facultyIdNumber = facultyIdNumber;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
 

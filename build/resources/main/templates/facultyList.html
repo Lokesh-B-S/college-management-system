@@ -13,37 +13,41 @@
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container">
-    <h1> Faculties </h1>
+    <h1 th:text="'Faculties - [' + ${department.departmentName} + ']'"> Faculties - [DepartmentName]</h1>
 
-    <p>
-        <a href="/admin/editFaculty" th:href="@{/admin/editFaculty}">Create</a>
+    <p th:if="${#request.isUserInRole('DEPT_HEAD')}">
+        <a th:if="${department.departmentId} == ${departmentLoggedIn.departmentId}" href="/hod/editFaculty" th:href="@{/hod/editFaculty}">Create</a>
     </p>
 
     <table  class="table table-striped">
         <thead>
         <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Sl no</th>
             <th scope="col">Faculty name</th>
             <th scope="col">Short name</th>
+            <th scope="col">Dept</th>
+            <th scope="col">Type</th>
             <th scope="col">Designation</th>
             <th scope="col">Highest qualification</th>
             <th scope="col">Specialization</th>
-            <th scope="col">Teaching Experience</th>
+<!--            <th scope="col">Teaching Experience</th>-->
         </tr>
         </thead>
         <tbody>
-        <tr th:each="faculty : ${facultyList}">
-            <td th:text="${faculty.id}">1</td>
+        <tr th:each="faculty, rowStat : ${facultyList}">
+            <td th:text="${rowStat.count}">1</td>
             <td th:text="${faculty.name}">Test</td>
             <td th:text="${faculty.shortName}">Test</td>
+            <td th:text="${faculty.department.departmentName}">Test</td>
+            <td th:text="${faculty.facultyType}">Test</td>
             <td th:text="${faculty.designation}">Test</td>
             <td th:text="${faculty.highestQualification}">Test</td>
             <td th:text="${faculty.specialization}">Test</td>
-            <td th:text="${faculty.teachingExperience}">Test</td>
+<!--            <td th:text="${faculty.teachingExperience}">Test</td>-->
 
-            <td>
-                <a href="/admin/editFaculty/1" th:href="@{/admin/editFaculty/__${faculty.id}__}">Edit</a>
-                <a href="/admin/deleteFaculty/1" th:href="@{/admin/deleteFaculty/__${faculty.id}__}">Delete</a>
+            <td th:if="${#request.isUserInRole('DEPT_HEAD')}">
+                <a th:if="${department.departmentId} == ${departmentLoggedIn.departmentId}" href="/hod/editFaculty/1" th:href="@{/hod/editFaculty/__${faculty.id}__}">Edit</a>
+                <a th:if="${department.departmentId} == ${departmentLoggedIn.departmentId}" href="/hod/deleteFaculty/1" th:href="@{/hod/deleteFaculty/__${faculty.id}__}">Delete</a>
             </td>
         </tr>
         </tbody>

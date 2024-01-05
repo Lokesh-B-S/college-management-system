@@ -12,6 +12,8 @@ public class SemesterServiceImpl implements SemesterService{
     @Autowired
     private SemesterRepository semesterRepository;
 
+    public Semester findOne(Long semId) { return semesterRepository.findById(semId).get(); }
+
     public List<Semester> findAll(){
         return semesterRepository.findAll();
     }

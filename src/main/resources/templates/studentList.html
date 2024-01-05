@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
@@ -9,42 +10,274 @@
 
     <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+
+<!--    <style>-->
+<!--        #studentTable {-->
+<!--            display: block;-->
+<!--        }-->
+<!--    </style>-->
 </head>
 <body>
 <div th:replace="fragments/header :: header"/>
+
+
 <div class="container">
-    <h1>Student</h1>
 
-    <p>
-        <a href="/student/studentEdit" th:href="@{/student/studentEdit}">Create</a>
-    </p>
+    <table width="100%">
+        <tr>
+            <th th:text="'Programme: ' + ${program.programName}" style="font-size: 15px;">
+            <th th:text="'Department: ' + ${firstStudent.department.departmentName}" style="font-size: 15px;">Department</th>
+            <th th:text="'Academic Year: ' + ${firstStudent.academicYear.year}" style="font-size: 15px;">Academic Year</th>
+        </tr>
+        <tr>
+            <th th:text="'Batch: ' + ${batch.batchName}" style="font-size: 15px;">Batch</th>
+            <th th:text="'Semester: ' + ${semester.sem}" style="font-size: 15px;">Semester</th>
+            <!--        <th th:text="'Term: ' + ${student.term.termDate}" style="font-size: 15px;">Term</th>-->
+        </tr>
+        <tr><td></td></tr>
+    </table>
+    <hr>
+<!--    <p>-->
+<!--        <a href="/admin/studentEdit" th:href="@{/admin/studentEdit}">Create</a>-->
+<!--    </p>-->
 
-    <table class="table table-striped">
+
+    <form th:action="@{${#request.isUserInRole('PRINCIPAL')} ? '/admin/listStudent' : '/hod/listStudent'}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+<!--        <table border="0" width="80%">-->
+<!--            <tr>-->
+
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="batch.batchId"> Batch: </label> <br>-->
+<!--                        <select class="form-control" id="batch" name="batch">-->
+<!--                            <option th:each="batch : ${batches}" th:value="${batch.batchId}" th:text="${batch.batchName}"-->
+<!--                                    id="batch.batchId"> batch </option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> &nbsp</td>-->
+
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="program.programId"> Program: </label> <br>-->
+<!--                        <select class="form-control" id="program" name="program">-->
+<!--                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"-->
+<!--                                    id="program.programId"> program </option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td> &nbsp</td>-->
+<!--            </tr>-->
+<!--        </table>-->
+
+    <table class="table table-striped" id="studentTable">
         <thead>
         <tr>
-            <th>Id</th>
+            <th>Sl no.</th>
+            <th>Reg no.</th>
+            <th>USN</th>
             <th>Name</th>
             <th>Father Name</th>
             <th>Gender</th>
-            <th>State</th>
-            <th>Actions</th>
+            <th>Category</th>
+            <th>Quota</th>
+            <th th:if="${#request.isUserInRole('DEPT_HEAD')}">Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="student : ${studentList}">
-            <td th:text="${student.id}">1</td>
+        <tr th:each="student, rowStat : ${studentList}">
+            <td th:text="${rowStat.count}">1</td>
+            <td th:text="${student.regNumber}">Test</td>
+            <td th:text="${student.usn}">Test</td>
             <td th:text="${student.name}">Test</td>
             <td th:text="${student.fatherName}">F-Test</td>
             <td th:text="${student.gender}">Gender</td>
-            <td th:text="${student.state}">Gender</td>
+            <td th:text="${student.category}">category</td>
+            <td th:text="${student.quota}">test</td>
             <td>
-                <a href="/student/studentEdit/1" th:href="@{/student/studentEdit/__${student.id}__}">Edit</a>
+                <a  th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/studentEdit/1" th:href="@{/admin/studentEdit/__${student.id}__}">Edit</a>
                 <!--<a href="/studentDelete/1" th:href="@{/studentDelete/__${student.id}__}">Delete</a>-->
             </td>
         </tr>
         </tbody>
     </table>
+    </form>
+
+    <div align="center">
+        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectBatchProgram/" th:href="@{/admin/selectBatchProgram/}" class="btn btn-primary view">Select again</a>
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/selectBatchProgram/" th:href="@{/hod/selectBatchProgram/}" class="btn btn-primary view">Select again</a>
+    </div>
 </div>
+
+<!--<script>-->
+<!--    function toggleStudentTableDisplay() {-->
+<!--    var program = document.getElementById('program').value;-->
+<!--    var batch = document.getElementById('batch').value;-->
+
+<!--    var studentTable = document.getElementById('studentTable');-->
+<!--    if (program && batch) {-->
+<!--        studentTable.style.display = 'block';  // Show table-->
+<!--    } else {-->
+<!--        studentTable.style.display = 'none';   // Hide table-->
+<!--    }-->
+<!--}-->
+
+
+<!--    document.getElementById('program').addEventListener('change', toggleStudentTableDisplay);-->
+<!--    document.getElementById('batch').addEventListener('change', toggleStudentTableDisplay);-->
+<!--</script>-->
+
 <div th:replace="fragments/footer :: footer"/>
 </body>
 </html>
+
+
+
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml"-->
+<!--      xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8" />-->
+<!--    <title>Student</title>-->
+
+<!--    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />-->
+
+<!--    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>-->
+<!--    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div th:replace="fragments/header :: header"/>-->
+<!--<div class="container">-->
+<!--    <h1>Student</h1>-->
+
+<!--    <p>-->
+<!--        <a href="/admin/studentEdit" th:href="@{/admin/studentEdit}">Create</a>-->
+<!--    </p>-->
+
+<!--    <table border="0" width="80%">-->
+<!--        <tr>-->
+
+<!--            <td>-->
+<!--                <div class="form-group">-->
+<!--                    <label for="batch.batchId"> Batch: </label> <br>-->
+<!--                    <select class="form-control" id="batch" name="batch">-->
+<!--                        <option th:each="batch : ${batches}" th:value="${batch.batchId}" th:text="${batch.batchName}"-->
+<!--                                id="batch.batchId"> batch </option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </td>-->
+<!--            <td> &nbsp</td>-->
+
+<!--            <td>-->
+<!--                <div class="form-group">-->
+<!--                    <label for="program.programId"> Program: </label> <br>-->
+<!--                    <select class="form-control" id="program" name="program">-->
+<!--                        <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"-->
+<!--                                id="program.programId"> program </option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </td>-->
+<!--            <td> &nbsp</td>-->
+<!--        </tr>-->
+<!--    </table>-->
+
+<!--    <table class="table table-striped" id="studentTable">-->
+<!--        &lt;!&ndash; Table headers &ndash;&gt;-->
+<!--        <tbody id="studentTableBody">-->
+<!--        &lt;!&ndash; Rows will be populated here &ndash;&gt;-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+
+
+<!--<script>-->
+<!--    function fetchStudents() {-->
+<!--        var programId = document.getElementById('program').value;-->
+<!--        var batchId = document.getElementById('batch').value;-->
+
+<!--        fetch('/admin/listStudent?program=' + programId + '&batch=' + batchId)-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                var tbody = document.getElementById('studentTableBody');-->
+<!--                tbody.innerHTML = ''; // Clear existing rows-->
+<!--                data.forEach(student => {-->
+<!--                    tbody.innerHTML += '<tr>' +-->
+<!--                        '<td>' + student.id + '</td>' +-->
+<!--                        '<td>' + student.name + '</td>' +-->
+<!--                        // other student details-->
+<!--                        '</tr>';-->
+<!--                });-->
+<!--            });-->
+<!--    }-->
+<!--    document.getElementById('program').addEventListener('change', fetchStudents);-->
+<!--    document.getElementById('batch').addEventListener('change', fetchStudents);-->
+<!--</script>-->
+
+
+
+
+
+<!--<div th:replace="fragments/footer :: footer"/>-->
+<!--</body>-->
+<!--</html>-->
+
+
+<!--old working code without javascript-->
+<!--<!DOCTYPE html>-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml"-->
+<!--      xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8" />-->
+<!--    <title>Student</title>-->
+
+<!--    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />-->
+
+<!--    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>-->
+<!--    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div th:replace="fragments/header :: header"/>-->
+<!--<div class="container">-->
+<!--    <h1>Student</h1>-->
+
+<!--    <p>-->
+<!--        <a href="/admin/studentEdit" th:href="@{/admin/studentEdit}">Create</a>-->
+<!--    </p>-->
+
+<!--    <table class="table table-striped">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Id</th>-->
+<!--            <th>Name</th>-->
+<!--            <th>Father Name</th>-->
+<!--            <th>Gender</th>-->
+<!--            <th>State</th>-->
+<!--            <th>Actions</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="student, rowStat : ${studentList}">-->
+<!--            <td th:text="${rowStat.count}">1</td>-->
+<!--            <td th:text="${student.regNumber}">Test</td>-->
+<!--            <td th:text="${student.usn}">Test</td>-->
+<!--            <td th:text="${student.name}">Test</td>-->
+<!--            <td th:text="${student.fatherName}">F-Test</td>-->
+<!--            <td th:text="${student.gender}">Gender</td>-->
+<!--            <td th:text="${student.category}">category</td>-->
+<!--            <td th:text="${student.quota}">test</td>-->
+<!--            <td>-->
+<!--                <a href="/admin/studentEdit/1" th:href="@{/admin/studentEdit/__${student.id}__}">Edit</a>-->
+<!--                &lt;!&ndash;<a href="/studentDelete/1" th:href="@{/studentDelete/__${student.id}__}">Delete</a>&ndash;&gt;-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+<!--<div th:replace="fragments/footer :: footer"/>-->
+<!--</body>-->
+<!--</html>-->

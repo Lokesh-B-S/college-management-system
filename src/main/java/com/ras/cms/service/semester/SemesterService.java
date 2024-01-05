@@ -8,5 +8,9 @@ public interface SemesterService {
 
     List<Semester> findAll();
 
+    Semester findOne(Long semId);
+
     Semester saveSemester(Semester semester);
+
+
 }

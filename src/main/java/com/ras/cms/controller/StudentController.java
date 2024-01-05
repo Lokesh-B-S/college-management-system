@@ -1,9 +1,15 @@
 package com.ras.cms.controller;
 
-import com.ras.cms.domain.Qualification;
-import com.ras.cms.domain.Student;
+import com.ras.cms.domain.*;
+import com.ras.cms.service.academicyear.AcademicYearService;
+import com.ras.cms.service.batch.BatchService;
+import com.ras.cms.service.department.DepartmentService;
+import com.ras.cms.service.program.ProgramService;
+import com.ras.cms.service.semester.SemesterService;
 import com.ras.cms.service.state.StateService;
 import com.ras.cms.service.student.StudentService;
+import org.apache.catalina.core.ApplicationContextFacade;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +19,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Surya on 12-Jun-18.
@@ -26,9 +35,119 @@ public class StudentController {
     @Autowired
     private StateService stateService;
 
-    @GetMapping(value={"/admin/listStudent","/hod/listStudent","/student/listStudent"})
-    public String studentList(Model model) {
-        model.addAttribute("studentList", studentService.findAll());
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private ProgramService programService;
+
+    @Autowired
+    private BatchService batchService;
+
+    @Autowired
+    private AcademicYearService academicYearService;
+
+    @Autowired
+    private SemesterService semesterService;
+
+
+    private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
+
+
+    @GetMapping({"/admin/selectBatchProgram", "/hod/selectBatchProgram"})
+    public String selectbatchProgram(Model model, HttpServletRequest request) {
+
+        List<Batch> batches = batchService.findAll();
+        List<Program> programs = programService.findAll();
+        List<Semester> semesters = semesterService.findAll();
+
+        model.addAttribute("batches", batches);
+        model.addAttribute("programs", programs);
+        model.addAttribute("semesters", semesters);
+
+//        model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
+        return "/BatchProgramSelectionForStudentList";
+    }
+
+
+    @PostMapping({"/admin/selectBatchProgram", "/hod/selectBatchProgram"})
+    public String postselectofbatchprogram(Model model, HttpServletRequest request,
+                                           @RequestParam(required=false, name="batch") Long batchId,
+                                           @RequestParam(required=false, name="program") Long programId,
+                                           @RequestParam(required = false, name="semester") Long semId) {
+        Batch batch = batchService.findOne(batchId);
+        Program program = programService.findOne(programId);
+        Semester semester = semesterService.findOne(semId);
+
+        if (request.isUserInRole("PRINCIPAL")) {
+            if (studentService.existsStudentEntryByBatchAndProgramAndSemester(batch, program, semester)) {
+                List<Student> students = studentService.getStudentsByBatchAndProgramAndSemester(batch, program, semester);
+                System.out.println(students);
+
+                return "redirect:/admin/listStudent/" + batchId + "/" + programId + "/" + semId;
+            }
+            else{
+                return "redirect:/admin/selectBatchProgram";
+            }
+        }
+
+        else if (request.isUserInRole("DEPT_HEAD")) {
+            if (studentService.existsStudentEntryByBatchAndProgramAndSemester(batch, program, semester)) {
+                List<Student> students = studentService.getStudentsByBatchAndProgramAndSemester(batch, program, semester);
+                System.out.println(students);
+
+                return "redirect:/hod/listStudent/" + batchId + "/" + programId + "/" + semId;
+            }
+            else{
+                return "redirect:/hod/selectBatchProgram";
+            }
+        }
+//            BatchYearSemTerm batchYearSemTerm1 = batchYearSemTermService.findRow(batchYearSemTerm);
+
+        return "/403";
+    }
+
+    @GetMapping(value={"/admin/listStudent/{batchId}/{programId}/{semId}","/hod/listStudent/{batchId}/{programId}/{semId}","/student/listStudent"})
+    public String studentList(Model model,
+                              @PathVariable(required = true, name = "programId") Long programId,
+                              @PathVariable(required = true, name = "batchId") Long batchId,
+                              @PathVariable(required = true, name = "semId") Long semId) {
+
+//        List<Program> programs = programService.findAll();
+//        List<Batch> batches = batchService.findAll();
+
+        System.out.println(programId);
+        System.out.println(batchId);
+        System.out.println(semId);
+
+        Program program = programService.findOne(programId);
+        Batch batch = batchService.findOne(batchId);
+        Semester semester = semesterService.findOne(semId);
+
+        List<Student> studentList;
+        if (program != null && batch != null && semester!=null) {
+            studentList = studentService.getStudentsByBatchAndProgramAndSemester(batch, program, semester);
+        }
+        else{
+            studentList = studentService.findAll();
+        }
+
+        Student firstStudent = null;
+        if (!studentList.isEmpty()) {
+            firstStudent = studentList.get(0);
+        }
+
+        System.out.println(firstStudent.getDepartment().getDepartmentName());
+        model.addAttribute("firstStudent", firstStudent);
+        model.addAttribute("program", program);
+        model.addAttribute("batch", batch);
+        model.addAttribute("semester", semester);
+//
+//        logger.info("Program ID: " + programId + ", Batch ID: " + batchId);
+//
+//        return studentList;
+
+        model.addAttribute("studentList", studentList);
         return "/studentList";
     }
 
@@ -36,9 +155,24 @@ public class StudentController {
         return  stateService.findAll();
     }
 
+
+
     @GetMapping(value={"/admin/studentEdit","/admin/studentEdit/{id}"})
     public String studentEditForm(Model model, @PathVariable(required = false, name = "id") Long id,
                                   @RequestParam(required = false, name="add") String add) {
+
+        List<Department> departments = departmentService.findAll();
+        List<Program> programs = programService.findAll();
+        List<Batch> batches = batchService.findAll();
+        List<AcademicYear> academicYears = academicYearService.findAll();
+        List<Semester> semesters = semesterService.findAll();
+
+        model.addAttribute("departments", departments);
+        model.addAttribute("programs", programs);
+        model.addAttribute("batches", batches);
+        model.addAttribute("academicYears", academicYears);
+        model.addAttribute("semesters", semesters);
+
         if (null != id) {
             Student student = studentService.findOne(id);
             model.addAttribute("student", student);
@@ -66,7 +200,7 @@ public class StudentController {
         studentService.saveStudent(student);
         model.addAttribute("studentList", studentService.findAll());
         cleanUpQualification(student);
-        return "/studentList";
+        return "redirect:/admin/studentEdit";
     }
 
     private void cleanUpQualification(Student student) {

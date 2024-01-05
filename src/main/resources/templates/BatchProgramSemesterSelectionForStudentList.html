@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Allotment</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+    <!--    th:action="@{/admin/selectOpenElective}"-->
+    <form th:action="${#request.isUserInRole('PRINCIPAL') ? '/admin/selectBatchProgram' : '/hod/selectBatchProgram'}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+        <table border="0" width="80%">
+            <tr>
+
+                <td>
+                    <div class="form-group">
+                        <label for="batch.batchId"> Batch: </label> <br>
+                        <select class="form-control" id="batch" name="batch">
+                            <option th:each="batch : ${batches}" th:value="${batch.batchId}" th:text="${batch.batchName}"
+                                    id="batch.batchId"> batch </option>
+                        </select>
+                    </div>
+                </td>
+
+
+                <td> &nbsp</td>
+                <td>
+                    <div class="form-group">
+                        <label for="program.programId"> Program: </label> <br>
+                        <select class="form-control" id="program" name="program">
+                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"
+                                    id="program.programId"> program </option>
+                        </select>
+                    </div>
+                </td>
+
+
+                <td> &nbsp</td>
+                <td>
+                    <div class="form-group">
+                        <label for="semester.semId"> Semester: </label> <br>
+                        <select class="form-control" id="semester" name="semester">
+                            <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"
+                                    id="semester.semId"> semester </option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+
+
+
+
+<!--            <tr>-->
+<!--                <td>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="department.departmentId"> Department: </label> <br>-->
+<!--                        <select class="form-control" id="department" name="department">-->
+<!--                            <option th:each="department : ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"-->
+<!--                                    id="department.departmentId"> Department </option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </td>-->
+
+<!--                <td> &nbsp</td>-->
+<!--                <td> &nbsp</td>-->
+<!--            </tr>-->
+        </table>
+
+        <table width="100%">
+            <tr>
+                <td align="center">
+                    <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+</body>
+</html>

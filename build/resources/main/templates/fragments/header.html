@@ -40,9 +40,14 @@
                         <li><a th:href="@{/admin/listPrograms}">Program</a></li>
 <!--                        <li><a th:href="@{/admin/selectCourse}">Course</a></li>-->
                         <li><a th:href="@{/admin/selectOpenElective}">Open Elective</a></li>
-                        <li><a th:href="@{/admin/studentEdit}">Register Student</a></li>
-                        <li><a th:href="@{/admin/listStudent}">Students List</a></li>
-                        <li><a th:href="@{/admin/editFaculty}">Faculty</a></li>-->
+                        <li><a th:href="@{/admin/studentEdit}">Student Admission</a></li>
+                        <li><a th:href="@{/admin/selectBatchProgram}">Students List</a></li>
+
+<!--                        working but not needed for principal, needed for hod-->
+<!--                        <li><a th:href="@{/admin/selectBatchDepProg}">Allot AY and Sem</a></li>-->
+                        <li><a th:href="@{/admin/selectDeptForFaculty}">All-Dept-Faculty</a></li>
+
+<!--                        <li><a th:href="@{/admin/listFaculty}">Faculty</a></li>&ndash;&gt;-->
                        <li><a th:href="@{/admin/courseFacultyEdit}">Course-Faculty Allotment</a></li>
 <!--                        <li><a th:href="@{/admin/selectTimeTable}">Time Table</a></li>-->
 
@@ -60,8 +65,9 @@
                         <li><a th:href="@{/hod/selectCourse}">Course</a></li>
                         <li><a th:href="@{/hod/selectOpenElective}">Open Elective</a></li>
 <!--                        <li><a th:href="@{/admin/studentEdit}">Register Student</a></li>-->
-                        <li><a th:href="@{/hod/listStudent}">Students List</a></li>
-                        <li><a th:href="@{/hod/listFaculty}">Faculty</a></li>-->
+                        <li><a th:href="@{/hod/selectBatchProgram}">Students List</a></li>
+                        <li><a th:href="@{/hod/listFaculty}">Dept-Faculty</a></li>
+                        <li><a th:href="@{/hod/selectDeptForFaculty}">All-Dept-Faculty</a></li>
                         <li><a th:href="@{/hod/courseFacultyEdit}">Course-Faculty Allotment</a></li>
                         <li><a th:href="@{/hod/selectTimeTable}">Time Table</a></li>
 

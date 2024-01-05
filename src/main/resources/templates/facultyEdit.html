@@ -3,7 +3,7 @@
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>Course</title>
+    <title>Faculty</title>
 
     <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}"/>
@@ -14,13 +14,13 @@
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container">
-    <form action="/admin/editFaculty" th:action="@{/admin/editFaculty}" method="post">
+    <form action="/hod/editFaculty" th:action="@{/hod/editFaculty}" method="post">
 
         <table width="100%">
             <tr>
 
                 <td align="left">
-                    <a href="/admin/listFaculty" th:href="@{/admin/listFaculty}" class="btn btn-primary" role="button">View Faculties</a>
+                    <a href="/hod/listFaculty" th:href="@{/hod/listFaculty}" class="btn btn-primary" role="button">View Faculties</a>
                 </td>
 
                 <td align="right">
@@ -34,6 +34,8 @@
         <table border="0" width="80%">
             <tr>
                 <td><input th:type="hidden" name="facultyId" th:field="${faculty.id}"/>
+<!--                    <input th:type="hidden" name="department" th:value="${department.departmentId}" />-->
+
                     <div class="form-group">
                         <label for="facultyname">Faculty Name</label>
                         <input type="text" class="form-control" id="facultyname" th:field="${faculty.name}"
@@ -49,6 +51,49 @@
                     </div>
                 </td>
             </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="facultyIdNumber">Faculty ID:</label>
+                        <input type="text" class="form-control" id="facultyIdNumber" th:field="${faculty.facultyIdNumber}"
+                               placeholder="facultyIdNumber"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <input type="radio" th:field="*{faculty.gender}" name="gender" value="M" id="gender"/><label
+                            th:text="Male">M</label>
+                        <input type="radio" th:field="*{faculty.gender}" name="gender" value="F"/><label
+                            th:text="Female">F</label>
+                    </div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" th:field="${faculty.dob}"
+                               placeholder="DOB" dataformatas=""/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="gender">faculty type </label>
+                        <input type="radio" th:field="*{faculty.facultyType}" name="facultyType" value="Regular" id="facultyType"/><label
+                            th:text="Regular">M</label>
+                        <input type="radio" th:field="*{faculty.facultyType}" name="facultyType" value="Temporary"/><label
+                            th:text="Temporary">F</label>
+                    </div>
+                </td>
+            </tr>
+
+
             <tr>
                 <td>
                     <div class="form-group">
@@ -84,6 +129,47 @@
                     </div>
                 </td>
             </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone number</label>
+                        <input type="text" class="form-control" id="phoneNumber" th:field="${faculty.phoneNumber}"
+                               placeholder="phoneNumber"/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select class="form-control" th:field="*{faculty.category}">
+                            <option th:each="cat : ${categories}" th:value="${cat.key}" th:text="${cat.value}"
+                                    id="category"> Select Category </option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="doj">Date of Joining</label>
+                        <input type="date" class="form-control" id="doj" th:field="${faculty.dateOfJoining}"
+                               placeholder="date of joining" dataformatas=""/>
+                    </div>
+                </td>
+                <td> &nbsp;</td>
+                <td>
+                    <div class="form-group">
+                        <label for="dol">Date of Leaving</label>
+                        <input type="date" class="form-control" id="dol" th:field="${faculty.dateOfLeaving}"
+                               placeholder="Date of Leaving" dataformatas=""/>
+                    </div>
+                </td>
+            </tr>
+
+
+
         </table>
     </form>
 </div>

@@ -1,0 +1,101 @@
+<!--//still started now-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Allotment</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+
+    <form action="#" th:action="@{/admin/updateStudentDetails}" method="post">
+        <div>
+            <h1>Assign Academic Year And Semester</h1>
+            <div>
+                <label>Select Academic Year:</label>
+                <select name="academicYearId">
+                    <option th:each="academicYear : ${academicYears}" th:value="${academicYear.id}" th:text="${academicYear.year}"></option>
+                </select>
+                <label>Select Sem:</label>
+                <select name="semesterId">
+                    <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"></option>
+                </select>
+            </div>
+
+            <div>
+                <input type="checkbox" id="selectAll" onclick="selectAllStudents(this)" /> Select All<br/>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Select</th> <!-- Added for checkbox -->
+                    <th>Sl No.</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Program</th>
+                    <th>Batch</th>
+                    <th>Current A.Y</th>
+                    <th>Current Sem</th>
+                    <!--                <th>Actions</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${students}">
+                    <td><input type="checkbox" th:name="studentIds" th:value="${student.id}"></td> <!-- Checkbox for each student -->
+                    <td th:text="${student.id}"></td>
+                    <td th:text="${student.name}"></td>
+                    <td th:text="${student.department.departmentCode}"></td>
+                    <td th:text="${student.program.programCode}"></td>
+                    <td th:text="${student.batch.batchName}"></td>
+                    <td th:text="${student.academicYear?.year} ?: 'Not Assigned'"></td>
+                    <td th:text="${student.semester?.sem} ?: 'Not assigned'"></td>
+
+                    <!--                <td>-->
+                    <!--                    <a th:href="@{/admin/studentEdit/{id}(id=${student.id})}">Edit</a>-->
+                    <!--                </td>-->
+                </tr>
+                </tbody>
+            </table>
+
+            <!--         no good view but working-->
+            <!--        <div th:each="student : ${students}">-->
+            <!--            <input type="checkbox" name="studentIds" th:value="${student.id}" />-->
+            <!--            <label th:text="${student.name}"></label>-->
+            <!--        </div>-->
+        </div>
+
+
+
+        <button type="submit">Assign</button>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"/>
+
+<script>
+    function selectAllStudents(source) {
+        checkboxes = document.getElementsByName('studentIds');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+</script>
+
+
+
+</body>
+</html>
+
+

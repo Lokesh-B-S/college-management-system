@@ -14,6 +14,34 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @NotNull
+    private Department department;
+
+    @ManyToOne
+    @NotNull
+    private Program program;
+    @ManyToOne
+    @NotNull
+    private AcademicYear academicYear;
+    @ManyToOne
+    @NotNull
+    private Batch batch;
+    @ManyToOne
+    @NotNull
+    private Semester semester;
+    @ManyToOne
+    @NotNull
+    private Section section;
+
+    @NotNull
+    private String dateOfRegistration;
+
+    @NotNull
+    private String regNumber;
+    @NotNull
+    private String usn;
+
     @NotNull
     private String name;
     @NotNull
@@ -51,6 +79,8 @@ public class Student {
     private String category;
     private String nameOfCaste;
     private String specialCategoryCode;
+    private String quota;
+
     private long registrationAmountPaid;
     //    private Address address;
     private String amoutPaidDate;
@@ -320,5 +350,85 @@ public class Student {
 
     public void setIndianNational(String indianNational) {
         this.indianNational = indianNational;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public AcademicYear getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(AcademicYear academicYear) {
+        this.academicYear = academicYear;
+    }
+
+    public Batch getBatch() {
+        return batch;
+    }
+
+    public void setBatch(Batch batch) {
+        this.batch = batch;
+    }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public Section getSection() {
+        return section;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
+    }
+
+    public String getDateOfRegistration() {
+        return dateOfRegistration;
+    }
+
+    public void setDateOfRegistration(String dateOfRegistration) {
+        this.dateOfRegistration = dateOfRegistration;
+    }
+
+    public String getRegNumber() {
+        return regNumber;
+    }
+
+    public void setRegNumber(String regNumber) {
+        this.regNumber = regNumber;
+    }
+
+    public String getUsn() {
+        return usn;
+    }
+
+    public void setUsn(String usn) {
+        this.usn = usn;
+    }
+
+    public String getQuota() {
+        return quota;
+    }
+
+    public void setQuota(String quota) {
+        this.quota = quota;
     }
 }
