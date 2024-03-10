@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Eligible student List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div th:replace="fragments/header :: header"/>
+
+
+        <div class="container" th:if="${#request.isUserInRole('PRINCIPAL')}">
+
+            <h3>Eligible Students </h3>
+
+               <table  class="table table-bordered">
+                    <thead>
+                                <tr>
+                                    <th colspan="4" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                                        class="text-center">College
+                                    </th>
+                                </tr>
+
+                                <tr>
+                                    <th colspan="2" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+                                    <th colspan="2" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+                                    <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+                                </tr>
+                    </thead>
+
+
+
+                    <tbody>
+                            <tr style="text-align:center">
+                                <th rowspan="1" class="text-center">Sl no.</th>
+                                <th rowspan="1" class="text-center">USN</th>
+                                <th rowspan="1" class="text-center">Name</th>
+            <!--                    <th rowspan="1" class="text-center">Actions</th>-->
+                            </tr>
+
+                            <tr th:each="eligibleStudent, rowStat : ${eligibleStudentList}">
+                                <td th:text="${rowStat.count}" class="text-center">1</td>
+                    <!--            <td th:text="${eligibleStudent.regNumber}" class="text-center">Test</td>-->
+                                <td th:text="${eligibleStudent.usn}" class="text-center">Test</td>
+                                <td th:text="${eligibleStudent.name}" class="text-center">Test</td>
+                            </tr>
+                    </tbody>
+               </table>
+
+                    <!--            <td>-->
+                    <!--                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteCourse/1" th:href="@{/hod/deleteCourse/__${courseList.courseId}__}">Delete</a>-->
+                    <!--            </td>-->
+
+
+
+
+                <div align="center">
+                    <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
+                    <a href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>
+                </div>
+
+        </div>
+
+
+
+
+
+
+
+
+
+        <div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+            <h3>Students </h3>
+
+
+                <p>
+                    <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
+                    <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="" th:href="@{/hod/eligibleStudents/addnew/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}">Add more/Modify</a>
+                    <!--        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectiveEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectiveEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>-->
+
+                </p>
+
+                    <table  class="table table-bordered">
+                        <thead>
+
+                        <tr>
+                            <th colspan="4" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                                class="text-center">College
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th colspan="2" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+                            <th colspan="2" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+                            <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+                        </tr>
+                        </thead>
+
+
+
+                        <tbody>
+                        <tr style="text-align:center">
+                            <th rowspan="1" class="text-center">Sl no.</th>
+                            <th rowspan="1" class="text-center">USN</th>
+                            <th rowspan="1" class="text-center">Name</th>
+                <!--            <th rowspan="1" class="text-center">Actions</th>-->
+                        </tr>
+
+                        <tr th:each="eligibleStudent, rowStat : ${eligibleStudentList}">
+                            <td th:text="${rowStat.count}" class="text-center">1</td>
+                            <!--            <td th:text="${eligibleStudent.regNumber}" class="text-center">Test</td>-->
+
+<!--                            <td class="text-center">-->
+<!--                                <a th:href="@{/hod/updateStudentCourseRegistration/{eligibleStudentId}(eligibleStudentId=${eligibleStudent.eligibleStudentId})}" th:text="${eligibleStudent.usn}">-->
+<!--                                &lt;!&ndash;                            <a th:href="@{/hod/updateStudentCourseRegistration/{eligibleStudent.eligibleStudentId}" th:text="${eligibleStudent.usn}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <span  />Test</span>&ndash;&gt;-->
+<!--                            </a>-->
+<!--                            </td>-->
+                            <td th:text="${eligibleStudent.usn}" class="text-center">Test</td>
+
+                            <!--                            <td class="text-center">-->
+<!--                            <a th:href="@{/hod/updateStudentCourseRegistration/{eligibleStudentId}(eligibleStudentId=${eligibleStudent.eligibleStudentId})}" th:text="${eligibleStudent.name}">-->
+<!--                            </a>-->
+<!--                            </td>-->
+                            <td th:text="${eligibleStudent.name}" class="text-center">Test</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div align="center">
+                        <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
+                        <a href="/hod/selectPrerequisitesForEligibleStudents/" th:href="@{/hod/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>
+                    </div>
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+<!--<script>-->
+<!--    function toggleStudentTableDisplay() {-->
+<!--    var program = document.getElementById('program').value;-->
+<!--    var batch = document.getElementById('batch').value;-->
+
+<!--    var studentTable = document.getElementById('studentTable');-->
+<!--    if (program && batch) {-->
+<!--        studentTable.style.display = 'block';  // Show table-->
+<!--    } else {-->
+<!--        studentTable.style.display = 'none';   // Hide table-->
+<!--    }-->
+<!--}-->
+
+
+<!--    document.getElementById('program').addEventListener('change', toggleStudentTableDisplay);-->
+<!--    document.getElementById('batch').addEventListener('change', toggleStudentTableDisplay);-->
+<!--</script>-->
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+

@@ -9,8 +9,15 @@ public interface CourseService {
     Course findOne(Long id);
     Course saveCourse(Course course);
 
+    boolean existsById(Long courseId);
+
     List<Course> getCoursesByBatchYearSemTermIdAndCourseType(Long batchYearSemTermId, CourseType courseType);
     List<Course> getCoursesByBatchYearSemTermId(Long batchYearSemTermId);
+    List<Course> getAllProfessionalElectiveCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department);
+    List<Course> getAllRegularCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department);
+
+    List<Course> getCoursesByBatchYearSemTermIdAndProgramAndCourseType(Long batchYearSemTermId,Program program, CourseType courseType);
+
 
 //    List<Course> getEntriesByBatchYearDeptProgramSemId(Long BatchYearDeptProgramSemId);
 

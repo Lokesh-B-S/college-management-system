@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Student Courses Registration</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+
+    <style>
+        .course-box {
+        width: 33.33% - 20px; /* Adjust width to accommodate gap */
+            float: left;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 5px solid #ddd; /* Add border styling */
+            border-radius: 10px;
+            margin-bottom: 15px; /* Add margin for spacing between boxes */
+            margin-right: 10px;
+        }
+
+        .course-box p {
+        font-size: 12px;
+        margin: 10; /* Remove default margin for paragraph elements */
+    }
+
+        .semester-container {
+            clear: both; /* Ensure proper alignment of semesters */
+            margin-bottom: 30px; /* Add margin between semesters */
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+<!--        <p th:text="${academicYear.year}"></p>-->
+<!--    <p th:text="${program.programName}"></p>-->
+<!--    <p th:text="${semester.semId}"></p>-->
+<!--    <p th:text="${term.termDate}"></p>-->
+
+    <table width="100%">
+        <tr>
+            <th style="font-size: 15px;">Student Name: <span style="background-color: #DCCA12;" th:text="${eligibleStudent.name}"></span></th>
+            <th style="font-size: 15px;">USN: <span style="background-color: #DCCA12;" th:text="${eligibleStudent.usn}"></span></th>
+            <th th:text="'Programme: ' + ${program.programName}" style="font-size: 15px;">
+            <th th:text="'Total courses registered: ' + ${totalCoursesRegistered}" style="font-size: 15px;">
+<!--            <th th:text="'Department: ' + ${department.departmentName}" style="font-size: 15px;">Department</th>-->
+        </tr>
+        <tr>
+            <th th:text="'Academic Year: ' + ${currentAcademicYear.year}" style="font-size: 15px;">Academic Year</th>
+            <th th:text="'Semester: ' + ${currentSemester.sem}" style="font-size: 15px;">Semester</th>
+            <th th:text="'Term: ' + ${term.termDate}" style="font-size: 15px;">Term</th>
+            <th th:text="'Total credits registered: ' + ${totalCreditsRegistered}" style="font-size: 15px;">Term</th>
+
+        </tr>
+        <tr><td></td></tr>
+    </table>
+    <hr>
+
+
+
+    <h2>Student - Courses Registration</h2>
+    <form action="#" th:action="@{/hod/updateStudentCourseRegistration}" method="post">
+        <div style="text-align: right;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a th:href="@{/hod/listAllottedCoursesForSpecificStudent/__${eligibleStudent.eligibleStudentId}__/__${currentAcademicYear.id}__/__${program.programId}__/__${currentSemester.semId}__/__${term.id}__}" class="btn btn-primary view" th:text="Next"></a>
+<!--            <button type="button" class="btn btn-primary" onclick="goBack()">Back</button>-->
+        </div>
+
+
+        <input type="hidden" name="eligibleStudent" th:value="*{eligibleStudent.eligibleStudentId}" />
+
+        <!-- Iterate over semesterDataList -->
+        <div th:each="semesterData : ${semesterDataList}" class="semester-container">
+        <div>
+            <h3 th:text="'Semester ' + ${semesterData.semester} + ' :'"></h3>
+
+            <!-- Regular Courses -->
+            <div class="col-sm-4">
+                <h4>Regular Courses:</h4>
+                <div style="background-color: #CDF2F7;" class="course-box" th:each="regularCourse : ${semesterData.regularCourses}">
+                    <!-- Regular course details -->
+                    <input type="checkbox" th:name="'rc_' + ${eligibleStudent.eligibleStudentId} + '_' + ${regularCourse.courseId}"
+                           th:value="${regularCourse.courseId}"
+                           th:checked="${currentRegularCourseIds.contains(regularCourse.courseId)}"/>
+                    <p th:text="${regularCourse.courseCode}"></p>
+                    <p th:text="${regularCourse.courseName}"></p>
+                    <p th:text="'(' + ${regularCourse.courseType.typeOfCourse} + ')'"></p>
+                    <p th:text="'credits- L:' + ${regularCourse.lectureCredits} + ' T:' + ${regularCourse.tutorialCredits} + ' P:' + ${regularCourse.practicalCredits} + ' = ' + ${regularCourse.totalCredits}"></p>
+                </div>
+            </div>
+
+            <!-- Professional Elective Courses -->
+            <div class="col-sm-4">
+                <h4>Professional Elective Courses:</h4>
+
+                <div class="row">
+                    <h5>PE-1:</h5>
+                    <div style="background-color: #98EDC6;" class="course-box" th:each="professionalElective1 : ${semesterData.pe1Courses}">
+                        <input type="radio" th:name="'pe1_' + ${eligibleStudent.eligibleStudentId} + '_' + ${semesterData.semester}" th:value="${professionalElective1.courseId}"
+                               th:checked="${currentAssignmentsForPE1.containsKey(professionalElective1.courseId)}"/>
+                        <p th:text="${professionalElective1.courseCode}"></p>
+                        <p th:text="${professionalElective1.courseName}"></p>
+                        <p th:text="'credits- L:' + ${professionalElective1.lectureCredits} + ' T:' + ${professionalElective1.tutorialCredits} + ' P:' + ${professionalElective1.practicalCredits} + ' = ' + ${professionalElective1.totalCredits}"></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <h5>PE-2:</h5>
+                    <div style="background-color: #C4EDE2;" class="course-box" th:each="professionalElective2 : ${semesterData.pe2Courses}">
+                        <input type="radio" th:name="'pe2_' + ${eligibleStudent.eligibleStudentId} + '_' + ${semesterData.semester}" th:value="${professionalElective2.courseId}"
+                               th:checked="${currentAssignmentsForPE2.containsKey(professionalElective2.courseId)}"/>
+                        <p th:text="${professionalElective2.courseCode}"></p>
+                        <p th:text="${professionalElective2.courseName}"></p>
+                        <p th:text="'credits- L:' + ${professionalElective2.lectureCredits} + ' T:' + ${professionalElective2.tutorialCredits} + ' P:' + ${professionalElective2.practicalCredits} + ' = ' + ${professionalElective2.totalCredits}"></p>
+                    </div>
+                </div>
+            </div>
+
+<!--            th:checked="${currentOpenElectives[eligibleStudent.eligibleStudentId] == openElective.openElectiveId}"-->
+
+            <div class="col-sm-4">
+                <h4>Open Elective Courses:</h4>
+                <div style="background-color: #C4DEED;" class="course-box" th:each="openElective : ${semesterData.openElectives}">
+<!--                    useful to see if the course/elective is in db-->
+<!--                    <p>Open Elective ID: <span th:text="${openElective.openElectiveId}"></span></p>-->
+<!--                    <p>Is Selected: <span th:text="${currentOpenElectives.containsKey(openElective.openElectiveId)}"></span></p>-->
+
+                    <input type="radio" th:name="'oe_' + ${eligibleStudent.eligibleStudentId} + '_' + ${semesterData.semester}" th:value="${openElective.openElectiveId}"
+                                               th:checked="${currentOpenElectives.containsKey(openElective.openElectiveId)}"
+
+                    />
+                    <p th:text="${openElective.courseCode}"></p>
+                    <p th:text="${openElective.courseName}"></p>
+                    <p th:text="'(' + ${openElective.openElectiveType.typeOfOpenElective} + ')'"></p>
+                    <p th:text="'credits- L:' + ${openElective.lectureCredits} + ' T:' + ${openElective.tutorialCredits} + ' P:' + ${openElective.practicalCredits} + ' = ' + ${openElective.totalCredits}"></p>
+                </div>
+            </div>
+        </div>
+            <br>
+            <hr>
+
+        </div>
+
+
+
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a th:href="@{/hod/listAllottedCoursesForSpecificStudent/__${eligibleStudent.eligibleStudentId}__/__${currentAcademicYear.id}__/__${program.programId}__/__${currentSemester.semId}__/__${term.id}__}" class="btn btn-primary view" th:text="Next"></a>
+<!--            <button type="button" class="btn btn-primary" >Next</button>-->
+
+        </div>
+
+    </form>
+
+
+</div>
+<!--        <div class="row">-->
+<!--            <div class="col-sm-4">-->
+<!--&lt;!&ndash;                <div class="col-sm-4" style="border-right: 1px solid #ddd;">&ndash;&gt;-->
+<!--                <h4>Regular Courses:</h4>-->
+<!--&lt;!&ndash;                    <div style="background-color: #CDF2F7; padding: 10px;">&ndash;&gt;-->
+
+<!--&lt;!&ndash;                        <div class="row">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <div class="col-sm-6">&ndash;&gt;-->
+<!--                    <div style="background-color: #CDF2F7;" class="course-box" th:each="regularCourse, secStat : ${regularCourses}">-->
+<!--                    <input type="checkbox" th:name="'rc_' + ${eligibleStudent.eligibleStudentId} + '_' + ${regularCourse.courseId}"-->
+<!--                           th:value="${regularCourse.courseId}" th:checked="${currentRegularCourseIds.contains(regularCourse.courseId)}"/>-->
+<!--                    <p th:text="${regularCourse.courseCode}"></p>-->
+<!--                    <p th:text="${regularCourse.courseName}"></p>-->
+<!--                    <p th:text="'(' + ${regularCourse.courseType.typeOfCourse} + ')'"></p>-->
+<!--                    <p th:text="'credits- L:' + ${regularCourse.lectureCredits} + ' T:' + ${regularCourse.tutorialCredits} + ' P:' + ${regularCourse.practicalCredits} + ' = ' + ${regularCourse.totalCredits}"></p>-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+
+
+
+<!--                <div class="col-sm-4">-->
+<!--                    <h4>Professional Elective Courses:</h4>-->
+
+<!--                    <div class="row">-->
+<!--                        <h5>PE-1:</h5>-->
+<!--                        <div style="background-color: #98EDC6;" class="course-box" th:each="professionalElective1, secStat : ${PE1courses}">-->
+<!--                            <input type="radio" th:name="'pe1_' + ${eligibleStudent.eligibleStudentId}" th:value="${professionalElective1.courseId}"-->
+<!--                                   th:checked="${currentAssignmentsForPE1[eligibleStudent.eligibleStudentId] == professionalElective1.courseId}"/>-->
+<!--                            <p th:text="${professionalElective1.courseCode}"></p>-->
+<!--                            <p th:text="${professionalElective1.courseName}"></p>-->
+<!--                            <p th:text="'credits- L:' + ${professionalElective1.lectureCredits} + ' T:' + ${professionalElective1.tutorialCredits} + ' P:' + ${professionalElective1.practicalCredits} + ' = ' + ${professionalElective1.totalCredits}"></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+
+<!--                    <div class="row">-->
+<!--                        <h5>PE-2:</h5>-->
+<!--                        <div style="background-color: #C4EDE2;" class="course-box" th:each="professionalElective2, secStat : ${PE2courses}">-->
+<!--                            <input type="radio" th:name="'pe2_' + ${eligibleStudent.eligibleStudentId}" th:value="${professionalElective2.courseId}"-->
+<!--                                   th:checked="${currentAssignmentsForPE2[eligibleStudent.eligibleStudentId] == professionalElective2.courseId}"/>-->
+<!--                            <p th:text="${professionalElective2.courseCode}"></p>-->
+<!--                            <p th:text="${professionalElective2.courseName}"></p>-->
+<!--                            <p th:text="'credits- L:' + ${professionalElective2.lectureCredits} + ' T:' + ${professionalElective2.tutorialCredits} + ' P:' + ${professionalElective2.practicalCredits} + ' = ' + ${professionalElective2.totalCredits}"></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+
+<!--                <div class="col-sm-4">-->
+<!--                    <h4>Open Elective Courses:</h4>-->
+<!--                    <div style="background-color: #C4DEED;" class="course-box" th:each="openElective, secStat : ${openElectives}">-->
+<!--                        <input type="radio" th:name="'oe_' + ${eligibleStudent.eligibleStudentId}" th:value="${openElective.openElectiveId}"-->
+<!--                               th:checked="${currentOpenElectiveAssignments[eligibleStudent.eligibleStudentId] == openElective.openElectiveId}"/>-->
+<!--                        <p th:text="${openElective.courseCode}"></p>-->
+<!--                        <p th:text="${openElective.courseName}"></p>-->
+<!--                        <p th:text="'(' + ${openElective.openElectiveType.typeOfOpenElective} + ')'"></p>-->
+<!--                        <p th:text="'credits- L:' + ${openElective.lectureCredits} + ' T:' + ${openElective.tutorialCredits} + ' P:' + ${openElective.practicalCredits} + ' = ' + ${openElective.totalCredits}"></p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--        </div>-->
+
+
+
+
+<div th:replace="fragments/footer :: footer"/>
+
+
+
+
+<!--double tap radio button to uncheck it-->
+<script>
+    //print
+            document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+            });
+
+
+    //back
+    function goBack(){
+        window.history.back();
+    }
+
+
+    //double-click to uncheck radio buttons
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all radio buttons
+        var radioButtons = document.querySelectorAll('input[type="radio"]');
+
+        // Add double-click event listener to each radio button
+        radioButtons.forEach(function(radioButton) {
+            radioButton.addEventListener("dblclick", function() {
+                // Toggle the checked state of the radio button
+                this.checked = !this.checked;
+            });
+        });
+    });
+</script>
+</body>
+</html>

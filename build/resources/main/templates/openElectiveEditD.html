@@ -43,6 +43,9 @@
 <div th:replace="fragments/header :: header"/>
 
 <div class="container">
+
+<!--    <h1> Open Electives</h1>-->
+
     <div th:if="${batchYearSemTerm}">
 
 <!--        perfectly working <p>s-->
@@ -79,6 +82,8 @@
         <input type="hidden" id="programId" th:value="${program.programId}" />
 
     </div>
+    <h3>Open Electives:</h3>
+
     <table class="table table-sm table-bordered payments-table">
         <thead>
         <tr>

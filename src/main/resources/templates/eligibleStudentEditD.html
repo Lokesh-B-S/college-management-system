@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eligible student</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+
+    <!--    <link-->
+    <!--            rel="stylesheet"-->
+    <!--            href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"-->
+    <!--            integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"-->
+    <!--            crossorigin="anonymous"-->
+    <!--    />-->
+    <script
+            src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+            crossorigin="anonymous"
+    ></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+            crossorigin="anonymous"
+    ></script>
+    <style>
+        table.payments-table tbody tr.dirty {
+          background-color: #72e4a1;
+        }
+
+        table.payments-table tbody tr.deleted {
+          background-color: #df5151;
+        }
+
+        .refresh {
+      background-color: #6c757d; /* Light black color */
+      color: #fff; /* Text color */
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <div>
+
+        <table width="100%">
+            <tr>
+                <th th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 15px;">Academic Year</th>
+                <th th:text="'Programme: ' + ${program.programName}" style="font-size: 15px;">
+                <th th:text="'Department: ' + ${department.departmentName}" style="font-size: 15px;">Department</th>
+            </tr>
+            <tr>
+<!--                <th th:text="'Batch: ' + ${batchYearSemTerm.batch.batchName}" style="font-size: 15px;">Batch</th>-->
+                <th th:text="'Semester: ' + ${semester.sem}" style="font-size: 15px;">Semester</th>
+                <th th:text="'Term: ' + ${term.termDate}" style="font-size: 15px;">Term</th>
+            </tr>
+            <tr><td></td></tr>
+        </table>
+        <hr>
+
+<!--        <input type="hidden" id="batchYearSemTermId" th:value="${batchYearSemTerm.batchYearSemTermId}" />-->
+<!--        <input type="hidden" id="batchId" th:value="${batchYearSemTerm.batch.batchId}" />-->
+        <input type="hidden" id="academicYearId" th:value="${academicYear.id}" />
+        <input type="hidden" id="semId" th:value="${semester.semId}" />
+        <input type="hidden" id="termId" th:value="${term.id}" />
+
+        <input type="hidden" id="departmentId" th:value="${department.departmentId}" />
+        <input type="hidden" id="programId" th:value="${program.programId}" />
+
+    </div>
+
+    <h3> Students:</h3>
+    <table class="table table-sm table-bordered payments-table">
+        <thead>
+        <tr>
+            <th scope="col" class="text-center">USN</th>
+            <th scope="col" class="text-center">Student Name</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <table width="100%">
+        <tr>
+            <td align="center">
+                <button type="button" class="btn btn-secondary refresh" onclick="goBack()">Previous</button>
+                <button type="button" class="btn btn-success add-row">Add Student</button>
+                <button type="button" class="btn btn-success save">Save</button>
+                <button type="button" class="btn btn-secondary refresh">Refresh</button>
+                <a href="" th:href="@{/hod/listEligibleStudent/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-primary view">Detailed View</a>
+                <a href="/" class="btn btn-primary home">Home</a>
+            </td>
+        </tr>
+    </table>
+
+
+
+</div>
+
+<script>
+    function goBack(){
+            window.history.back();
+        }
+
+        function addRow(tbody, eligibleStudentId, usn, name, className) {
+
+                  var tr = $("<tr></tr>").attr("data-id", eligibleStudentId);
+
+                  if (className) {
+                    tr.addClass(className);
+                  }
+
+
+                  tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(usn)));
+                  tr.append($("<td></td>").append($('<input type="text" class="form-control">').val(name)));
+
+                    tr.append($("<td></td>").append($('<button type="button" class="btn btn-danger delete-row">X</button>')));
+
+                    // Append the <tr> element to the provided table body (tbody).
+                    tbody.append(tr);
+        }
+
+
+
+
+
+
+          function tableRefresh() {
+
+              var tbody = $(".payments-table tbody");
+              tbody.html("Loading...");
+
+                var academicYearId = $("#academicYearId").val(); // Fetch value from the hidden input field in html
+                var programId = $("#programId").val();
+                var semId = $("#semId").val();
+                var termId = $("#termId").val();
+
+                console.log(academicYearId);
+                console.log(programId);
+                console.log(semId);
+                console.log(termId);
+
+
+
+                $.getJSON("/hod/eligibleStudents/" + academicYearId + "/" + programId + "/" + semId + "/" + termId, function (data) {
+                  tbody.html("");
+
+                         data.forEach((el) => {
+
+                                        addRow(tbody, el.eligibleStudentId, el.usn, el.name);
+
+                  });
+                });
+        }
+
+
+
+
+
+    $("button.refresh").click(tableRefresh);
+
+    $("button.add-row").click(function () {
+            var tbody = $(".payments-table tbody");
+            addRow(tbody, null, null, null, "dirty");
+    });
+
+
+
+
+
+
+    //when a save button is clicked:-
+            $("button.save").click(function () {
+
+                    var arr = [];
+                    $(".payments-table tbody tr").each(function () {
+                        var row = $(this);
+                        if (row.hasClass("dirty") || row.hasClass("deleted")) {
+
+                              //if wishing to set hidden values of "objects" like batch,semester etc, need to initialize and keep in rowdata before setting their id values.
+                              //if the hidden value is a direct value("not objects") say batchYearSemTermId field of the course table, no need initialization separatelty here
+                              var rowData = { eligibleStudentId: row.attr("data-id"), academicYear: {}, program: {}, semester: {}, term: {} , department: {} };
+                              var keys = ["usn", "name"];
+
+                                row.find("input, select").each(function (idx) {
+                                       if ($(this).is("select"))
+                                       {
+                                         //rowData.batchYearSemTermId = $("#batchYearSemTermId").val();
+                                        // rowData.batch.batchId = {batchId : parseInt( $("#batchId").val())};  change this by refereing below line
+                                         rowData.academicYear.id =parseInt( $("#academicYearId").val());
+                                         rowData.program.programId = parseInt( $("#programId").val());
+                                         rowData.semester.semId = parseInt($("#semId").val());
+                                         rowData.term.id = parseInt( $("#termId").val());
+                                         rowData.department.departmentId = parseInt( $("#departmentId").val());
+
+                                                         rowData[keys[idx]] = $(this).val();
+
+                                       }
+                                       else
+                                       {
+                                        //rowData.batchYearSemTermId = $("#batchYearSemTermId").val();
+                                        // rowData.batch.batchId = {batchId : parseInt( $("#batchId").val())};  change this by refereing below line
+                                         rowData.academicYear.id =parseInt( $("#academicYearId").val());
+                                         rowData.program.programId = parseInt( $("#programId").val());
+                                         rowData.semester.semId = parseInt($("#semId").val());
+                                         rowData.term.id = parseInt( $("#termId").val());
+                                         rowData.department.departmentId = parseInt( $("#departmentId").val());
+
+                                                 rowData[keys[idx]] = $(this).val();
+                                       }
+                                });
+
+                        console.log(rowData);
+
+                              // Add an object to the array for this row with action and data.
+                              arr.push({
+                                action: row.hasClass("deleted") ? "DELETE" : "UPDATE",
+                                data: rowData,
+                              });
+                        }
+                    });
+
+                      // Perform an AJAX POST request to send the data to the server.
+                      $.ajax({
+                        type: "POST",
+                        url: '/hod/eligibleStudents',
+                        contentType: 'application/json',
+                        data: JSON.stringify(arr),
+                        success: tableRefresh,
+                        error: function(jqXHR, textStatus, errorThrown) {
+                          alert('error: ' + jqXHR.responseJSON.message);
+                        }
+                      });
+
+
+
+            });
+
+
+
+
+
+
+
+
+
+    //when a delete button is clicked:-
+            $(document).on("click", "button.delete-row", function () {
+                  var row = $(this).closest("tr");
+                  if (row.attr("data-id")) {
+
+                          var rowData = { eligibleStudentId: row.attr("data-id") };
+                                        <!--                    rowData.batchYearSemTermId = $("#batchYearSemTermId").val();-->
+                                        <!--                    rowData.batch.batchId = $("#batchId").val();-->
+                                        <!--                     rowData.academicYear.id = $("#academicYearId").val();-->
+                                        <!--                     rowData.semester.semId = $("#semId").val();-->
+                                        <!--                     rowData.term.id = $("#termId").val();-->
+                                        <!--                     rowData.department.departmentId =  $("#departmentId").val();-->
+                                        <!--                     rowData.program.programId = $("#programId").val();-->
+
+                            row.addClass("deleted");
+                  }
+                  else {
+                        row.remove();
+                  }
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $(document).on("change", ".payments-table tbody input", function () {
+      $(this).closest("tr").addClass("dirty");
+    });
+
+    $(document).on("change", ".payments-table tbody input, .payments-table tbody select", function () {
+    $(this).closest("tr").addClass("dirty");
+    });
+
+    tableRefresh();          //initial refresh when page is loaded.
+</script>
+</body>
+</html>

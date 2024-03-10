@@ -76,45 +76,6 @@
     <!-- Include jQuery library -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!--    <script>-->
-<!--        $(document).ready(function () {-->
-<!--            // Attach the click event to the "Delete" link-->
-<!--            $("#deleteLink").click(function (e) {-->
-<!--                e.preventDefault(); // Prevent the link from navigating-->
-
-<!--                var departmentSemSecId = $("input[name='departmentSemSecId']").val();-->
-<!--                var selectedDay = $("#day").val();-->
-<!--                var selectedTimeSlot = $("#timeSlot").val();-->
-<!--                var selectedCourse = $("#course").val();-->
-
-<!--                // Construct the URL for the delete action-->
-<!--                var deleteUrl = "/admin/deleteTimeTable/" + departmentSemSecId;-->
-
-<!--                // Perform the delete request with Ajax-->
-<!--                $.ajax({-->
-<!--                    type: "DELETE",-->
-<!--                    url: deleteUrl,-->
-<!--                    data: {-->
-<!--                        day: selectedDay,-->
-<!--                        timeSlot: selectedTimeSlot,-->
-<!--                        course: selectedCourse,-->
-<!--                    },-->
-<!--                    success: function (data) {-->
-<!--                        // Handle success, e.g., show an alert or update the page-->
-<!--                        //deleteSuccess(data, 3000);-->
-<!--                        console.log("Entry deleted successfully");-->
-<!--                    },-->
-<!--                    error: function (error) {-->
-<!--                        // Handle error, e.g., show an error message-->
-<!--                       // deleteFailure(data, 3000);-->
-<!--                        console.error("Failed to delete the entry");-->
-<!--                    },-->
-<!--                });-->
-<!--            });-->
-<!--        });-->
-<!--    </script>-->
-
-
     <!--delete time table entry-->
     <script type="text/javascript">
         function deleteEntry() {
@@ -130,8 +91,6 @@
             window.location.href = deleteUrl;
         }
 
-        // Attach the deleteEntry function to the click event of the delete link
-       // document.getElementById("deleteLink").addEventListener("click", deleteEntry);
     </script>
 
 

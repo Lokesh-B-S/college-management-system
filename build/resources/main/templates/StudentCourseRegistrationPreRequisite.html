@@ -1,0 +1,52 @@
+<!--//not used-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Student Course Reg</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+    <h4>Enter USN: </h4>
+
+    <!--    th:action="@{/admin/selectOpenElective}"-->
+    <form th:action="@{${#request.isUserInRole('DEPT_HEAD')} ? '/hod/selectPrerequisiteForStudentCourseRegistration' : '/hod/selectPrerequisiteForStudentCourseRegistration'}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+        <div class="form-group">
+            <label for="usn">USN:</label>
+            <input type="text" class="form-control" id="usn" name="usn" th:field="${eligibleStudent.usn}"
+                   placeholder=""/>
+        </div>
+
+
+        <table width="100%">
+            <tr>
+                <td align="center">
+                    <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -54,8 +54,8 @@ public class StudentController {
     private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
 
 
-    @GetMapping({"/admin/selectBatchProgram", "/hod/selectBatchProgram"})
-    public String selectbatchProgram(Model model, HttpServletRequest request) {
+    @GetMapping({"/admin/selectBatchProgramSemester", "/hod/selectBatchProgramSemester"})
+    public String selectbatchProgramSemester(Model model, HttpServletRequest request) {
 
         List<Batch> batches = batchService.findAll();
         List<Program> programs = programService.findAll();
@@ -66,12 +66,12 @@ public class StudentController {
         model.addAttribute("semesters", semesters);
 
 //        model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
-        return "/BatchProgramSelectionForStudentList";
+        return "/BatchProgramSemesterSelectionForStudentList";
     }
 
 
-    @PostMapping({"/admin/selectBatchProgram", "/hod/selectBatchProgram"})
-    public String postselectofbatchprogram(Model model, HttpServletRequest request,
+    @PostMapping({"/admin/selectBatchProgramSemester", "/hod/selectBatchProgramSemester"})
+    public String postselectofbatchprogramsemester(Model model, HttpServletRequest request,
                                            @RequestParam(required=false, name="batch") Long batchId,
                                            @RequestParam(required=false, name="program") Long programId,
                                            @RequestParam(required = false, name="semester") Long semId) {
@@ -87,7 +87,7 @@ public class StudentController {
                 return "redirect:/admin/listStudent/" + batchId + "/" + programId + "/" + semId;
             }
             else{
-                return "redirect:/admin/selectBatchProgram";
+                return "redirect:/admin/selectBatchProgramSemester";
             }
         }
 
@@ -99,7 +99,7 @@ public class StudentController {
                 return "redirect:/hod/listStudent/" + batchId + "/" + programId + "/" + semId;
             }
             else{
-                return "redirect:/hod/selectBatchProgram";
+                return "redirect:/hod/selectBatchProgramSemester";
             }
         }
 //            BatchYearSemTerm batchYearSemTerm1 = batchYearSemTermService.findRow(batchYearSemTerm);

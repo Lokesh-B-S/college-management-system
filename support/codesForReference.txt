@@ -16,6 +16,63 @@ if (auth != null && auth.getAuthorities().stream().anyMatch(authority -> authori
 else if (...)
 
    ----------------------------------------
+
+
+        @GetMapping("/hod/listSectionStudents")
+    public String listStudentsofSectionSelected(Model model,
+                                                @RequestParam Long academicYearId,
+                                                @RequestParam Long programId,
+                                                @RequestParam Long semId,
+                                                @RequestParam Long termId) {
+
+
+            AcademicYear academicYear = academicYearService.findOne(academicYearId);
+            Program program = programService.findOne(programId);
+            Semester semester = semesterService.findOne(semId);
+            Term term = termService.findOne(termId);
+
+            model.addAttribute("academicYear", academicYear);
+            model.addAttribute("program", program);
+            model.addAttribute("semester", semester);
+            model.addAttribute("term", term);
+
+        List<Section> sections = sectionService.findAll();
+        model.addAttribute("sections", sections);
+
+        Section section = sectionService.findOne(1L);
+        List<EligibleStudent> sectionStudents = eligibleStudentService.getStudentsByAcademicYearAndProgramAndSemesterAndTermAndSection(academicYear, program, semester, term, section);
+        model.addAttribute("sectionStudents", sectionStudents);
+        System.out.println(sectionStudents);
+//
+        return "SectionStudentsList";
+    }
+
+    @PostMapping("/hod/listSectionStudents")
+    public String postListSectionStudents(Model model, @RequestParam Long academicYearId,
+                                          @RequestParam Long programId,
+                                          @RequestParam Long semId,
+                                          @RequestParam Long termId,
+                                          @RequestParam Long sectionId){
+
+        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+        Program program = programService.findOne(programId);
+        Semester semester = semesterService.findOne(semId);
+        Term term = termService.findOne(termId);
+
+        model.addAttribute("academicYear", academicYear);
+        model.addAttribute("program", program);
+        model.addAttribute("semester", semester);
+        model.addAttribute("term", term);
+
+        Section section = sectionService.findOne(sectionId);
+        List<EligibleStudent> sectionStudents = eligibleStudentService.getStudentsByAcademicYearAndProgramAndSemesterAndTermAndSection(academicYear, program, semester, term, section);
+        model.addAttribute("sectionStudents", sectionStudents);
+        System.out.println(sectionStudents);
+         return "sectionStudentsList";
+    }
+
+
+   ------------------------------------------
    Fetching username in controllers: (stackoverflow) used in openElectiveController
    There are multiple ways to do this.
 

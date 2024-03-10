@@ -13,6 +13,7 @@ public class SectionServiceImpl implements SectionService{
     @Autowired
     private SectionRepository sectionRepository;
 
+    public Section findOne(Long secId){return sectionRepository.findById(secId).get();}
     public List<Section> findAll(){return sectionRepository.findAll();}
 
     public Section saveSection(Section section){return sectionRepository.save(section);}

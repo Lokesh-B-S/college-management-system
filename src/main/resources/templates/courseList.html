@@ -13,7 +13,7 @@
 <body>
 <div th:replace="fragments/header :: header"/>
 <div class="container" th:if="${#request.isUserInRole('PRINCIPAL')}">
-    <!--    <h1> Courses </h1>-->
+        <h1> Courses: </h1>
 
     <p>
         <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
@@ -126,6 +126,7 @@
 
 <div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
 
+    <h1> Courses:</h1>
     <p>
         <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
         <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/courses/addnew/${batchYearSemTermView.batchYearSemTermId}/${program.programId}}" th:href="@{/hod/courses/addnew/__${batchYearSemTermView.batchYearSemTermId}__/__${program.programId}__}">Add more</a>

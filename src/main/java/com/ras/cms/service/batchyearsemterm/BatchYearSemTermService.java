@@ -1,7 +1,6 @@
 package com.ras.cms.service.batchyearsemterm;
 
-import com.ras.cms.domain.BatchYearDeptProgramSem;
-import com.ras.cms.domain.BatchYearSemTerm;
+import com.ras.cms.domain.*;
 
 import java.util.List;
 
@@ -19,5 +18,7 @@ public interface BatchYearSemTermService {
     Long findId(BatchYearSemTerm batchYearSemTerm);
 
     BatchYearSemTerm findRow(BatchYearSemTerm batchYearSemTerm);
+
+    BatchYearSemTerm getRowByAcademicYearAndSemesterAndTerm(AcademicYear academicYear, Semester semester, Term term);
 
 }

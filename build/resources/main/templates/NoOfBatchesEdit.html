@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+
+
+<!--    <a th:href="@{/hod/listSecBatchStudents(academicYearId=__${academicYear.id}__, programId=__${program.programId}__, semId=__${semester.semId}__, termId=__${term.id}__, sectionId=__${section.sectionId}__)}" class="btn btn-primary view">View students</a>-->
+
+
+    <table width="100%">
+        <tr>
+            <th th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 15px;">Academic Year</th>
+            <th th:text="'Program: ' + ${program.programName}" style="font-size: 15px;">
+                <!--            <th th:text="'Academic Year: ' + ${firstStudent.academicYear.year}" style="font-size: 15px;">Academic Year</th>-->
+        </tr>
+        <tr>
+            <th th:text="'Semester: ' + ${semester.sem}" style="font-size: 15px;">Semester</th>
+            <th th:text="'Term: ' + ${term.termDate}" style="font-size: 15px;">term</th>
+<!--            <th th:text="'Section: ' + ${section.sec}" style="font-size: 15px;">section</th>-->
+
+
+            <!--        <th th:text="'Term: ' + ${student.term.termDate}" style="font-size: 15px;">Term</th>-->
+        </tr>
+        <tr><td></td></tr>
+    </table>
+    <hr>
+
+
+
+
+    <form action="#" th:action="@{/hod/editNoOfBatches}" method="post">
+        <div>
+            <h1> Batch Counts</h1>
+
+                        <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />
+                        <input type="hidden" name="programId" th:value="${program.programId}" />
+                        <input type="hidden" name="semId" th:value="${semester.semId}" />
+                        <input type="hidden" name="termId" th:value="${term.id}" />
+<!--                        <input type="hidden" name="sectionId" th:value="${section.sectionId}" />-->
+
+<!--                        <div>-->
+<!--                            <label>Batch count:</label>-->
+<!--                            <input type="number" id="count" name="count" th:value="${count}" min="1" max="10">-->
+<!--                        </div>-->
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <!--                    <th>Select</th> &lt;!&ndash; Added for checkbox &ndash;&gt;-->
+                    <th class="text-center">Sl No.</th>
+                    <th class="text-center">Section</th>
+                    <th class="text-center">Batch Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="section, rowStat : ${sections}">
+                    <td th:text="${rowStat.count}" class="text-center"></td>
+                    <td th:text="${section.sec}" class="text-center"></td>
+
+                    <td class="text-center">
+                        <input type="number" th:attr="name=${section.sectionId}"
+                               th:value="${existingBatchCountsMap.containsKey(section.sectionId) ? existingBatchCountsMap.get(section.sectionId) : ''}"
+                               min="0" max="10">
+                    </td>
+
+
+                    <!--                    <td class="text-center">-->
+<!--                        <input type="number" th:attr="name=${section.sectionId}"-->
+<!--                               th:value="${existingBatchCounts.?[section.sectionId == section.sectionId].size() > 0-->
+<!--                      ? existingBatchCounts.?[section.sectionId == section.sectionId].get(0).batchCount : ''}"-->
+<!--                               min="0" max="10">-->
+<!--                    </td>-->
+
+
+
+<!--                    <td class="text-center">-->
+<!--                        <input type="number" th:attr="name=${section.sectionId}" th:value="${existingBatchCounts.?[section.sectionId == section.sectionId].size() > 0 ? existingBatchCounts.?[section.sectionId == section.sectionId].get(0).batchCount : ''}" min="0" max="10">-->
+<!--                    </td>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-primary" onclick="goBack()">Previous</button>
+        </div>
+
+    </form>
+
+
+</div>
+<div th:replace="fragments/footer :: footer"/>
+
+<script>
+    function goBack()
+    {
+         window.history.back();
+    }
+</script>
+
+
+<script>
+    function selectAllStudents(source) {
+        checkboxes = document.getElementsByName('studentIds');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+</script>
+
+
+
+</body>
+</html>
+
+

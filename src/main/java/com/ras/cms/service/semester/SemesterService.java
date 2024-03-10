@@ -12,5 +12,7 @@ public interface SemesterService {
 
     Semester saveSemester(Semester semester);
 
+    Semester findBySem(Long sem);
+
 
 }

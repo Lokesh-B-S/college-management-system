@@ -145,6 +145,7 @@ public class TimeTableEntryController {
                             model.addAttribute("departmentSemSec", departmentSemSec);
 
                         }
+                        //i dont think this else part is needed - 20/2/2024
                         else{
                             List<TimeSlotSelection> timeSlots = timeSlotSelectionService.findAll();
                             model.addAttribute("timeSlots", timeSlots);
@@ -158,7 +159,10 @@ public class TimeTableEntryController {
     }
 
     @PostMapping({"/admin/editTimeTable","/hod/editTimeTable"})
-    public String addEntry(Model model, TimeTableEntry timeTableEntry, DepartmentSemSec departmentSemSec1, RedirectAttributes attributes, @RequestParam Long departmentSemSecId){
+    public String addEntry(Model model, TimeTableEntry timeTableEntry,
+                           DepartmentSemSec departmentSemSec1,
+                           RedirectAttributes attributes,
+                           @RequestParam Long departmentSemSecId){
         try {
             // Check if an entry already exists for the given parameters
             boolean entryExists = timeTableEntryService.doesEntryExist(departmentSemSecId, timeTableEntry.getDay(), timeTableEntry.getTimeSlot());  //no need of mentioning timeTableEntry.getCourse too coz it results adding multiple courses
@@ -209,10 +213,10 @@ public class TimeTableEntryController {
                 TimeTableEntry entryToDelete = timeTableEntryService.getEntry(departmentSemSecId, day, timeSlot, course);
                 timeTableEntryService.deleteTimeTableEntry(entryToDelete.getId());
                 System.out.println("Deleted");
-                attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
+                attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully.....");
             }
             else{
-                attributes.addFlashAttribute("EntryDoesNotExistError", "Sorry! this entry doesn't exist to delete, add it first");
+                attributes.addFlashAttribute("EntryDoesNotExistError", "Sorry! this entry doesn't exist to delete, add it first.....");
             }
         } catch (Exception e) {
             System.out.println(e);

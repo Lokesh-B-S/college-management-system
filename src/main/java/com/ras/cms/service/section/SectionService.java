@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface SectionService {
 
+
+    Section findOne(Long secId);
     List<Section> findAll();
 
     Section saveSection(Section section);

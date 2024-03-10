@@ -22,4 +22,6 @@ public class SemesterServiceImpl implements SemesterService{
         return semesterRepository.save(semester);
     }
 
+    public Semester findBySem(Long sem){return semesterRepository.findBySem(sem);}
+
 }

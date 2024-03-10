@@ -22,17 +22,18 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Id</th>
+            <th>Sl no.</th>
             <th>Teaching Department Name</th>
             <th>Short Name</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="teachingDepartment : ${teachingDepartmentList}">
-            <td th:text="${teachingDepartment.teachingDepartmentId}">1</td>
-            <td th:text="${teachingDepartment.teachingDepartmentCode}">Test</td>
+        <tr th:each="teachingDepartment, rowStat : ${teachingDepartmentList}">
+            <td th:text="${rowStat.count}">Test</td>
+<!--            <td th:text="${teachingDepartment.teachingDepartmentId}">1</td>-->
             <td th:text="${teachingDepartment.teachingDepartmentName}">Test</td>
+            <td th:text="${teachingDepartment.teachingDepartmentCode}">Test</td>
             <td>
                 <a href="/hod/editTeachingDepartment/1" th:href="@{/hod/editTeachingDepartment/__${teachingDepartment.teachingDepartmentId}__}">Edit</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

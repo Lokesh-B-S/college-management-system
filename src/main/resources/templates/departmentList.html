@@ -22,7 +22,7 @@
     <table  class="table table-striped">
         <thead>
         <tr>
-            <th> Department Id</th>
+            <th> Sl no.</th>
             <th> Department Code</th>
             <th> Department Name</th>
             <th> College </th>
@@ -31,8 +31,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="department : ${departmentList}">
-            <td th:text="${department.departmentId}">1</td>
+        <tr th:each="department, rowStat : ${departmentList}">
+            <td th:text="${rowStat.count}">1</td>
             <td th:text="${department.departmentCode}">1</td>
             <td th:text="${department.departmentName}">Test</td>
             <td th:text="${department.college.collegeId} + '-' + ${department.college.collegeName}"> College </td>

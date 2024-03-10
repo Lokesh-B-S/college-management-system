@@ -173,7 +173,7 @@ public class CourseController {
                     } else if (request.isUserInRole("DEPT_HEAD")) {
                         //if i had to use openElectiveEdit(non dynamic)
 //                        return "redirect:/hod/openElectiveEdit/" + batchYearSemTerm.getBatchYearSemTermId();
-                        return "redirect:/hod/listCourse/" + batchYearSemTerm1.getBatchYearSemTermId();
+                        return "redirect:/hod/listCourse/" + batchYearSemTerm1.getBatchYearSemTermId() + "/" + programId;
 
                     }
                 } catch (Exception e) {

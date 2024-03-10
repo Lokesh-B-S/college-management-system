@@ -22,14 +22,14 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>id</th>
+            <th>Sl no.</th>
             <th>Open Elective Type </th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="openElectiveType : ${openElectiveTypeList}">
-            <td th:text="${openElectiveType.id}">1</td>
+        <tr th:each="openElectiveType, rowStat : ${openElectiveTypeList}">
+            <td th:text="${rowStat.count}">1</td>
             <td th:text="${openElectiveType.typeOfOpenElective}">Test</td>
             <td>
 <!--                <a href="/admin/editOpenElectiveType/1" th:href="@{/admin/editOpenElectiveType/__${openElectiveType.id}__}">Edit</a>-->

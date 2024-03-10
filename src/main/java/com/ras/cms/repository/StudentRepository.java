@@ -15,9 +15,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     boolean existsByBatchAndDepartmentAndProgram(Batch batch, Department department, Program program);
 
+    boolean existsByBatchAndDepartmentAndProgramAndSemester(Batch batch, Department department, Program program, Semester semester);
+
     boolean existsByBatchAndProgramAndSemester(Batch batch, Program program, Semester semester);
 
     List<Student> findAllByBatchAndDepartmentAndProgram(Batch batch, Department department, Program program);
+
+    List<Student> findAllByBatchAndDepartmentAndProgramAndSemester(Batch batch, Department department, Program program, Semester semester);
 
     List<Student> findAllByBatchAndProgramAndSemester(Batch batch, Program program, Semester semester);
 

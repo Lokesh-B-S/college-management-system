@@ -20,6 +20,7 @@
     <!--    th:action="@{/admin/selectOpenElective}"-->
     <form th:action="@{${#request.isUserInRole('PRINCIPAL')} ? '/admin/selectCourse' : '/hod/selectCourse'}" th:object="${batchYearDeptProgramSem1}" method="post">
 
+
         <table width="100%">
             <tr>
                 <td align="left">
@@ -35,14 +36,12 @@
                     <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editTeachingDepartment" th:href="@{/hod/editTeachingDepartment}" class="btn btn-primary" role="button">Add Teaching Department</a>
                 </td>
 
-
-                <td align="right">
-                    <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
-                    <button type="submit" class="btn btn-primary">Proceed</button>
-                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>
-                </td>
             </tr>
         </table>
+
+        <hr>
+        <h1>Courses</h1>
+
 
         <table border="0" width="80%">
 
@@ -144,7 +143,14 @@
                 <td></td>
             </tr>
 
+
         </table>
+
+        <div align="center">
+                <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                <button type="submit" class="btn btn-primary">Proceed</button>
+                <!--                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>-->
+        </div>
 
     </form>
     <div th:if="${message}" class="alert alert-warning">

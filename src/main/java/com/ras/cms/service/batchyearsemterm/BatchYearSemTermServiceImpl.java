@@ -1,5 +1,8 @@
 package com.ras.cms.service.batchyearsemterm;
 
+import com.ras.cms.domain.AcademicYear;
+import com.ras.cms.domain.Semester;
+import com.ras.cms.domain.Term;
 import com.ras.cms.repository.BatchYearSemTermRepository;
 import com.ras.cms.domain.BatchYearSemTerm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,11 @@ public class BatchYearSemTermServiceImpl implements BatchYearSemTermService{
     @Override
     public BatchYearSemTerm findRow(BatchYearSemTerm batchYearSemTerm){
         return batchYearSemTermRepository.findByBatchAndAcademicYearAndSemesterAndTerm(batchYearSemTerm.getBatch(),batchYearSemTerm.getAcademicYear(),batchYearSemTerm.getSemester(), batchYearSemTerm.getTerm());
+    }
+
+    @Override
+    public BatchYearSemTerm getRowByAcademicYearAndSemesterAndTerm(AcademicYear academicYear, Semester semester, Term term){
+        return batchYearSemTermRepository.findByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
     }
 
 }

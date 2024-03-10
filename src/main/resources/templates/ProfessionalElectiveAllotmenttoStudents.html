@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Allotment</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+
+
+    <!--    <a href="" th:href="@{/hod/listSectionStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-primary">View students</a>-->
+    <a th:href="@{/hod/listProfessionalElectiveStudents(academicYearId=__${academicYear.id}__, programId=__${program.programId}__, semId=__${semester.semId}__, termId=__${term.id}__)}" class="btn btn-primary view">View students</a>
+
+
+    <table width="100%">
+        <tr>
+            <th th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 15px;">Academic Year</th>
+            <th th:text="'Program: ' + ${program.programName}" style="font-size: 15px;">
+                <!--            <th th:text="'Academic Year: ' + ${firstStudent.academicYear.year}" style="font-size: 15px;">Academic Year</th>-->
+        </tr>
+        <tr>
+            <th th:text="'Semester: ' + ${semester.sem}" style="font-size: 15px;">Semester</th>
+            <th th:text="'Term: ' + ${term.termDate}" style="font-size: 15px;">term</th>
+
+            <!--        <th th:text="'Term: ' + ${student.term.termDate}" style="font-size: 15px;">Term</th>-->
+        </tr>
+        <tr><td></td></tr>
+    </table>
+    <hr>
+
+
+
+    <form action="#" th:action="@{/hod/updateStudentPEDetails}" method="post">
+        <div>
+            <h1>Assign Professional Elective</h1>
+
+            <!--            <p th:text="No of Sections: ${noOfSections}">No of Sections: ${noOfSections}</p>-->
+
+            <input type="hidden" name="academicYear" th:value="*{academicYear.id}" />
+            <input type="hidden" name="program" th:value="*{program.programId}" />
+            <input type="hidden" name="semester" th:value="*{semester.semId}" />
+            <input type="hidden" name="term" th:value="*{term.id}" />
+            <table>
+                <tr>
+                    <!--                    <td>-->
+                    <!--                        <label for="noOfSections">Set Number of Sections:</label>-->
+                    <!--                          </td>-->
+                    <!--                    <td>-->
+                    <!--                        <input type="number" class="form-control" id="noOfSections" name="noOfSections" th:value="${noOfSections}"  min="1" max="26" />-->
+                    <!--                    </td>-->
+                    <!--                    <td>-->
+                    <!--                        <button type="submit" class="btn btn-primary">Submit</button>-->
+                    <!--                    </td>-->
+                </tr>
+            </table>
+
+
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <!--                    <th>Select</th> &lt;!&ndash; Added for checkbox &ndash;&gt;-->
+                    <th class="text-center">Sl No.</th>
+                    <th class="text-center">USN</th>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Professional Elective 1</th>
+                    <th class="text-center">Professional Elective 2</th>
+
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student, rowStat : ${students}">
+                    <!--                    <td><input type="checkbox" th:name="studentIds" th:value="${student.id}"></td> &lt;!&ndash; Checkbox for each student &ndash;&gt;-->
+                    <td th:text="${rowStat.count}" class="text-center"></td>
+                    <td th:text="${student.usn}" class="text-center"></td>
+                    <td th:text="${student.name}" class="text-center"></td>
+                    <td class="text-center">
+                        <div style="display: inline;" th:each="professionalElective1, secStat : ${PE1courses}">
+<!--                            <input type="radio" th:name="${student.eligibleStudentId}" th:value="${professionalElective1.courseId}"-->
+                            <input type="radio" th:name="'pe1_' + ${student.eligibleStudentId}" th:value="${professionalElective1.courseId}"
+                                   th:checked="${currentAssignmentsForPE1[student.eligibleStudentId] == professionalElective1.courseId}"/>
+                            <label th:text="${professionalElective1.courseCode}"></label>
+                        </div>
+                    </td>
+
+                    <td class="text-center">
+                        <div style="display: inline;" th:each="professionalElective2, secStat : ${PE2courses}">
+<!--                            <input type="radio" th:name="${student.eligibleStudentId}" th:value="${professionalElective2.courseId}"-->
+                            <input type="radio" th:name="'pe2_' + ${student.eligibleStudentId}" th:value="${professionalElective2.courseId}"
+                                   th:checked="${currentAssignmentsForPE2[student.eligibleStudentId] == professionalElective2.courseId}"/>
+                            <label th:text="${professionalElective2.courseCode}"></label>
+                        </div>
+                    </td>
+
+
+                </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+
+
+
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-primary">Assign</button>
+        </div>
+    </form>
+
+
+</div>
+<div th:replace="fragments/footer :: footer"/>
+
+<!--double tap radio button to uncheck it-->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all radio buttons
+        var radioButtons = document.querySelectorAll('input[type="radio"]');
+
+        // Add double-click event listener to each radio button
+        radioButtons.forEach(function(radioButton) {
+            radioButton.addEventListener("dblclick", function() {
+                // Toggle the checked state of the radio button
+                this.checked = !this.checked;
+            });
+        });
+    });
+</script>
+
+
+<script>
+    function selectAllStudents(source) {
+        checkboxes = document.getElementsByName('studentIds');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+</script>
+
+
+
+</body>
+</html>
+
+

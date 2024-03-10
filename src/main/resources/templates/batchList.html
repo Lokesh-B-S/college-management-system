@@ -22,7 +22,7 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Batch id</th>
+            <th>Sl no.</th>
             <th>Batch Name </th>
             <th>Department</th>
             <th>Program</th>
@@ -30,8 +30,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="batch : ${batchList}">
-            <td th:text="${batch.batchId}">1</td>
+        <tr th:each="batch, rowStat : ${batchList}">
+            <td th:text="${rowStat.count}">1</td>
             <td th:text="${batch.batchName}">Test</td>
             <td th:text="${batch.department.departmentName}">Test</td>
             <td th:text="${batch.program.programName}">Test</td>

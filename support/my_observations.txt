@@ -214,9 +214,77 @@ when writing links in <script>:
   ----------------------------
 when we write both href and th:href="" , href is ignored.
 --------------------------------
+dynamic:
+
+error: JSON parse error: Cannot deserialize value of type java.lang.Long from Object value (token JsonToken.START_OBJECT); nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException:
+solution: (refer parseInt part in eligibleStudentEditD)
+
+try printing rowData in console to check the structure( in my case it was aca>id>id>'3' instead of aca>id>'3'
+
+rowData.academicYear.id =parseInt( $("#academicYearId").val());
+ rowData.program.programId = parseInt( $("#programId").val());
+ rowData.semester.semId = parseInt($("#semId").val());
+ rowData.term.id = parseInt( $("#termId").val());
+ rowData.department.departmentId = parseInt( $("#departmentId").val());
+
+ note that this part is different from courseEditD but both works.
 
 
 
+
+------------------------------
+Notes:
 
 faculty registration:
 faculty ID, DoB, DoJ, Male/female, regular/temporary, category:3A,3B etc, Dept, date of leaving (no program)
+
+--------------------------------
+Error: There was an unexpected error (type=Bad Request, status=400).
+       "Required request parameter 'academicYear' for method parameter type academicYear is not present"
+       org.springframework.web.bind.MissingServletRequestParameterException: Required request parameter 'noOfSections' for method parameter type Integer is not present
+       	at org.springframework.web.method.annotation.RequestParamMethodArgumentResolver.handleMissingValueInternal(RequestParamMethodArgumentResolver.java:218)
+try this way:
+
+
+            <input type="hidden" name="academicYear" th:value="*{academicYear.id}" />
+            <input type="hidden" name="program" th:value="*{program.programId}" />
+            <input type="hidden" name="semester" th:value="*{semester.semId}" />
+            <input type="hidden" name="term" th:value="*{term.id}" />
+
+
+                                                  @RequestParam("academicYear") AcademicYear academicYear,
+                                                  @RequestParam("program") Program program,
+                                                  @RequestParam("semester") Semester semester,
+                                                  @RequestParam("term") Term term,
+                                                  @RequestParam("noOfSections") Integer noOfSections,
+-------------------------------------------
+Error processing entry: section=2
+java.lang.NumberFormatException: For input string: "section"
+
+solution:      if (entry.getKey().equals("semester") || entry.getKey().equals("academicYear") || entry.getKey().equals("program") || entry.getKey().equals("term") || entry.getKey().equals("section") || entry.getKey().equals("noOfSections")) {
+
+--------------------------------------------
+Sometimes th:href causes problem in <a href="" th:href="" /> , remove and try it works
+-----------------------------------
+
+doubt to ask 9th feb 2024:
+student id is different to each sem students.
+if a student is in 2mnd sem, selects pe from 1st sem,  it saves to same eligiblestudentId ie replaces the present 2nd sem pe with the selected 1st sem pe and viceversa.
+
+if student is in 3rd sem, the oe and pe1 pe2 gets replaced if i save them to same eligibleStudentId from different semester say sem1
+
+
+
+---------------------------------------
+potential issue that to be resolved:
+
+when selecting a academic year,batch, sem, term
+(a new batchYearSemTerm row gets created)
+if same values like 17,12,1,1 and 17,13,1,1 are found when querying like example:         BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
+(sometimes user when adding a new course etc may give NH24 as batch and select 2023-24 AY, there is is the issue created in batchYearSemTerm table)
+it results in error as:
+
+query did not return a unique result: 2; nested exception is javax.persistence.NonUniqueResultException: query did not return a unique result: 2
+org.springframework.dao.IncorrectResultSizeDataAccessException: query did not return a unique result: 2; nested exception is javax.persistence.NonUniqueResultException: query did not return a unique result: 2
+
+-------------------------------------

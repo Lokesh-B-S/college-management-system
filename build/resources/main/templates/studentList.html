@@ -105,8 +105,8 @@
     </form>
 
     <div align="center">
-        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectBatchProgram/" th:href="@{/admin/selectBatchProgram/}" class="btn btn-primary view">Select again</a>
-        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/selectBatchProgram/" th:href="@{/hod/selectBatchProgram/}" class="btn btn-primary view">Select again</a>
+        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectBatchProgramSemester/" th:href="@{/admin/selectBatchProgramSemester/}" class="btn btn-primary view">Select again</a>
+        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/selectBatchProgramSemester/" th:href="@{/hod/selectBatchProgramSemester/}" class="btn btn-primary view">Select again</a>
     </div>
 </div>
 

@@ -13,6 +13,8 @@ public class TermServiceImpl implements TermService{
     @Autowired
     TermRepository termRepository;
 
+
+    public Term findOne(Long id){return termRepository.findById(id).get();}
     public List<Term> findAll(){
         return termRepository.findAll();
     }

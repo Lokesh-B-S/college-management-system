@@ -25,9 +25,26 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
+    public List<Course> getAllProfessionalElectiveCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department){
+        return courseRepository.findAllProfessionalElectiveCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, department);
+    }
+
+    @Override
+    public List<Course> getAllRegularCoursesByBatchYearSemTermIdAndDepartment(Long batchYearSemTermId, Department department){
+        return courseRepository.findAllRegularCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, department);
+    }
+
+
+    @Override
     public List<Course> getCoursesByBatchYearSemTermIdAndCourseType(Long batchYearSemTermId, CourseType courseType){
         return courseRepository.findAllByBatchYearSemTermIdAndCourseType(batchYearSemTermId, courseType);
     }
+
+    @Override
+    public List<Course> getCoursesByBatchYearSemTermIdAndProgramAndCourseType(Long batchYearSemTermId, Program program, CourseType courseType){
+        return courseRepository.findAllByBatchYearSemTermIdAndProgramAndCourseType(batchYearSemTermId, program, courseType);
+    }
+
     @Override
     public List<Course> getCoursesByBatchYearSemTermId(Long batchYearSemTermId){
         return courseRepository.findAllByBatchYearSemTermId(batchYearSemTermId);
@@ -47,6 +64,11 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course saveCourse(Course course) {
         return courseRepository.save(course);
+    }
+
+    @Override
+    public boolean existsById(Long id){
+        return courseRepository.existsById(id);
     }
 
 //    @Override

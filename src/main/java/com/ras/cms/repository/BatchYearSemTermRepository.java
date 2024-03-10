@@ -12,4 +12,5 @@ public interface BatchYearSemTermRepository extends JpaRepository<BatchYearSemTe
 
     BatchYearSemTerm findByBatchAndAcademicYearAndSemesterAndTerm(Batch batch, AcademicYear academicYear, Semester semester, Term term);
 
+    BatchYearSemTerm findByAcademicYearAndSemesterAndTerm(AcademicYear academicYear, Semester semester, Term term);
 }

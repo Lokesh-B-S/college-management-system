@@ -22,14 +22,14 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>id</th>
+            <th>Sl no.</th>
             <th>Academic Year </th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="academicYear : ${academicYearList}">
-            <td th:text="${academicYear.id}">1</td>
+        <tr th:each="academicYear, rowStat : ${academicYearList}">
+            <td th:text="${rowStat.count}">1</td>
             <td th:text="${academicYear.year}">Test</td>
             <td>
                 <a href="/hod/editAcademicYear/1" th:href="@{/hod/editAcademicYear/__${academicYear.id}__}">Edit</a>

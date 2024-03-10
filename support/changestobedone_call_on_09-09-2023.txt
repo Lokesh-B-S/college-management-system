@@ -117,3 +117,20 @@ safer side codes:
                             <span th:text="${entry?.course?.courseCode} + ' - (' + ${allotment?.faculty?.shortName} + ')'"></span>
                         </div>
                     </div>
+
+
+  --------
+  after 23/1/24 call:
+
+  made sections from A to Z (earlier A to H)
+  set min=1 max=26 for no of sections in section allotment.
+  renamed A,B,C,D to OE1, OE2 in open elective
+  --------------
+
+  26th work(9am call):
+  Professional elective allotment done
+  list of PE students done partially (change last column values, also filter selecting dropdown based on present program logged in too , in controller)
+
+  Note: if any section is not yet alloted, it shows sec cannot be found on null error for that guy in list PE.(so have to change)
+
+

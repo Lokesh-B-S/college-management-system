@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>student Course List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+
+
+    <style>
+        @media print {
+
+        @page {
+        margin: 0; /* Remove default margin */
+        }
+
+        /* Hide the page title (HTML page name) */
+        title {
+        display: none;
+        }
+
+        .btn {
+        display: none !important;
+        }
+
+        .delete-link {
+           display: none;
+        }
+
+        }
+    </style>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+<!--<div class="container" th:if="${#request.isUserInRole('PRINCIPAL')}">-->
+<!--    <h2> Courses Registered: </h2>-->
+<!--    -->
+<!--    <table  class="table table-bordered">-->
+<!--        <thead>-->
+
+<!--        <tr>-->
+<!--            <th colspan="11" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"-->
+<!--                class="text-center">College-->
+<!--            </th>-->
+<!--        </tr>-->
+
+
+<!--        <tr>-->
+<!--            <th colspan="5" th:text="'batch: '" style="font-size: 20px;"  class="text-center">Batch</th>-->
+<!--            <th colspan="7" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <th colspan="5" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>-->
+<!--            <th colspan="7" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>-->
+<!--        </tr>-->
+
+
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr style="text-align:center">-->
+<!--            <th rowspan="2" class="text-center">Sl no.</th>-->
+<!--&lt;!&ndash;            <th rowspan="2" class="text-center">Added By Dept.</th>&ndash;&gt;-->
+<!--&lt;!&ndash;            <th rowspan="2" class="text-center">Course Type</th>&ndash;&gt;-->
+<!--            <th rowspan="2" class="text-center">Course Code</th>-->
+
+<!--            <th rowspan="2" class="text-center">Actions</th>-->
+<!--        </tr>-->
+<!--        <tr style="text-align:center">-->
+<!--            <th>L</th>-->
+<!--            <th>T</th>-->
+<!--            <th>P</th>-->
+<!--            <th>Total</th>-->
+<!--        </tr>-->
+
+<!--        <tr th:each="courseList, rowStat : ${coursesList}">-->
+<!--            <td th:text="${rowStat.count}" class="text-center">1</td>-->
+<!--&lt;!&ndash;            <td th:text="${courseList.department.departmentCode}" class="text-center">1</td>&ndash;&gt;-->
+<!--&lt;!&ndash;            <td th:text="${courseList.courseType.typeOfCourse}" class="text-center">1</td>&ndash;&gt;-->
+<!--            <td th:text="${courseList.courseCode}" class="text-center">Test</td>-->
+<!-- -->
+<!--        </tr>-->
+<!--        -->
+<!--        </tbody>-->
+<!--    </table>-->
+
+<!--    <div align="center">-->
+<!--        <a href="/admin/selectCourse/" th:href="@{/admin/selectCourse/}" class="btn btn-primary view">Select again</a>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash;    &lt;!&ndash;    Print  &ndash;&gt;&ndash;&gt;-->
+<!--    &lt;!&ndash;    <div align="center">&ndash;&gt;-->
+<!--    &lt;!&ndash;        <button id="printButton1">Print</button>&ndash;&gt;-->
+<!--    &lt;!&ndash;        <script>&ndash;&gt;-->
+<!--    &lt;!&ndash;            document.getElementById("printButton").addEventListener("click", function() {&ndash;&gt;-->
+<!--    &lt;!&ndash;            window.print();&ndash;&gt;-->
+<!--    &lt;!&ndash;            });&ndash;&gt;-->
+<!--    &lt;!&ndash;        </script>&ndash;&gt;-->
+<!--    &lt;!&ndash;    </div>&ndash;&gt;-->
+
+
+<!--</div>-->
+
+
+
+
+
+
+
+
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+    <h3>Registered Courses:</h3>
+<!--    <p>-->
+<!--        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="" th:href="@{/hod/courses/addnew/__${batchYearSemTermView.batchYearSemTermId}__/__${program.programId}__}">Add more</a>-->
+
+<!--    </p>-->
+
+    <table  class="table table-bordered">
+        <thead>
+
+        <tr>
+            <th colspan="5" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                class="text-center">College
+            </th>
+        </tr>
+
+        <tr>
+                        <th colspan="2" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Batch</th>
+                        <th colspan="3" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+                    </tr>
+                    <tr>
+<!--                        <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>-->
+                        <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+                   </tr>
+                    <tr>
+                        <th colspan="2" style="font-size: 15px;" class="text-center">Student Name: <span style="background-color: #DCCA12; " th:text="${eligibleStudent.name}" ></span></th>
+                        <th colspan="3" style="font-size: 15px;" class="text-center">USN: <span style="background-color: #DCCA12; " th:text="${eligibleStudent.usn}" ></span></th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                    <tr style="text-align:center">
+<!--                        <th  class="text-center">Sl no.</th>-->
+                        <th colspan="5" class="text-center" style="font-size: 20px;">Courses</th>
+                    </tr>
+
+                    <tr>
+                        <th  class="text-center">Sl no</th>
+                        <th  class="text-center">Course Code</th>
+                        <th  class="text-center">Course Name</th>
+                        <th  class="text-center">Semester</th>
+                        <th class="text-center delete-link">Actions</th>
+                    </tr>
+
+                    <tr th:each="item, rowStat : ${allRegisteredCoursesList}">
+                        <td class="text-center" th:text="${rowStat.count}"></td>
+                        <td class="text-center"  th:if="${item.class.simpleName == 'Course'}"  th:text="${item.courseCode}"></td>
+                        <td class="text-center"  th:if="${item.class.simpleName == 'OpenElective'}"  th:text="${item.courseCode}"></td>
+                        <td class="text-center" th:text="${item.courseName}"></td>
+                        <td class="text-center" th:text="${item.semester.sem}"></td>
+
+<!--                        <td  th:if="${item.class.simpleName == 'Course'}"> <a th:href="@{/hod/deleteCourseRegistered/__${eligibleStudent.eligibleStudentId}__/__${item.courseId}__}}">Delete</a> </td>-->
+<!--                        <td  th:if="${item.class.simpleName == 'OpenElective'}"> <a th:href="@{/hod/deleteCourseRegistered/__${eligibleStudent.eligibleStudentId}__/__${item.openElectiveId}__}}">Delete</a> </td>-->
+
+                        <td class="text-center delete-link" th:if="${item.class.simpleName == 'Course'}">  <a th:href="@{'/hod/deleteCourseRegistered/' + ${eligibleStudent.eligibleStudentId} + '/' + ${item.courseId}}">
+                            Delete
+                        </a></td>
+                        <td class="text-center delete-link" th:if="${item.class.simpleName == 'OpenElective'}">  <a th:href="@{'/hod/deleteCourseRegistered/' + ${eligibleStudent.eligibleStudentId} + '/' + ${item.openElectiveId}}">
+                            Delete
+                        </a> </td>
+
+
+
+                        <!--                        <td colspan="2" th:text="${eachRegisteredCourse.courseCode}" class="text-center">Test</td>-->
+                    </tr>
+
+<!--        <tr th:each="foundRegularAndPECourse, rowStat : ${foundRegularAndPECourses}">-->
+<!--            <td colspan="2" th:text="${foundRegularAndPECourse.courseCode}" class="text-center">Test</td>-->
+<!--        </tr>-->
+
+<!--        <tr th:each="foundOpenElectiveCourse, rowStat : ${foundOpenElectiveCourses}">-->
+<!--            <td colspan="2" th:text="${foundOpenElectiveCourse.courseCode}" class="text-center">Test</td>-->
+<!--        </tr>-->
+
+
+
+<!--        <tr>-->
+<!--            <div th:if="${allottedProfessionalElective1 != null}">-->
+<!--            <td colspan="2" th:text="${allottedProfessionalElective1.courseCode}" class="text-center">Test</td>-->
+<!--            </div>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <div th:if="${allottedProfessionalElective2 != null}">-->
+<!--            <td colspan="2" th:text="${allottedProfessionalElective2.courseCode}" class="text-center">Test</td>-->
+<!--            </div>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <div th:if="${allottedOpenElective != null}">-->
+<!--            <td colspan="2" th:text="${allottedOpenElective.courseCode}" class="text-center">Test</td>-->
+<!--            </div>-->
+<!--        </tr>-->
+
+
+
+        <!--        //Total code - for future-->
+        <!--        <tr>-->
+        <!--            <th class="text-center">Total</th>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+        <!--            <td></td>-->
+
+        <!--            <th th:text="${totalLectureCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalTutorialCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalPracticalCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalTotalCredits}" class="text-center">0</th>-->
+        <!--            <th th:text="${totalContactHours}" class="text-center">0</th>-->
+        <!--        </tr>-->
+        </tbody>
+    </table>
+
+    <div align="center">
+        <a href="" th:href="@{/hod/updateStudentCourseRegistration/__${eligibleStudent.eligibleStudentId}__}" class="btn btn-primary view">Edit registration</a>
+        <a href="" th:href="@{/hod/listStudentsForCoursesAllotment/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/}" class="btn btn-primary view">Select other student</a>
+        <button id="printButton" class="btn btn-info">Print</button>
+          <a href="/hod/selectPrerequisitesForStudentCourseSelection/" th:href="@{/hod/selectPrerequisitesForStudentCourseSelection/}" class="btn btn-danger">close</a>
+    </div>
+
+
+
+</div>
+
+<div th:replace="fragments/footer :: footer"/>
+<script>
+
+    //print
+            document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+            });
+
+
+    //back
+    function goBack(){
+    window.history.back();
+}
+</script>
+
+</body>
+</html>

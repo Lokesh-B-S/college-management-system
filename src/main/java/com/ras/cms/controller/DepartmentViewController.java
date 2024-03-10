@@ -1,10 +1,12 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.Department;
+import com.ras.cms.domain.DepartmentAndProgramFetch;
 import com.ras.cms.domain.Program;
 import com.ras.cms.service.college.CollegeService;
 import com.ras.cms.service.course.CourseService;
 import com.ras.cms.service.department.DepartmentService;
+import com.ras.cms.service.departmentProgramFetch.DepartmentProgramFetchService;
 import com.ras.cms.service.program.ProgramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,10 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin")
+//@RequestMapping("/admin")
 public class DepartmentViewController {
 
     @Autowired
@@ -32,7 +35,20 @@ public class DepartmentViewController {
     @Autowired
     CourseService courseService;
 
-    @GetMapping(value = "/listDepartment")
+    @Autowired
+    DepartmentProgramFetchService departmentProgramFetchService;
+
+//    @GetMapping(value="/hod/listDepartment")
+//    public String departmentListForHOD(Model model, HttpServletRequest request) {
+//
+//        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+//        Department dep = departmentAndProgramFetch.getDepartment();
+//
+//        model.addAttribute("programList", programService.getProgramsByDepartment(dep));
+//        return "/programList";
+//    }
+
+    @GetMapping(value = {"/admin/listDepartment", "/hod/listDepartment"})
     public String departmentList(Model model) {
 
         List<Department> departments = departmentService.findAll();
@@ -62,7 +78,7 @@ public class DepartmentViewController {
 //        return "/departmentList";
 //    }
 
-    @GetMapping(value={"/departmentEdit","/departmentEdit/{id}"})
+    @GetMapping(value={"/admin/departmentEdit","/admin/departmentEdit/{id}"})
     public String departmentEdit(Model model, @PathVariable(required = false, name = "id") Long id) {
         if (null != id) {
             model.addAttribute("department", departmentService.findOne(id));
@@ -84,7 +100,7 @@ public class DepartmentViewController {
         return  courseService.findAll();
     }
 
-    @PostMapping(value="/departmentEdit")
+    @PostMapping(value="/admin/departmentEdit")
     public String departmentEdit(Model model, Department department) {
         departmentService.saveDepartment(department);
 
@@ -94,7 +110,7 @@ public class DepartmentViewController {
         return "/departmentList";
     }
 
-    @GetMapping(value="/departmentDelete/{id}")
+    @GetMapping(value="/admin/departmentDelete/{id}")
     public String  departmentDelete(Model model, @PathVariable(required = true, name = "id") Long id) {
         departmentService.deleteDepartment(id);
         model.addAttribute("departmentList", departmentService.findAll());

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Created by Surya on 12-Jun-18.
  */
 @RestController
-//@RequestMapping("/admin/departments")
+@RequestMapping("/admin/departments")
 public class DepartmentRestController {
 
     @Autowired
@@ -32,7 +32,8 @@ public class DepartmentRestController {
     private DepartmentRepository departmentRepo;
 
 
-    @GetMapping(value = "/admin/departments")
+//    @GetMapping(value = "/admin/departments")
+    @GetMapping
     public List<Department> departmentsList(Model model) {
 
         List<Department> departments = departmentService.findAll();
@@ -41,7 +42,8 @@ public class DepartmentRestController {
     }
 
 
-    @PostMapping(value = "/admin/departments", consumes = "application/json", produces = "application/json")
+//    @PostMapping(value = "/admin/departments", consumes = "application/json", produces = "application/json")
+@PostMapping(consumes = "application/json", produces = "application/json")
     public List<Department> updateDepartments(final @RequestBody List<DepartmentUpdateDAO> list) {
         List<Department> toDelete = list.stream().filter(o -> o.getAction() == DepartmentUpdateDAO.Action.DELETE)
                 .map(DepartmentUpdateDAO::getData).collect(Collectors.toList());

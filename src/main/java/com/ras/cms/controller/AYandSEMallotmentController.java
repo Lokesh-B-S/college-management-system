@@ -79,7 +79,8 @@ public class AYandSEMallotmentController {
 //            BatchYearSemTerm batchYearSemTerm1 = batchYearSemTermService.findRow(batchYearSemTerm);
         } else {
 
-             return "/403";
+            return "redirect:/admin/selectBatchDepProg";
+
         }
 //        return "/403";
     }

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Batch student List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+
+<style>
+    .flex-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group {
+        margin-right: 10px;
+    }
+</style>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container" th:if="${#request.isUserInRole('PRINCIPAL')}">
+
+    <h3 th:text="'Batch: ' + ' students'">Batch Students</h3>
+
+    <table  class="table table-bordered">
+        <thead>
+        <tr>
+            <th colspan="4" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                class="text-center">College
+            </th>
+        </tr>
+
+        <tr>
+            <th colspan="2" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+            <th colspan="2" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+        </tr>
+        <tr>
+            <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+            <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+        </tr>
+        </thead>
+
+
+
+        <tbody>
+        <tr style="text-align:center">
+            <th rowspan="1" class="text-center">Sl no.</th>
+            <th rowspan="1" class="text-center">USN</th>
+            <th rowspan="1" class="text-center">Name</th>
+            <!--                    <th rowspan="1" class="text-center">Actions</th>-->
+        </tr>
+
+        <tr th:each="eligibleStudent, rowStat : ${eligibleStudentList}">
+            <td th:text="${rowStat.count}" class="text-center">1</td>
+            <!--            <td th:text="${eligibleStudent.regNumber}" class="text-center">Test</td>-->
+            <td th:text="${eligibleStudent.usn}" class="text-center">Test</td>
+            <td th:text="${eligibleStudent.name}" class="text-center">Test</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--            <td>-->
+    <!--                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteCourse/1" th:href="@{/hod/deleteCourse/__${courseList.courseId}__}">Delete</a>-->
+    <!--            </td>-->
+
+
+
+
+    <div align="center">
+        <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
+        <a href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+    <h3>Batch Students:</h3>
+
+
+
+    <form th:action="@{/hod/listSecBatchStudents}" method="post">
+        <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />
+        <input type="hidden" name="programId" th:value="${program.programId}" />
+        <input type="hidden" name="semId" th:value="${semester.semId}" />
+        <input type="hidden" name="termId" th:value="${term.id}" />
+
+        <div>
+
+                <label>Select Section:</label>
+                <select  name="sectionId">
+                    <!-- Populate options dynamically based on available sections -->
+                    <option th:each="section : ${sections}" th:value="${section.sectionId}" th:text="${section.sec}"></option>
+                </select>
+
+                <label>Select Batch:</label>
+                <select name="secBatchId">
+                    <option th:each="secBatch : ${secBatches}" th:value="${secBatch.secBatchId}" th:text="${secBatch.secBatchName}"></option>
+                </select>
+
+            <button type="submit" class="btn btn-primary">Show Students</button>
+
+        </div>
+
+    </form>
+
+    <div>
+
+<!--        <p>-->
+<!--            &lt;!&ndash;        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>&ndash;&gt;-->
+<!--            <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="" th:href="@{/hod/updateStudentSecBatchDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${section.sectionId}__}">Back</a>-->
+<!--            &lt;!&ndash;        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectiveEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectiveEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>&ndash;&gt;-->
+
+<!--        </p>-->
+
+        <table  class="table table-bordered">
+            <thead>
+
+            <tr>
+                <th colspan="5" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                    class="text-center">College
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="2" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+                <th colspan="3" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+            </tr>
+            <tr>
+                <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+                <th colspan="3" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+            </tr>
+            </thead>
+
+
+
+            <tbody>
+            <tr style="text-align:center">
+                <th rowspan="1" class="text-center">Sl no.</th>
+                <th rowspan="1" class="text-center">Section</th>
+                <th rowspan="1" class="text-center">Batch</th>
+                <th rowspan="1" class="text-center">USN</th>
+                <th rowspan="1" class="text-center">Name</th>
+                <!--            <th rowspan="1" class="text-center">Actions</th>-->
+            </tr>
+
+            <tr th:each="secBatchStudent, rowStat : ${secBatchStudents}">
+                <td th:text="${rowStat.count}" class="text-center">1</td>
+                <td th:text="${secBatchStudent.section.sec}" class="text-center">Test</td>
+                <td th:text="${secBatchStudent.secBatch.secBatchName}" class="text-center">Test</td>
+                <td th:text="${secBatchStudent.usn}" class="text-center">Test</td>
+                <td th:text="${secBatchStudent.name}" class="text-center">Test</td>
+
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div align="center">
+        <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
+        <a href="/hod/selectPrerequisiteForSecBatchAllotment/" th:href="@{/hod/selectPrerequisiteForSecBatchAllotment/}" class="btn btn-primary view">Home</a>
+    </div>
+
+
+</div>
+
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+

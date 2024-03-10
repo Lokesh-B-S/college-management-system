@@ -140,6 +140,25 @@ public class InitApplicationService implements ApplicationRunner {
             sectionService.saveSection(new Section("F"));
             sectionService.saveSection(new Section("G"));
             sectionService.saveSection(new Section("H"));
+            sectionService.saveSection(new Section("I"));
+            sectionService.saveSection(new Section("J"));
+            sectionService.saveSection(new Section("K"));
+            sectionService.saveSection(new Section("L"));
+            sectionService.saveSection(new Section("M"));
+            sectionService.saveSection(new Section("N"));
+            sectionService.saveSection(new Section("O"));
+            sectionService.saveSection(new Section("P"));
+            sectionService.saveSection(new Section("Q"));
+            sectionService.saveSection(new Section("R"));
+            sectionService.saveSection(new Section("S"));
+            sectionService.saveSection(new Section("T"));
+            sectionService.saveSection(new Section("U"));
+            sectionService.saveSection(new Section("V"));
+            sectionService.saveSection(new Section("W"));
+            sectionService.saveSection(new Section("X"));
+            sectionService.saveSection(new Section("Y"));
+            sectionService.saveSection(new Section("Z"));
+
         }
 
         if(courseTypeService.findAll().isEmpty()){

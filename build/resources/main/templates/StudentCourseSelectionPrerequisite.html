@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Prerequisite for student courses reg</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+    <h2>Student Course Registration: </h2>
+    <!--    th:action="@{/admin/selectOpenElective}"-->
+    <form th:action="@{${#request.isUserInRole('DEPT_HEAD')} ? '/hod/selectPrerequisitesForStudentCourseSelection' : '/admin/selectPrerequisitesForStudentCourseSelection'}" th:object="${batchYearDeptProgramSem1}" method="post">
+
+
+
+        <table border="0" width="80%">
+            <tr>
+
+                <td>
+                    <div class="form-group">
+                        <label for="academicYear.id"> Select Academic Year: </label> <br>
+                        <select class="form-control" id="academicYear" name="academicYear">
+                            <option th:each="academicYear : ${academicYears}" th:value="${academicYear.id}" th:text="${academicYear.year}"
+                                    id="academicYear.id"> academic Year </option>
+                        </select>
+                    </div>
+                </td>
+
+
+                <td> &nbsp</td>
+
+                <td>
+                    <div class="form-group">
+                        <label for="program.programId">Select Program: </label> <br>
+                        <select class="form-control" id="program" name="program">
+                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"
+                                    id="program.programId"> program </option>
+                        </select>
+                    </div>
+                </td>
+
+                <td> &nbsp</td>
+
+            </tr>
+            <tr>
+
+                <td>
+                    <div class="form-group">
+                        <label for="semester.semId">Select Semester: </label> <br>
+                        <select class="form-control" id="semester" name="semester">
+                            <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"
+                                    id="semester.semId"> semester </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td>
+                    <div class="form-group">
+                        <label for="term.id">Select Term: </label> <br>
+                        <select class="form-control" id="term" name="term">
+                            <option th:each="term : ${terms}" th:value="${term.id}" th:text="${term.termDate}"
+                                    id="term.id"> term </option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        <table width="100%">
+            <tr>
+                <td align="center">
+                    <!--                    onclick="window.location.href='@{/admin/editTimeTable/__${}__}'-->
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                    <!--                                        <a href="" th:href="@{/hod/updateStudentSectionDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-primary" role="button">Assign Eligibility</a>-->
+                    <!--                                        <a href="" th:href="@{/hod/listEligibleStudent/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-primary" role="button">View Eligible students List</a>-->
+
+                    <!--                    <a href="#" th:href="@{/home}" class="btn btn-danger" role="button">Cancel</a>-->
+                </td>
+            </tr>
+        </table>
+    </form>
+
+
+
+
+
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+</body>
+</html>

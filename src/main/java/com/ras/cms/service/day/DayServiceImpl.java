@@ -17,6 +17,8 @@ public class DayServiceImpl implements DayService{
         return dayRepository.findAll();
     }
 
+    public Day findOne(Long id){ return dayRepository.findById(id).get(); }
+
     public Day saveDay(Day day) {
         return dayRepository.save(day);
     }
