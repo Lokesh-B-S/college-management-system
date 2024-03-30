@@ -30,6 +30,24 @@ public class StudentCourseRegistration {
         @ManyToOne
         private Semester courseSemester;
 
+//        @ManyToOne(cascade = CascadeType.ALL)
+//        private Program currentProgram;
+//        @ManyToOne(cascade = CascadeType.ALL)
+//        private AcademicYear currentAcademicYear;
+//        @ManyToOne(cascade = CascadeType.ALL)
+//        private Semester currentSemester;
+//        @ManyToOne(cascade = CascadeType.ALL)
+//        private Term currentTerm;
+
+    @ManyToOne
+    private Program currentProgram;
+    @ManyToOne
+    private AcademicYear currentAcademicYear;
+    @ManyToOne
+    private Semester currentSemester;
+    @ManyToOne
+    private Term currentTerm;
+
 
     public Long getId() {
         return id;
@@ -85,5 +103,37 @@ public class StudentCourseRegistration {
 
     public void setCourseSemester(Semester courseSemester) {
         this.courseSemester = courseSemester;
+    }
+
+    public AcademicYear getCurrentAcademicYear() {
+        return currentAcademicYear;
+    }
+
+    public void setCurrentAcademicYear(AcademicYear currentAcademicYear) {
+        this.currentAcademicYear = currentAcademicYear;
+    }
+
+    public Program getCurrentProgram() {
+        return currentProgram;
+    }
+
+    public void setCurrentProgram(Program currentProgram) {
+        this.currentProgram = currentProgram;
+    }
+
+    public Semester getCurrentSemester() {
+        return currentSemester;
+    }
+
+    public void setCurrentSemester(Semester currentSemester) {
+        this.currentSemester = currentSemester;
+    }
+
+    public Term getCurrentTerm() {
+        return currentTerm;
+    }
+
+    public void setCurrentTerm(Term currentTerm) {
+        this.currentTerm = currentTerm;
     }
 }

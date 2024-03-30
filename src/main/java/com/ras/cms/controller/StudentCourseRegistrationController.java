@@ -121,14 +121,12 @@ public class StudentCourseRegistrationController {
     }
 
 
-
-
-    @GetMapping(value={"/hod/listStudentsForCoursesAllotment/{academicYearId}/{programId}/{semId}/{termId}", "/admin/listEligibleStudent/{academicYearId}/{programId}/{semId}/{termId}"})
+    @GetMapping(value = {"/hod/listStudentsForCoursesAllotment/{academicYearId}/{programId}/{semId}/{termId}", "/admin/listEligibleStudent/{academicYearId}/{programId}/{semId}/{termId}"})
     public String studentslistforcourseallotment(Model model,
-                                      @PathVariable(required = true, name = "programId") Long programId,
-                                      @PathVariable(required = true, name = "academicYearId") Long academicYearId,
-                                      @PathVariable(required = true, name = "semId") Long semId,
-                                      @PathVariable(required = true, name = "termId") Long termId) {
+                                                 @PathVariable(required = true, name = "programId") Long programId,
+                                                 @PathVariable(required = true, name = "academicYearId") Long academicYearId,
+                                                 @PathVariable(required = true, name = "semId") Long semId,
+                                                 @PathVariable(required = true, name = "termId") Long termId) {
 
         Program program = programService.findOne(programId);
         AcademicYear academicYear = academicYearService.findOne(academicYearId);
@@ -136,12 +134,11 @@ public class StudentCourseRegistrationController {
         Term term = termService.findOne(termId);
 
         List<EligibleStudent> eligibleStudentList;
-        if (program != null && academicYear != null && semester!=null && term!=null) {
+        if (program != null && academicYear != null && semester != null && term != null) {
             eligibleStudentList = eligibleStudentService.getStudentsByAcademicYearAndProgramAndSemesterAndTerm(academicYear, program, semester, term);
             // Sort the list based on usn
             Collections.sort(eligibleStudentList, Comparator.comparing(EligibleStudent::getUsn));
-        }
-        else{
+        } else {
             eligibleStudentList = eligibleStudentService.findAll();
             Collections.sort(eligibleStudentList, Comparator.comparing(EligibleStudent::getUsn));
         }
@@ -153,54 +150,50 @@ public class StudentCourseRegistrationController {
         for (EligibleStudent student : eligibleStudentList) {
 
             //to group and order based on regular, pe, oe courses further (same as in listCoursesOfStudent)
-                    List<StudentCourseRegistration> allottedCoursesList = studentCourseRegistrationService.findRegistrationsByStudent(student);
-                    List<Course> foundRegularCourses = new ArrayList<>();
-                    List<Course> foundPECourses = new ArrayList<>();
-                    List<OpenElective> foundOpenElectiveCourses = new ArrayList<>();
-                    Long totalCredits = 0L;
+            List<StudentCourseRegistration> allottedCoursesList = studentCourseRegistrationService.findRegistrationsByStudent(student);
+            List<Course> foundRegularCourses = new ArrayList<>();
+            List<Course> foundPECourses = new ArrayList<>();
+            List<OpenElective> foundOpenElectiveCourses = new ArrayList<>();
+            Long totalCredits = 0L;
 
-                    for (StudentCourseRegistration registration : allottedCoursesList) {
-                        if(registration.getCourseType().equals("regular") ){
-                            Long courseId = registration.getCourse().getCourseId();
-                            Course course = courseService.findOne(courseId);
-                            if (course != null) {
-                                foundRegularCourses.add(course);
-                                totalCredits += course.getTotalCredits();
-                            }
-                        }
-
-                        else if(registration.getCourseType().equals("pe1") || registration.getCourseType().equals("pe2")){
-                            Long courseId = registration.getCourse().getCourseId();
-                            Course course = courseService.findOne(courseId);
-                            if (course != null) {
-                                foundPECourses.add(course);
-                                totalCredits += course.getTotalCredits();
-                            }
-                        }
-
-                        else if(registration.getCourseType().equals("oe")){
-                            Long openElectiveId = registration.getOpenElective().getOpenElectiveId();
-                            OpenElective openElective = openElectiveService.findOne(openElectiveId);
-                            if(openElective != null){
-                                foundOpenElectiveCourses.add(openElective);
-                                totalCredits += openElective.getTotalCredits();
-                            }
-                        }
+            for (StudentCourseRegistration registration : allottedCoursesList) {
+                if (registration.getCourseType().equals("regular")) {
+                    Long courseId = registration.getCourse().getCourseId();
+                    Course course = courseService.findOne(courseId);
+                    if (course != null) {
+                        foundRegularCourses.add(course);
+                        totalCredits += course.getTotalCredits();
                     }
+                } else if (registration.getCourseType().equals("pe1") || registration.getCourseType().equals("pe2")) {
+                    Long courseId = registration.getCourse().getCourseId();
+                    Course course = courseService.findOne(courseId);
+                    if (course != null) {
+                        foundPECourses.add(course);
+                        totalCredits += course.getTotalCredits();
+                    }
+                } else if (registration.getCourseType().equals("oe")) {
+                    Long openElectiveId = registration.getOpenElective().getOpenElectiveId();
+                    OpenElective openElective = openElectiveService.findOne(openElectiveId);
+                    if (openElective != null) {
+                        foundOpenElectiveCourses.add(openElective);
+                        totalCredits += openElective.getTotalCredits();
+                    }
+                }
+            }
 
-                        //add them to a single list (purpose: rowStat in thymleaf)
-                        List<Object> allRegisteredCoursesList = new ArrayList<>();
-                        allRegisteredCoursesList.addAll(foundRegularCourses);
-                        allRegisteredCoursesList.addAll(foundPECourses);
-                        allRegisteredCoursesList.addAll(foundOpenElectiveCourses);
+            //add them to a single list (purpose: rowStat in thymleaf)
+            List<Object> allRegisteredCoursesList = new ArrayList<>();
+            allRegisteredCoursesList.addAll(foundRegularCourses);
+            allRegisteredCoursesList.addAll(foundPECourses);
+            allRegisteredCoursesList.addAll(foundOpenElectiveCourses);
 
 
-                        // Sort the allRegisteredCoursesList based on the semester
-                        Collections.sort(allRegisteredCoursesList, (o1, o2) -> {
-                            Semester semester1 = (o1 instanceof Course) ? ((Course) o1).getSemester() : ((OpenElective) o1).getSemester();
-                            Semester semester2 = (o2 instanceof Course) ? ((Course) o2).getSemester() : ((OpenElective) o2).getSemester();
-                            return semester2.getSem().compareTo(semester1.getSem());
-                        });
+            // Sort the allRegisteredCoursesList based on the semester
+            Collections.sort(allRegisteredCoursesList, (o1, o2) -> {
+                Semester semester1 = (o1 instanceof Course) ? ((Course) o1).getSemester() : ((OpenElective) o1).getSemester();
+                Semester semester2 = (o2 instanceof Course) ? ((Course) o2).getSemester() : ((OpenElective) o2).getSemester();
+                return semester2.getSem().compareTo(semester1.getSem());
+            });
 
 
             courseRegistrationsMap.put(student.getEligibleStudentId(), allRegisteredCoursesList);
@@ -217,7 +210,6 @@ public class StudentCourseRegistrationController {
         model.addAttribute("totalCreditsMap", totalCreditsMap);
 
 
-
         model.addAttribute("program", program);
         model.addAttribute("academicYear", academicYear);
         model.addAttribute("term", term);
@@ -228,13 +220,13 @@ public class StudentCourseRegistrationController {
     }
 
 
-    @GetMapping(value={"/hod/listAllottedCoursesForSpecificStudent/{eligibleStudentId}/{academicYearId}/{programId}/{semId}/{termId}", "/admin/listAllottedCoursesForSpecificStudent/{eligibleStudentId}/{academicYearId}/{programId}/{semId}/{termId}"})
+    @GetMapping(value = {"/hod/listAllottedCoursesForSpecificStudent/{eligibleStudentId}/{academicYearId}/{programId}/{semId}/{termId}", "/admin/listAllottedCoursesForSpecificStudent/{eligibleStudentId}/{academicYearId}/{programId}/{semId}/{termId}"})
     public String coursesAllottedToSpecificStudent(Model model,
-                                       @PathVariable(required = true, name = "eligibleStudentId") Long eligibleStudentId,
-                                       @PathVariable(required = true, name = "programId") Long programId,
-                                      @PathVariable(required = true, name = "academicYearId") Long academicYearId,
-                                      @PathVariable(required = true, name = "semId") Long semId,
-                                      @PathVariable(required = true, name = "termId") Long termId) {
+                                                   @PathVariable(required = true, name = "eligibleStudentId") Long eligibleStudentId,
+                                                   @PathVariable(required = true, name = "programId") Long programId,
+                                                   @PathVariable(required = true, name = "academicYearId") Long academicYearId,
+                                                   @PathVariable(required = true, name = "semId") Long semId,
+                                                   @PathVariable(required = true, name = "termId") Long termId) {
 
         EligibleStudent eligibleStudent = eligibleStudentService.findOne(eligibleStudentId);
         Program program = programService.findOne(programId);
@@ -247,8 +239,8 @@ public class StudentCourseRegistrationController {
 
             List<StudentCourseRegistration> allottedCoursesList = studentCourseRegistrationService.findRegistrationsByStudent(eligibleStudent);
 //            List<Course> foundRegularAndPECourses = new ArrayList<>(); // List to store found Course objects
-           List<Course> foundRegularCourses = new ArrayList<>();
-           List<Course> foundPECourses = new ArrayList<>();
+            List<Course> foundRegularCourses = new ArrayList<>();
+            List<Course> foundPECourses = new ArrayList<>();
             List<OpenElective> foundOpenElectiveCourses = new ArrayList<>();
 
             for (StudentCourseRegistration registration : allottedCoursesList) {
@@ -259,27 +251,22 @@ public class StudentCourseRegistrationController {
 //                        foundRegularAndPECourses.add(course);
 //                    }
 //                }
-                if(registration.getCourseType().equals("regular") ){
+                if (registration.getCourseType().equals("regular")) {
                     Long courseId = registration.getCourse().getCourseId();
                     Course course = courseService.findOne(courseId);
                     if (course != null) {
                         foundRegularCourses.add(course);
                     }
-                }
-
-                else if(registration.getCourseType().equals("pe1") || registration.getCourseType().equals("pe2")){
+                } else if (registration.getCourseType().equals("pe1") || registration.getCourseType().equals("pe2")) {
                     Long courseId = registration.getCourse().getCourseId();
                     Course course = courseService.findOne(courseId);
                     if (course != null) {
                         foundPECourses.add(course);
                     }
-                }
-
-
-                else if(registration.getCourseType().equals("oe")){
+                } else if (registration.getCourseType().equals("oe")) {
                     Long openElectiveId = registration.getOpenElective().getOpenElectiveId();
                     OpenElective openElective = openElectiveService.findOne(openElectiveId);
-                    if(openElective != null){
+                    if (openElective != null) {
                         foundOpenElectiveCourses.add(openElective);
                     }
                 }
@@ -320,12 +307,9 @@ public class StudentCourseRegistrationController {
     }
 
 
-
-
     @GetMapping("/hod/updateStudentCourseRegistration/{eligibleStudentId}")
     public String showUpdateStudentCourseRegistration(Model model, HttpServletRequest request,
-                                                      @PathVariable(required = true, name = "eligibleStudentId") Long eligibleStudentId)
-    {
+                                                      @PathVariable(required = true, name = "eligibleStudentId") Long eligibleStudentId) {
 
         DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
         Department dep = departmentAndProgramFetch.getDepartment();
@@ -343,7 +327,6 @@ public class StudentCourseRegistrationController {
         model.addAttribute("term", term);
 
 
-
         List<EligibleStudent> allRowsOfStudent = eligibleStudentService.findAllIdsByUsn(eligibleStudent.getUsn());
         Collections.sort(allRowsOfStudent, Comparator.comparing((EligibleStudent s) -> s.getSemester().getSem()).reversed());
         System.out.println(allRowsOfStudent);
@@ -357,44 +340,44 @@ public class StudentCourseRegistrationController {
             System.out.println(eachStudentRow);
             Semester sem = eachStudentRow.getSemester();
 
-                if (sem != null && sem.getSem() <= currentSemester.getSem() ) {
-                    AcademicYear ay = eachStudentRow.getAcademicYear();
-                    Term termm = eachStudentRow.getTerm();
+            if (sem != null && sem.getSem() <= currentSemester.getSem()) {
+                AcademicYear ay = eachStudentRow.getAcademicYear();
+                Term termm = eachStudentRow.getTerm();
 
-                    System.out.println(ay.getId());
-                    System.out.println(sem.getSemId());
-                    System.out.println(termm.getId());
+                System.out.println(ay.getId());
+                System.out.println(sem.getSemId());
+                System.out.println(termm.getId());
 
-                    // Get the BatchYearSemTermId for the current student
-                    BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(ay, sem, termm);
+                // Get the BatchYearSemTermId for the current student
+                BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(ay, sem, termm);
 
-                    if (batchYearSemTerm != null) {
-                        Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
+                if (batchYearSemTerm != null) {
+                    Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
 
-                        // Find courses for the current semester and academic year
-                        List<Course> regularCourses = courseService.getAllRegularCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, dep);
-                        List<OpenElective> openElectives = openElectiveService.getOpenElectivesByBatchYearSemTermId(batchYearSemTermId);
-                        CourseType pe1CourseType = courseTypeService.getCourseTypeByTypeOfCourse("Professional Elective 1");
-                        CourseType pe2CourseType = courseTypeService.getCourseTypeByTypeOfCourse("Professional Elective 2");
-                        List<Course> pe1Courses = courseService.getCoursesByBatchYearSemTermIdAndProgramAndCourseType(batchYearSemTermId, program, pe1CourseType);
-                        List<Course> pe2Courses = courseService.getCoursesByBatchYearSemTermIdAndProgramAndCourseType(batchYearSemTermId, program, pe2CourseType);
+                    // Find courses for the current semester and academic year
+                    List<Course> regularCourses = courseService.getAllRegularCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, dep);
+                    List<OpenElective> openElectives = openElectiveService.getOpenElectivesByBatchYearSemTermId(batchYearSemTermId);
+                    CourseType pe1CourseType = courseTypeService.getCourseTypeByTypeOfCourse("Professional Elective 1");
+                    CourseType pe2CourseType = courseTypeService.getCourseTypeByTypeOfCourse("Professional Elective 2");
+                    List<Course> pe1Courses = courseService.getCoursesByBatchYearSemTermIdAndProgramAndCourseType(batchYearSemTermId, program, pe1CourseType);
+                    List<Course> pe2Courses = courseService.getCoursesByBatchYearSemTermIdAndProgramAndCourseType(batchYearSemTermId, program, pe2CourseType);
 
-                        Map<String, Object> semesterData = new LinkedHashMap<>();
-                        semesterData.put("semester", sem.getSem());
-                        semesterData.put("regularCourses", regularCourses);
-                        semesterData.put("openElectives", openElectives);
-                        semesterData.put("pe1Courses", pe1Courses);
-                        semesterData.put("pe2Courses", pe2Courses);
+                    Map<String, Object> semesterData = new LinkedHashMap<>();
+                    semesterData.put("semester", sem.getSem());
+                    semesterData.put("regularCourses", regularCourses);
+                    semesterData.put("openElectives", openElectives);
+                    semesterData.put("pe1Courses", pe1Courses);
+                    semesterData.put("pe2Courses", pe2Courses);
 
-                        semesterDataList.add(semesterData);
+                    semesterDataList.add(semesterData);
 
-                    } else {
-                        System.out.println("BatchYearSemTerm is null");
-                    }
                 } else {
-                    System.out.println("Semester is null");
+                    System.out.println("BatchYearSemTerm is null");
                 }
+            } else {
+                System.out.println("Semester is null");
             }
+        }
 
 
         model.addAttribute("eligibleStudent", eligibleStudent);
@@ -435,7 +418,7 @@ public class StudentCourseRegistrationController {
         List<StudentCourseRegistration> pe1Registrations = studentCourseRegistrationService.findRegistrationsByStudentAndCourseType(eligibleStudent, "pe1");
         for (StudentCourseRegistration registration : pe1Registrations) {
             if (registration.getCourse() != null) {
-                currentAssignmentsForPE1.put(registration.getCourse().getCourseId(),registration.getCourse());
+                currentAssignmentsForPE1.put(registration.getCourse().getCourseId(), registration.getCourse());
 
                 totalCoursesRegistered = totalCoursesRegistered + 1L;
                 totalCreditsRegistered = totalCreditsRegistered + registration.getCourse().getTotalCredits();
@@ -447,7 +430,7 @@ public class StudentCourseRegistrationController {
         List<StudentCourseRegistration> pe2Registrations = studentCourseRegistrationService.findRegistrationsByStudentAndCourseType(eligibleStudent, "pe2");
         for (StudentCourseRegistration registration : pe2Registrations) {
             if (registration.getCourse() != null) {
-                currentAssignmentsForPE2.put(registration.getCourse().getCourseId(),registration.getCourse());
+                currentAssignmentsForPE2.put(registration.getCourse().getCourseId(), registration.getCourse());
 
                 totalCoursesRegistered = totalCoursesRegistered + 1L;
                 totalCreditsRegistered = totalCreditsRegistered + registration.getCourse().getTotalCredits();
@@ -461,17 +444,33 @@ public class StudentCourseRegistrationController {
         model.addAttribute("currentAssignmentsForPE2", currentAssignmentsForPE2);
 
         model.addAttribute("totalCoursesRegistered", totalCoursesRegistered);
-        model.addAttribute("totalCreditsRegistered",totalCreditsRegistered);
+        model.addAttribute("totalCreditsRegistered", totalCreditsRegistered);
         return "StudentCourseRegistrationEdit";
     }
 
     @PostMapping("/hod/updateStudentCourseRegistration")
     public String postStudentCourseRegistrationUpdate(
-                                                        @RequestParam Map<String, String> formData,
-                                                      @RequestParam("eligibleStudent") Long eligibleStudentId,
-                                                      HttpServletRequest request,
-                                             RedirectAttributes redirectAttributes
+            Model model,
+            @RequestParam(required=false, name="academicYear") Long academicYearId,
+            @RequestParam(required=false, name="program") Long programId,
+            @RequestParam(required = false, name="semester") Long semId,
+            @RequestParam(required = false, name="term") Long termId,
+            @RequestParam Map<String, String> formData,
+            @RequestParam("eligibleStudent") Long eligibleStudentId,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes
     ) {
+
+        Program currentProgram = programService.findOne(programId);
+        AcademicYear currentAcademicYear = academicYearService.findOne(academicYearId);
+        Semester currentSemester = semesterService.findOne(semId);
+        Term currentTerm = termService.findOne(termId);
+
+//        model.addAttribute("program", currentProgram);
+//        model.addAttribute("academicYear", currentAcademicYear);
+//        model.addAttribute("semester", currentSemester);
+//        model.addAttribute("term", currentTerm);
+
 
         System.out.println(formData);
         for (Map.Entry<String, String> entry : formData.entrySet()) {
@@ -490,13 +489,13 @@ public class StudentCourseRegistrationController {
                     if (type.equals("pe1") || type.equals("pe2")) {
                         Course course = courseService.findOne(courseId);
                         if (type.equals("pe1")) {
-                            studentCourseRegistrationService.assignProfessionalElective1ToEligibleStudent(eligibleStudent, course, course.getAcademicYear(), course.getSemester());
+                            studentCourseRegistrationService.assignProfessionalElective1ToEligibleStudent(eligibleStudent, course, course.getAcademicYear(), course.getSemester(), currentProgram, currentAcademicYear, currentSemester, currentTerm);
                         } else {
-                            studentCourseRegistrationService.assignProfessionalElective2ToEligibleStudent(eligibleStudent, course, course.getAcademicYear(), course.getSemester());
+                            studentCourseRegistrationService.assignProfessionalElective2ToEligibleStudent(eligibleStudent, course, course.getAcademicYear(), course.getSemester(), currentProgram, currentAcademicYear, currentSemester, currentTerm);
                         }
                     } else if (type.equals("oe")) {
                         OpenElective openElective = openElectiveService.findOne(courseId);
-                        studentCourseRegistrationService.assignOpenElectiveToEligibleStudent(eligibleStudent, openElective, openElective.getAcademicYear(), openElective.getSemester());
+                        studentCourseRegistrationService.assignOpenElectiveToEligibleStudent(eligibleStudent, openElective, openElective.getAcademicYear(), openElective.getSemester(), currentProgram, currentAcademicYear, currentSemester, currentTerm);
                     }
 
 
@@ -522,7 +521,7 @@ public class StudentCourseRegistrationController {
                     // Retrieve eligible student and course objects
                     EligibleStudent eligibleStudent = eligibleStudentService.findOne(eligibleStudentId);
                     Course course = courseService.findOne(courseId);
-                    studentCourseRegistrationService.registerRegularCourseToStudent(eligibleStudent, course, course.getAcademicYear(), course.getSemester());
+                    studentCourseRegistrationService.registerRegularCourseToStudent(eligibleStudent, course, course.getAcademicYear(), course.getSemester(), currentProgram, currentAcademicYear, currentSemester, currentTerm);
 
                 } catch (Exception e) {
                     // Handle exception
@@ -530,16 +529,14 @@ public class StudentCourseRegistrationController {
             }
         }
 //
-            redirectAttributes.addFlashAttribute("successMessage", "Students updated successfully!");
-            return "redirect:/hod/updateStudentCourseRegistration/" + eligibleStudentId;
+        redirectAttributes.addFlashAttribute("successMessage", "Students updated successfully!");
+        return "redirect:/hod/updateStudentCourseRegistration/" + eligibleStudentId;
 //        return "redirect:/hod/updateStudentCourseRegistration/" + academicYearId + "/" + programId + "/" + semId + "/" + termId;
 
-        }
+    }
 
 
-
-
-    @GetMapping(value={"/hod/deleteCourseRegistered/{eligibleStudentId}/{courseId}"})
+    @GetMapping(value = {"/hod/deleteCourseRegistered/{eligibleStudentId}/{courseId}"})
     public String CourseRegistrationDelete(Model model, @PathVariable(required = true, name = "eligibleStudentId") Long eligibleStudentId,
                                            @PathVariable(required = false, name = "courseId") Long courseId,
                                            RedirectAttributes attributes,
@@ -553,10 +550,9 @@ public class StudentCourseRegistrationController {
         if (courseId != null) {
             if (courseService.existsById(courseId)) {
                 course = courseService.findOne(courseId);
+            } else {
+                openElective = openElectiveService.findOne(courseId);
             }
-             else{
-                 openElective = openElectiveService.findOne(courseId);
-             }
         }
 
         StudentCourseRegistration registration = null;
@@ -571,15 +567,164 @@ public class StudentCourseRegistrationController {
         Long semId = eligibleStudent.getSemester().getSemId();
         Long termId = eligibleStudent.getTerm().getId();
 
-        if(registration != null){
+        if (registration != null) {
             studentCourseRegistrationService.deleteRegisteredCourseFromList(registration.getId());
         }
         attributes.addFlashAttribute("DeleteSuccessMessage", "entry deleted successfully");
 
-            return "redirect:/hod/listAllottedCoursesForSpecificStudent/" + eligibleStudentId + "/" + academicYearId + "/" + programId + "/" + semId + "/" + termId;
+        return "redirect:/hod/listAllottedCoursesForSpecificStudent/" + eligibleStudentId + "/" + academicYearId + "/" + programId + "/" + semId + "/" + termId;
+
+    }
 
 
+    @GetMapping("/hod/listStudentsOfCourseSelected")
+    public String listStudentsofCourseSelected(Model model,
+                                               HttpServletRequest request,
+                                               @RequestParam Long academicYearId,
+                                               @RequestParam Long programId,
+                                               @RequestParam Long semId,
+                                               @RequestParam Long termId) {
 
+        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+        Department dep = departmentAndProgramFetch.getDepartment();
+
+        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+        Program program = programService.findOne(programId);
+        Semester semester = semesterService.findOne(semId);
+        Term term = termService.findOne(termId);
+
+        model.addAttribute("academicYear", academicYear);
+        model.addAttribute("program", program);
+        model.addAttribute("semester", semester);
+        model.addAttribute("term", term);
+
+        BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
+        Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
+        System.out.println(batchYearSemTermId);
+
+
+        List<Course> regularCourses = courseService.getAllRegularCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, dep);
+        System.out.println(regularCourses);
+
+        List<Course> PEcourses = courseService.getAllProfessionalElectiveCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, dep);
+        System.out.println(PEcourses);
+
+        List<OpenElective> OEcourses = openElectiveService.getOpenElectivesByBatchYearSemTermId(batchYearSemTermId);
+        System.out.println(OEcourses);
+
+        List<StudentCourseRegistration> registrations = studentCourseRegistrationService.findAllRegistrationsByProgramAndAcademicYearAndSemester(program, academicYear, semester);
+        List<Course> coursesFromOtherLowerSemesters = new ArrayList<>();
+        List<OpenElective> openElectivesFromOtherLowerSemesters = new ArrayList<>();
+
+        for(StudentCourseRegistration registration : registrations){
+            if(registration.getCourseType().equals("regular") || registration.getCourseType().equals("pe1") || registration.getCourseType().equals("pe2")){
+                if((registration.getCourseYear() != academicYear) || (registration.getCourseSemester() != semester)){
+                    coursesFromOtherLowerSemesters.add(registration.getCourse());
+                }
+            }
+            if(registration.getCourseType().equals("oe")){
+                if((registration.getCourseYear() != academicYear) || (registration.getCourseSemester() != semester)){
+                    openElectivesFromOtherLowerSemesters.add(registration.getOpenElective());
+                }
+            }
+        }
+
+        ArrayList<Course> foundRegularCourses = new ArrayList<>(regularCourses);
+        ArrayList<Course> foundPECourses = new ArrayList<>(PEcourses);
+        ArrayList<OpenElective> foundOpenElectiveCourses = new ArrayList<>(OEcourses);
+
+        //add them to a single list (purpose: rowStat in thymleaf)
+        List<Object> allRegisteredCoursesList = new ArrayList<>();
+        allRegisteredCoursesList.addAll(foundRegularCourses);
+        allRegisteredCoursesList.addAll(foundPECourses);
+        allRegisteredCoursesList.addAll(foundOpenElectiveCourses);
+
+        allRegisteredCoursesList.addAll(coursesFromOtherLowerSemesters);
+        allRegisteredCoursesList.addAll(openElectivesFromOtherLowerSemesters);
+
+        System.out.println(foundRegularCourses);
+        System.out.println(foundPECourses);
+        System.out.println(foundOpenElectiveCourses);
+        System.out.println(coursesFromOtherLowerSemesters);
+        System.out.println(openElectivesFromOtherLowerSemesters);
+
+        System.out.println("list " + allRegisteredCoursesList);
+        model.addAttribute("allRegisteredCoursesList", allRegisteredCoursesList);
+
+//        model.addAttribute("PEcourses", PEcourses);
+
+        return "StudentListForEachCourse";
+    }
+
+
+    @PostMapping("/hod/listStudentsOfCourseSelected")
+    public String postListOfStudents(Model model,
+                                     HttpServletRequest request,
+                                     @RequestParam Long academicYearId,
+                                     @RequestParam Long programId,
+                                     @RequestParam Long semId,
+                                     @RequestParam Long termId,
+//@RequestParam(required = false, name="course")Long courseId,
+//@RequestParam(required = false, name="oe") Long openElectiveId,
+                                     @RequestParam(required = false, name="courseId") Long courseId,
+                                    @RequestParam(required = false, name="className") String className
+    ) {
+
+        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+        Department dep = departmentAndProgramFetch.getDepartment();
+
+        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+        Program program = programService.findOne(programId);
+        Semester semester = semesterService.findOne(semId);
+        Term term = termService.findOne(termId);
+
+        model.addAttribute("academicYear", academicYear);
+        model.addAttribute("program", program);
+        model.addAttribute("semester", semester);
+        model.addAttribute("term", term);
+
+
+        BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
+        Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
+
+
+        System.out.println(className);
+System.out.println(courseId);
+
+//        List<Course> courses = courseService.getAllRegularCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, dep);
+//        model.addAttribute("PEcourses", courses);
+
+        List<StudentCourseRegistration> registrations = new ArrayList<>();
+        if(className.equals("Course")) {
+            Course course = courseService.findOne(courseId);
+            model.addAttribute("postSelectedCourse", course);
+            registrations = studentCourseRegistrationService.findAllRegistrationsByCourse(course, academicYear, semester);
+        }
+        else if(className.equals("OpenElective")){
+            OpenElective openElective = openElectiveService.findOne(courseId);
+            model.addAttribute("postSelectedOpenElective", openElective);
+            registrations = studentCourseRegistrationService.findAllRegistrationsByOpenElective(openElective, academicYear, semester);
+        }
+
+
+        List<EligibleStudent> foundEligibleStudents = new ArrayList<>();
+        for(StudentCourseRegistration registration : registrations){
+
+            Long eligibleStudentId = registration.getEligibleStudent().getEligibleStudentId();
+            EligibleStudent eligibleStudent = eligibleStudentService.findOne(eligibleStudentId);
+            if(eligibleStudent!=null){
+                foundEligibleStudents.add(eligibleStudent);
+            }
+
+        }
+
+        Collections.sort(foundEligibleStudents, Comparator.comparing(EligibleStudent::getUsn));
+
+        model.addAttribute("foundEligibleStudents", foundEligibleStudents);
+        System.out.println(foundEligibleStudents);
+        return "StudentListForEachCourse";
+//        return "redirect:/hod/listStudentsOfCourseSelected";
+//        return "redirect:/hod/listStudentsOfCourseSelected?academicYearId=" + academicYearId + "&programId=" + programId + "&semId=" + semId + "&termId=" + termId;
     }
 
 }

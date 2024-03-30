@@ -6,6 +6,30 @@
               href="../../../css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" href="../../../css/main.css"/>
     </div>
+
+<!--    <script>-->
+<!--            var userName = document.getElementById("username").innerText.trim();-->
+<!--            var department = "";-->
+<!--            var program = "";-->
+
+<!--console.log(userName);-->
+<!--            if (userName === "h") {-->
+<!--                department = "Computer Science";-->
+<!--                program = "BE - Computer Science";-->
+<!--            } else if (userName === "hodise") {-->
+<!--                department = "Information Science";-->
+<!--                program = "BE - Information Science";-->
+<!--            } else if (userName === "hodmech") {-->
+<!--                department = "Mechanical";-->
+<!--                program = "BE - Mechanical";-->
+<!--            } else if (userName === "hodiem") {-->
+<!--                department = "Industrial Engineering and Management";-->
+<!--                program = "BE - Industrial Engineering and Management";-->
+<!--            }-->
+
+<!--            document.getElementById("department").innerText = department;-->
+<!--            document.getElementById("program").innerText = program;-->
+<!--    </script>-->
 </head>
 <body>
 <div th:fragment="header">
@@ -15,13 +39,40 @@
             <div class="navbar-header">
                 <a class="navbar-brand" th:href="@{/}">CMS App</a>
             </div>
-            <font face="Trebuchet ms" color="#f3f72a">
-                <span class="pull-right" sec:authorize="isAuthenticated()">
-                    <span sec:authentication="name"></span>
-                    <span  sec:authentication="principal.authorities"></span>
-                    <a class="navbar-link" th:href="@{/logout}">Sign Out</a>
-                </span>
-            </font>
+
+<!--            <p th:text="${#request.getUserPrincipal().getName()}"></p>-->
+<!--            <p id="username" class="display-4 text-white" th:text="${#request.getUserPrincipal().getName()}"></p>-->
+<!--             <p id="username" class="pull-right" style="align:right; font-size: 24px; color: white;" th:text="${#request.getUserPrincipal().getName()}"></p>-->
+
+<!--            <div class="navbar-right">-->
+<!--                <p id="department" class="navbar-text"></p>-->
+<!--                <p id="program" class="navbar-text"></p>-->
+
+                <div class="pull-right">
+                    <font face="Trebuchet ms" color="#f3f72a" sec:authorize="isAuthenticated()">
+                        <span sec:authentication="name"></span>
+                        <span sec:authentication="principal.authorities"></span>
+                        <p id="username" class="navbar-text" style="font-size: 24px; color: white;">
+                                <span th:if="${#request.getUserPrincipal() != null}">
+
+                        <span th:if="${#request.getUserPrincipal().getName().equals('h')}">User: HOD - Computer Science</span>
+                        <span th:else th:if="${#request.getUserPrincipal().getName().equals('hodmech')}">User: HOD - Mechanical</span>
+                        <span th:else th:if="${#request.getUserPrincipal().getName().equals('hodise')}">User: HOD - Information Science</span>
+                        <span th:else th:if="${#request.getUserPrincipal().getName().equals('hodiem')}">User: HOD - IEM</span>
+                        <span th:else th:if="${#request.getUserPrincipal().getName().equals('p')}">User : PRINCIPAL</span>
+                        <span th:else th:if="${#request.getUserPrincipal().getName().equals('f1')}">User: Faculty1</span>
+                        <span th:else th:if="${#request.getUserPrincipal().getName().equals('f2')}">User : Faculty2</span>
+                        <span th:else th:if="${#request.getUserPrincipal().getName().equals('f3')}">User: Faculty3</span>
+<!--                        <span th:else th:text="${#request.getUserPrincipal().getName()}"></span>-->
+
+                                </span>
+                        </p>
+                        <a class="navbar-link" th:href="@{/logout}">Sign Out</a>
+                    </font>
+                </div>
+
+
+
 
             <div sec:authorize="isAuthenticated()">
 <!--                This content is only shown to authenticated users.-->
@@ -73,8 +124,9 @@
 
                         <li><a th:href="@{/hod/selectPrerequisiteForSectionAllotment}">Section Allotment</a></li>
                         <li><a th:href="@{/hod/selectPrerequisiteForSecBatchAllotment}">Batch Allotment</a></li>
-                        <li><a th:href="@{/hod/selectPrerequisiteForOEAllotment}">Open Elective Allotment</a></li>
-                        <li><a th:href="@{/hod/selectPrerequisiteForPEAllotment}">Professional Elective Allotment</a></li>
+                        <li><a th:href="@{/hod/selectPrerequisiteForOEGroupAllotment}">Open Elective Groups Allotment</a></li>
+<!--                      properly working, but not needed  <li><a th:href="@{/hod/selectPrerequisiteForOEAllotment}">Open Elective Allotment</a></li>-->
+<!--                    properly working, but not needed     <li><a th:href="@{/hod/selectPrerequisiteForPEAllotment}">Professional Elective Allotment</a></li>-->
 
                         <li><a th:href="@{/hod/selectPrerequisitesForStudentCourseSelection}">Student-Courses Registration</a></li>
                         <li><a th:href="@{/hod/selectTimeTable}">(old TT)</a></li>

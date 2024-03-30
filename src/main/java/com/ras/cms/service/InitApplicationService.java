@@ -3,6 +3,7 @@ package com.ras.cms.service;
 import com.ras.cms.domain.*;
 import com.ras.cms.service.coursetype.CourseTypeService;
 import com.ras.cms.service.day.DayService;
+import com.ras.cms.service.group.GroupService;
 import com.ras.cms.service.role.RoleService;
 import com.ras.cms.service.section.SectionService;
 import com.ras.cms.service.semester.SemesterService;
@@ -43,6 +44,9 @@ public class InitApplicationService implements ApplicationRunner {
 
     @Autowired
     private SectionService sectionService;
+
+    @Autowired
+    private GroupService groupService;
 
     @Autowired
     private CourseTypeService courseTypeService;
@@ -175,7 +179,29 @@ public class InitApplicationService implements ApplicationRunner {
             termService.saveTerm(new Term("1-Sep-2023 to 10-Dec-2023"));
         }
 
+        if(groupService.findAll().isEmpty()){
+            groupService.saveGroup(new OEGroup(1L));
+            groupService.saveGroup(new OEGroup(2L));
+            groupService.saveGroup(new OEGroup(3L));
+            groupService.saveGroup(new OEGroup(4L));
+            groupService.saveGroup(new OEGroup(5L));
+            groupService.saveGroup(new OEGroup(6L));
+            groupService.saveGroup(new OEGroup(7L));
+            groupService.saveGroup(new OEGroup(8L));
+            groupService.saveGroup(new OEGroup(9L));
+            groupService.saveGroup(new OEGroup(10L));
+            groupService.saveGroup(new OEGroup(11L));
+            groupService.saveGroup(new OEGroup(12L));
+            groupService.saveGroup(new OEGroup(13L));
+            groupService.saveGroup(new OEGroup(14L));
+            groupService.saveGroup(new OEGroup(15L));
+            groupService.saveGroup(new OEGroup(16L));
+            groupService.saveGroup(new OEGroup(17L));
+            groupService.saveGroup(new OEGroup(18L));
+            groupService.saveGroup(new OEGroup(19L));
+            groupService.saveGroup(new OEGroup(20L));
 
+        }
 
             // Log a message when initialization is complete
         LOGGER.info("Initialization complete.");

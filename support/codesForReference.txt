@@ -1,3 +1,8 @@
+parameter passing url syntax:
+            <a th:href="@{/hod/listOEGroupStudents(academicYearId=__${academicYear.id}__, programId=__${program.programId}__, semId=__${semester.semId}__, termId=__${term.id}__)}" class="btn btn-primary view">View students</a>
+
+--------------------------------------------
+
 1. <form th:action="@{${#request.isUserInRole('PRINCIPAL')} ? '/admin/selectOpenElective' : '/hod/selectOpenElective'}" th:object="${batchYearDeptProgramSem1}" method="post">
 
 2. <a  th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/editBatch" th:href="@{/hod/editBatch}" class="btn btn-primary" role="button">Add Batch</a>

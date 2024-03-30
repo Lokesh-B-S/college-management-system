@@ -21,6 +21,8 @@ public interface EligibleStudentRepository extends JpaRepository<EligibleStudent
     List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndSection(AcademicYear academicYear, Program program, Semester semester, Term term, Section section);
 
     List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndSectionAndSecBatch(AcademicYear academicYear, Program program, Semester semester, Term term, Section section, SecBatch secBatch);
+
+     List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OEGroup GroupOfOpenElective);
     List<EligibleStudent> findAllBySection(Section section);
 
     EligibleStudent findByUsn(String usn);
@@ -58,6 +60,8 @@ public interface EligibleStudentRepository extends JpaRepository<EligibleStudent
    List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndSectionAndSecBatchIsNull(AcademicYear academicYear, Program program, Semester semester, Term term, Section section);
 
    List<EligibleStudent> findAllByAcademicYearAndSemesterAndTermAndOpenElective(AcademicYear academicYear, Semester semester, Term term, OpenElective openElective);
+
+    List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OpenElective openElective);
 
     List<EligibleStudent> findAllByUsn(String usn);
 

@@ -31,6 +31,9 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
     private SecBatchRepository secBatchRepository;
 
     @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
     private OpenElectiveRepository openElectiveRepository;
 
     @Autowired
@@ -89,6 +92,11 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
     }
 
     @Override
+    public List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OEGroup GroupOfOpenElective){
+        return eligibleStudentRepository.findAllByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(academicYear, program, semester, term, GroupOfOpenElective);
+    }
+
+    @Override
     public List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndProfessionalElective(AcademicYear academicYear, Program program, Semester semester, Term term, Course PEcourse){
         return eligibleStudentRepository.findStudentsByAcademicYearAndProgramAndSemesterAndTermAndProfessionalElective(academicYear, program, semester, term, PEcourse);
     }
@@ -97,7 +105,10 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
         return eligibleStudentRepository.findAllByAcademicYearAndSemesterAndTermAndOpenElective(academicYear, semester, term, openElective);
     }
 
-
+    @Override
+    public List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OpenElective openElective){
+        return eligibleStudentRepository.findAllByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(academicYear, program, semester, term, openElective);
+    }
     @Override
     public List<EligibleStudent> getStudentsBySection(Section section){
         return eligibleStudentRepository.findAllBySection(section);
@@ -130,6 +141,17 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
         eligibleStudentRepository.save(student);
     }
 
+    public void assignOEGroupToEligibleStudent(Long studentId, Long groupId) {
+        // Fetch the student and section from the database
+        EligibleStudent student = eligibleStudentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + studentId));
+        OEGroup group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid section ID: " + groupId));
+
+        // Assign the section to the student
+        student.setGroupOfOpenElective(group);
+        eligibleStudentRepository.save(student);
+    }
 
     public List<Long> findStudentsToUnassign(AcademicYear academicYear, Program program, Semester semester, Term term, Integer noOfSections) {
         // Query to find students assigned to sections beyond the new noOfSections

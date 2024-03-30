@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Student Courses Registration</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+
+    <style>
+        .course-box {
+            width: 50%; /* Adjust width for two columns */
+            float: left;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 5px solid #ddd; /* Add border styling */
+            border-radius: 10px;
+            margin-bottom: 15px; /* Add margin for spacing between boxes */
+            margin-right: 10px;
+        }
+
+        .course-box p {
+        font-size: 12px;
+        margin: 10; /* Remove default margin for paragraph elements */
+    }
+
+        .semester-container {
+            clear: both; /* Ensure proper alignment of semesters */
+            margin-bottom: 30px; /* Add margin between semesters */
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+
+    <table width="100%">
+        <tr>
+            <th th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 15px;">Academic Year</th>
+            <th th:text="'Programme: ' + ${program.programName}" style="font-size: 15px;">
+                <!--            <th th:text="'Department: ' + ${department.departmentName}" style="font-size: 15px;">Department</th>-->
+        </tr>
+        <tr>
+            <th th:text="'Semester: ' + ${semester.sem}" style="font-size: 15px;">Semester</th>
+            <th th:text="'Term: ' + ${term.termDate}" style="font-size: 15px;">Term</th>
+        </tr>
+        <tr><td></td></tr>
+    </table>
+    <hr>
+
+
+
+    <h2>Select Open Electives:</h2>
+    <form action="#" th:action="@{/hod/selectOpenElectiveCourse}" method="post">
+        <div style="text-align: right;">
+            <button type="submit" class="btn btn-primary">Proceed</button>
+<!--            <a th:href="@{/hod/listAllottedCoursesForSpecificStudent/__${eligibleStudent.eligibleStudentId}__/__${currentAcademicYear.id}__/__${program.programId}__/__${currentSemester.semId}__/__${term.id}__}" class="btn btn-primary view" th:text="Next"></a>-->
+        </div>
+
+        <!--        note: these name="" e for @RequestParam in postmapping, and th:value is by getmapping variables-->
+        <input type="hidden" name="academicYear" th:value="*{academicYear.id}" />
+        <input type="hidden" name="program" th:value="*{program.programId}" />
+        <input type="hidden" name="semester" th:value="*{semester.semId}" />
+        <input type="hidden" name="term" th:value="*{term.id}" />
+
+
+        <div class="row">
+            <div class="col-sm-6">
+            <h3>Same Department:</h3>
+                <div class="row">
+                    <div style="background-color: #C4DEED;" class="course-box col-12" th:each="openElective : ${sameDeptOpenElectives}">
+                        <input type="radio" name="selectedOpenElectiveId" th:value="${openElective.openElectiveId}"
+                               />
+                        <p th:text="${openElective.courseCode}"></p>
+                        <p th:text="${openElective.courseName}"></p>
+                        <p th:text="'(' + ${openElective.openElectiveType.typeOfOpenElective} + ')'"></p>
+                        <p th:text="'Credits: L:' + ${openElective.lectureCredits} + ' T:' + ${openElective.tutorialCredits} + ' P:' + ${openElective.practicalCredits} + ' = ' + ${openElective.totalCredits}"></p>
+                    </div>
+                </div>
+            </div>
+
+        <div class="col-sm-6">
+            <h3>Other Departments:</h3>
+            <div class="row">
+                <div style="background-color: #C4DEED;" class="course-box col-12" th:each="openElective : ${otherDeptOpenElectives}">
+                    <input type="radio" name="selectedOpenElectiveId" th:value="${openElective.openElectiveId}"
+                    />
+                    <p th:text="${openElective.courseCode}"></p>
+                    <p th:text="${openElective.courseName}"></p>
+                    <p th:text="'(' + ${openElective.openElectiveType.typeOfOpenElective} + ')'"></p>
+                    <p th:text="'Credits: L:' + ${openElective.lectureCredits} + ' T:' + ${openElective.tutorialCredits} + ' P:' + ${openElective.practicalCredits} + ' = ' + ${openElective.totalCredits}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-primary">Proceed</button>
+<!--            <a th:href="@{/hod/listAllottedCoursesForSpecificStudent/__${eligibleStudent.eligibleStudentId}__/__${currentAcademicYear.id}__/__${program.programId}__/__${currentSemester.semId}__/__${term.id}__}" class="btn btn-primary view" th:text="Next"></a>-->
+
+        </div>
+
+    </form>
+
+
+</div>
+
+
+
+
+
+<div th:replace="fragments/footer :: footer"/>
+
+
+
+
+<!--double tap radio button to uncheck it-->
+<script>
+    //print
+            document.getElementById("printButton").addEventListener("click", function() {
+            window.print();
+            });
+
+
+    //back
+    function goBack(){
+        window.history.back();
+    }
+
+
+    //double-click to uncheck radio buttons
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all radio buttons
+        var radioButtons = document.querySelectorAll('input[type="radio"]');
+
+        // Add double-click event listener to each radio button
+        radioButtons.forEach(function(radioButton) {
+            radioButton.addEventListener("dblclick", function() {
+                // Toggle the checked state of the radio button
+                this.checked = !this.checked;
+            });
+        });
+    });
+</script>
+</body>
+</html>

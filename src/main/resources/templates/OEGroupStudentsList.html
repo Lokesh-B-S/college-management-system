@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>OE group student List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+
+<style>
+    .flex-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group {
+        margin-right: 10px;
+    }
+</style>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+    <h3>Open Elective Students List:</h3>
+
+
+
+<!--    <form th:action="@{/hod/listOEGroupStudents}" method="post">-->
+        <form th:action="@{/hod/listOEGroupStudents}" method="get">
+
+<!--        <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />-->
+<!--        <input type="hidden" name="programId" th:value="${program.programId}" />-->
+<!--        <input type="hidden" name="semId" th:value="${semester.semId}" />-->
+<!--        <input type="hidden" name="termId" th:value="${term.id}" />-->
+<!--        <input type="hidden" name="selectedOpenElectiveId" th:value="${openElective.openElectiveId}" />-->
+
+<!--        <div style="display: inline-block; margin-right: 10px;">-->
+<!--            <div class="form-group">-->
+<!--                <label for="group">Select Group:</label>-->
+<!--                <select id="group" name="groupId" class="form-control">-->
+<!--                    &lt;!&ndash; Populate options dynamically based on available groups &ndash;&gt;-->
+<!--                    <option th:each="group : ${groups}" th:value="${group.groupId}" th:text="${group.groupNo}"></option>-->
+<!--                </select>-->
+<!--                <button type="submit" class="btn btn-primary">Show Students</button>-->
+<!--            </div>-->
+<!--        </div>-->
+    </form>
+
+
+
+
+    <div>
+        <p align="right">
+            <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
+            <a th:if="${#request.isUserInRole('DEPT_HEAD') and openElectiveDept == loggedInDept}" href="" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-primary view">Make Groups</a>
+            <a href="/hod/selectPrerequisiteForOEGroupAllotment/" th:href="@{/hod/selectOpenElectiveCourse/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-danger view">select other elective</a>
+        </p>
+
+        <table  class="table table-bordered">
+            <thead>
+
+            <tr>
+                <th colspan="6" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                    class="text-center">College
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="3" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+                <th colspan="3" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+            </tr>
+            <tr>
+                <th colspan="3" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+                <th colspan="3" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+            </tr>
+
+            <tr>
+                <th colspan="3" th:text="'Open Elective: ' + ${openElective.courseName} + ' (' + ${openElective.courseCode} + ')' " style=" font-size: 25px;"
+                    class="text-center">oe
+                </th>
+                <th colspan="3" th:text="'Offered By Department: ' + ${openElective.department.departmentName}" style="font-size: 20px;" class="text-center">dept offered</th>
+
+
+            </tr>
+            </thead>
+
+
+
+            <tbody>
+            <tr style="text-align:center">
+                <th rowspan="1" class="text-center">Sl no.</th>
+                <th rowspan="1" class="text-center">Section</th>
+                <th rowspan="1" class="text-center">USN</th>
+                <th rowspan="1" class="text-center">Name</th>
+                <th rowspan="1" class="text-center">Course Name</th>
+                <th rowspan="1" class="text-center">Group</th>
+            </tr>
+
+            <tr th:each="groupStudent, rowStat : ${foundOEStudents}">
+                <td th:text="${rowStat.count}" class="text-center">1</td>
+                <td th:text="${groupStudent.section.sec}" class="text-center">Test</td>
+                <td th:text="${groupStudent.usn}" class="text-center">Test</td>
+                <td th:text="${groupStudent.name}" class="text-center">Test</td>
+                <td th:text="${openElective.courseName}" class="text-center">Test</td>
+                <td th:if="${groupStudent.groupOfOpenElective?.groupNo != null}" th:text="${groupStudent.groupOfOpenElective.groupNo}" class="text-center"></td>
+                <td th:unless="${groupStudent.groupOfOpenElective?.groupNo != null}"></td>
+
+                <!--                <td th:text="${groupStudent.groupOfOpenElective.groupNo}">Test</td>-->
+
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div align="center">
+        <p>
+            <a th:if="${#request.isUserInRole('DEPT_HEAD') and openElectiveDept == loggedInDept}" href="" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-primary view">Make Groups</a>
+            <a href="/hod/selectPrerequisiteForOEGroupAllotment/" th:href="@{/hod/selectOpenElectiveCourse/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-danger view">select other elective</a>
+        </p>
+        <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
+    </div>
+
+
+</div>
+
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+

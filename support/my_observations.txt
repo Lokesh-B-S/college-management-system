@@ -288,3 +288,24 @@ query did not return a unique result: 2; nested exception is javax.persistence.N
 org.springframework.dao.IncorrectResultSizeDataAccessException: query did not return a unique result: 2; nested exception is javax.persistence.NonUniqueResultException: query did not return a unique result: 2
 
 -------------------------------------
+
+There was an unexpected error (type=Internal Server Error, status=500).
+org.hibernate.TransientPropertyValueException: object references an unsaved transient instance - save the transient instance before flushing : com.ras.cms.domain.StudentCourseRegistration.currentAcademicYear -> com.ras.cms.domain.AcademicYear; nested exception is java.lang.IllegalStateException: org.hibernate.TransientPropertyValueException: object references an unsaved transient instance - save the transient instance before flushing : com.ras.cms.domain.StudentCourseRegistration.currentAcademicYear -> com.ras.cms.domain.AcademicYear
+
+solution:
+
+ what I thought:
+ (cascade = CascadeType.ALL)
+in entity if we have @ManyToOne or such for more than one AcademicYear type, we get this error
+
+what actually is:
+in postmapping, requestparam for academicYear, program, sem,term from its html page is must
+(Not direclty AcademicYear academicYear, instead @RequestParam(name="academicYear") Long academicYearId)
+
+--------------------------------------
+note: th:name is not allowed in option tag, instead restricted to <select> itself
+<option th:each="course : ${allRegisteredCoursesList}" th:name="course" th:value="${course.courseId}" not allowed
+
+
+
+---------------------------------------

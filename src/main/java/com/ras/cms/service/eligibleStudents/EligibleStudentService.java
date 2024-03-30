@@ -29,6 +29,8 @@ public interface EligibleStudentService{
 
     List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndAndSectionAndSecBatch(AcademicYear academicYear, Program program, Semester semester, Term term, Section section, SecBatch secBatch);
 
+    List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OEGroup groupOfOpenElective);
+
 //   Course getProfessionalElective1ByEligibleStudentId(Long eligibleStudentId);
 //    Course getProfessionalElective2ByEligibleStudentId(Long eligibleStudentId);
 //    OpenElective getOpenElectiveByEligibleStudentId(Long eligibleStudentId);
@@ -36,6 +38,8 @@ public interface EligibleStudentService{
     void assignSectionToEligibleStudent(Long studentId, Long sectionId);
 
     void assignSecBatchToEligibleStudent(Long studentId, Long secBatchId);
+
+    void assignOEGroupToEligibleStudent(Long studentId, Long groupId);
 
     void assignOpenElectiveToEligibleStudent(Long studentId, Long openElectiveId);
 
@@ -46,6 +50,8 @@ public interface EligibleStudentService{
    List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndProfessionalElective(AcademicYear academicYear, Program program, Semester semester, Term term, Course PEcourse);
 
    List<EligibleStudent> getStudentsByAcademicYearAndAndSemesterAndTermAndOpenElective(AcademicYear academicYear, Semester semester, Term term, OpenElective openElective);
+    List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OpenElective openElective);
+
 
     List<EligibleStudent> getStudentsBySection(Section section);
 

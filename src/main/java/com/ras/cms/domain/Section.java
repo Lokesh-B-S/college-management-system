@@ -16,6 +16,7 @@ public class Section {
 
     public Section(){}
 
+    //constructor needed for initApplicationService
     public Section(String sec) {
         this.sec = sec;
     }

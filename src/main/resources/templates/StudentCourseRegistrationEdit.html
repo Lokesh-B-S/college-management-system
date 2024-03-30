@@ -72,6 +72,11 @@
 <!--            <button type="button" class="btn btn-primary" onclick="goBack()">Back</button>-->
         </div>
 
+<!--        note: these name="" e for @RequestParam in postmapping, and th:value is by getmapping variables-->
+        <input type="hidden" name="academicYear" th:value="*{currentAcademicYear.id}" />
+        <input type="hidden" name="program" th:value="*{program.programId}" />
+        <input type="hidden" name="semester" th:value="*{currentSemester.semId}" />
+        <input type="hidden" name="term" th:value="*{term.id}" />
 
         <input type="hidden" name="eligibleStudent" th:value="*{eligibleStudent.eligibleStudentId}" />
 

@@ -82,6 +82,9 @@
     <h3>Click Student to Proceed to courses allotment: </h3>
 
     <div align="right">
+        <a th:href="@{'/hod/listStudentsOfCourseSelected?academicYearId=' + ${academicYearId} + '&programId=' + ${programId} + '&semId=' + ${semId} + '&termId=' + ${termId}}" class="btn btn-primary">course-wise students list</a>
+
+
         <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
         <a href="/hod/selectPrerequisitesForStudentCourseSelection/" th:href="@{/hod/selectPrerequisitesForStudentCourseSelection/}" class="btn btn-danger">close</a>
     </div>

@@ -30,12 +30,15 @@ public class EligibleStudent {
     @ManyToOne
 //    @NotNull
     private Semester semester;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
 //    @NotNull
     private Section section;
 
     @ManyToOne
     private SecBatch secBatch;
+
+    @ManyToOne
+    private OEGroup groupOfOpenElective;
 
     @ManyToOne
     private Course regularCourse;
@@ -126,6 +129,14 @@ public class EligibleStudent {
 
     public void setSecBatch(SecBatch secBatch) {
         this.secBatch = secBatch;
+    }
+
+    public OEGroup getGroupOfOpenElective() {
+        return groupOfOpenElective;
+    }
+
+    public void setGroupOfOpenElective(OEGroup groupOfOpenElective) {
+        this.groupOfOpenElective = groupOfOpenElective;
     }
 
     public OpenElective getOpenElective() {
