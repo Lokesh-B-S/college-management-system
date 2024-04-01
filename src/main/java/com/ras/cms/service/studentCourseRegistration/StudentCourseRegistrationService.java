@@ -19,6 +19,9 @@ public interface StudentCourseRegistrationService {
 
     StudentCourseRegistration findRegistrationByStudentAndOpenElective(EligibleStudent eligibleStudent, OpenElective openElective);
 
+    //this is to filter students of same program which may be useful in future
+    StudentCourseRegistration findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentProgramAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear academicYear, Program program, Semester semester);
+    StudentCourseRegistration findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear academicYear, Semester semester);
 
 
     void removeCourseFromStudent(EligibleStudent eligibleStudent, Course course);
@@ -28,6 +31,8 @@ public interface StudentCourseRegistrationService {
     List<StudentCourseRegistration> findAllRegistrationsByCourse(Course course, AcademicYear academicYear, Semester semester);
 
     List<StudentCourseRegistration> findAllRegistrationsByOpenElective(OpenElective openElective, AcademicYear academicYear, Semester semester);
+
+    List<StudentCourseRegistration> findAllRegistrationsByOpenElectiveAndAcademicYearAndSemesterAndGroupOfOpenElective(OpenElective openElective, AcademicYear academicYear, Semester semester, OEGroup groupOfOpenElective);
 
     List<StudentCourseRegistration> findAllRegistrationsByProgramAndAcademicYearAndSemester(Program program, AcademicYear academicYear, Semester semester);
 
@@ -43,4 +48,5 @@ public interface StudentCourseRegistrationService {
 
     void assignOpenElectiveToEligibleStudent(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear courseYear, Semester courseSemester, Program currentProgram, AcademicYear currentAcademicYear, Semester currentSemester, Term currentTerm);
 
+    public void assignOEGroupToStudent(Long studentCourseRegistrationId, Long groupId);
 }

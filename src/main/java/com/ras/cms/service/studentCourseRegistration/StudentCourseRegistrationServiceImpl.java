@@ -21,19 +21,10 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
     private EntityManager entityManager;
 
     @Autowired
+    GroupRepository groupRepository;
+    @Autowired
     StudentCourseRegistrationRepository studentCourseRegistrationRepository;
 
-    @Autowired
-    AcademicYearRepository academicYearRepository;
-
-    @Autowired
-    ProgramRepository programRepository;
-
-    @Autowired
-    SemesterRepository semesterRepository;
-
-    @Autowired
-    TermRepository termRepository;
 
     @Override
     public StudentCourseRegistration findOne(Long id) {
@@ -45,13 +36,32 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
         return studentCourseRegistrationRepository.findByEligibleStudentAndCourse(eligibleStudent, course);
     }
 
+
+    @Override
+    public StudentCourseRegistration findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentProgramAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear academicYear, Program program, Semester semester){
+        return studentCourseRegistrationRepository.findByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentProgramAndCurrentSemester(eligibleStudent, openElective, academicYear, program, semester);
+    }
+
+    @Override
+    public StudentCourseRegistration findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear academicYear, Semester semester){
+        return studentCourseRegistrationRepository.findByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentSemester(eligibleStudent, openElective, academicYear, semester);
+    }
+
+
     @Override
     public List<StudentCourseRegistration> findAllRegistrationsByCourse(Course course, AcademicYear academicYear, Semester semester){
         return studentCourseRegistrationRepository.findAllByCourseAndCurrentAcademicYearAndCurrentSemester(course, academicYear, semester);
     }
+
+
     @Override
     public List<StudentCourseRegistration> findAllRegistrationsByOpenElective(OpenElective openElective, AcademicYear academicYear, Semester semester){
         return studentCourseRegistrationRepository.findAllByOpenElectiveAndCurrentAcademicYearAndCurrentSemester(openElective, academicYear, semester);
+    }
+
+    @Override
+    public List<StudentCourseRegistration> findAllRegistrationsByOpenElectiveAndAcademicYearAndSemesterAndGroupOfOpenElective(OpenElective openElective, AcademicYear academicYear, Semester semester, OEGroup groupOfOpenElective){
+        return studentCourseRegistrationRepository.findAllByOpenElectiveAndCurrentAcademicYearAndCurrentSemesterAndGroupOfOpenElective(openElective, academicYear, semester, groupOfOpenElective);
     }
 
     @Override
@@ -174,20 +184,6 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
 
     public void assignOpenElectiveToEligibleStudent(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear courseYear, Semester courseSemester, Program currentProgram, AcademicYear currentAcademicYear, Semester currentSemester, Term currentTerm) {
 
-//        System.out.println(currentProgram.getProgramId() + " barthidhe nodappa");
-//        System.out.println(currentAcademicYear.getId() + " barthidhe nodappa");
-//        System.out.println(currentSemester.getSemId() + " barthidhe nodappa");
-//        System.out.println(currentTerm.getId() + " barthidhe nodappa");
-//
-//        System.out.println(currentProgram + " barthidhe nodappa");
-//        System.out.println(currentAcademicYear + " barthidhe nodappa");
-//        System.out.println(currentSemester + " barthidhe nodappa");
-//        System.out.println(currentTerm + " barthidhe nodappa");
-
-//        Program programManaged = programRepository.getById(currentProgram.getProgramId());
-//        AcademicYear academicYearManaged = academicYearRepository.getById(currentAcademicYear.getId());
-//        Semester semesterManaged = semesterRepository.getById(currentSemester.getSemId());
-//        Term termManaged = termRepository.getById(currentTerm.getId());
 
         StudentCourseRegistration existingRegistration = studentCourseRegistrationRepository.findByEligibleStudentAndCourseTypeAndCourseYearAndCourseSemester(eligibleStudent, "oe", courseYear, courseSemester);
         if(existingRegistration != null){
@@ -210,19 +206,22 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
         }
     }
 
-//    public boolean isCourseRegistered(EligibleStudent eligibleStudent, Course course){
-//        return studentCourseRegistrationRepository.existsByEligibleStudentAndCourse(eligibleStudent, course);
-//    }
 
-//    @Override
-//    public Set<Long> getRegisteredCourseIdsForStudent(EligibleStudent eligibleStudent) {
-//
-//        Set<Long> registeredCourseIds = new HashSet<>();
-//        Iterable<StudentCourseRegistration> registrations = studentCourseRegistrationRepository.findByEligibleStudent(eligibleStudent);
-//        for (StudentCourseRegistration registration : registrations) {
-//            registeredCourseIds.add(registration.getCourse().getCourseId());
+    //earlier was in eligiblestudent, but since subjectwise the group id should be alloted , it must be here
+    public void assignOEGroupToStudent(Long studentCourseRegistrationId, Long groupId) {
+        // Fetch the student and section from the database
+        StudentCourseRegistration studentCourseRegistration = studentCourseRegistrationRepository.findById(studentCourseRegistrationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid registration ID: " + studentCourseRegistrationId));
+        OEGroup group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + groupId));
+
+//        if (studentCourseRegistration.getGroupOfOpenElective() == null) {
+//            studentCourseRegistration.setGroupOfOpenElective(new OEGroup());
 //        }
-//        return registeredCourseIds;
-//    }
+        // Assign the section to the student
+        studentCourseRegistration.setGroupOfOpenElective(group);
+        studentCourseRegistrationRepository.save(studentCourseRegistration);
+    }
+
 
 }

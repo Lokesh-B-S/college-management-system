@@ -1,6 +1,7 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.*;
+import com.ras.cms.repository.GroupConfigurationRepository;
 import com.ras.cms.repository.StudentCourseRegistrationRepository;
 import com.ras.cms.service.academicyear.AcademicYearService;
 import com.ras.cms.service.batch.BatchService;
@@ -68,6 +69,9 @@ public class StudentCourseRegistrationController {
 
     @Autowired
     StudentCourseRegistrationService studentCourseRegistrationService;
+
+    @Autowired
+    GroupConfigurationRepository groupConfigurationRepository;
 
     @Autowired
     StudentCourseRegistrationRepository studentCourseRegistrationRepository;
@@ -671,7 +675,7 @@ public class StudentCourseRegistrationController {
     ) {
 
         DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
-        Department dep = departmentAndProgramFetch.getDepartment();
+        Department loggedInDept = departmentAndProgramFetch.getDepartment();
 
         AcademicYear academicYear = academicYearService.findOne(academicYearId);
         Program program = programService.findOne(programId);
@@ -695,6 +699,8 @@ System.out.println(courseId);
 //        model.addAttribute("PEcourses", courses);
 
         List<StudentCourseRegistration> registrations = new ArrayList<>();
+        Integer noOfGroups = 0;
+
         if(className.equals("Course")) {
             Course course = courseService.findOne(courseId);
             model.addAttribute("postSelectedCourse", course);
@@ -703,7 +709,16 @@ System.out.println(courseId);
         else if(className.equals("OpenElective")){
             OpenElective openElective = openElectiveService.findOne(courseId);
             model.addAttribute("postSelectedOpenElective", openElective);
+            model.addAttribute("openElectiveDept", openElective.getDepartment());
             registrations = studentCourseRegistrationService.findAllRegistrationsByOpenElective(openElective, academicYear, semester);
+
+
+            // group1 , group2, group3... buttons
+            //in find by here, i have removed program, to allow other departments too
+            GroupConfiguration groupConfiguration = groupConfigurationRepository.findByAcademicYearAndSemesterAndTermAndOpenElective(academicYear, semester, term, openElective)
+                    .orElse(null);
+                if(groupConfiguration!=null && groupConfiguration.getNoOfGroups() != null)
+                    noOfGroups = groupConfiguration.getNoOfGroups();
         }
 
 
@@ -719,9 +734,19 @@ System.out.println(courseId);
         }
 
         Collections.sort(foundEligibleStudents, Comparator.comparing(EligibleStudent::getUsn));
-
         model.addAttribute("foundEligibleStudents", foundEligibleStudents);
         System.out.println(foundEligibleStudents);
+
+        model.addAttribute("foundRegistrations", registrations);
+        System.out.println(registrations);
+
+        System.out.println("illi " + noOfGroups);
+        model.addAttribute("noOfGroups", noOfGroups);
+
+
+        model.addAttribute("loggedInDept", loggedInDept);
+
+
         return "StudentListForEachCourse";
 //        return "redirect:/hod/listStudentsOfCourseSelected";
 //        return "redirect:/hod/listStudentsOfCourseSelected?academicYearId=" + academicYearId + "&programId=" + programId + "&semId=" + semId + "&termId=" + termId;

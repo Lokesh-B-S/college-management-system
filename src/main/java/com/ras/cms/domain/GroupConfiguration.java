@@ -25,6 +25,8 @@ public class GroupConfiguration {
     @ManyToOne
     private OpenElective openElective;
 
+
+
     private Integer noOfGroups;
 
     public Long getId() {

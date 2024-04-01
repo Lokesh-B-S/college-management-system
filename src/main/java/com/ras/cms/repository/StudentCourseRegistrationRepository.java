@@ -20,8 +20,13 @@ public interface StudentCourseRegistrationRepository extends JpaRepository<Stude
     List<StudentCourseRegistration> findAllByCurrentProgramAndCurrentAcademicYearAndCurrentSemester(Program currentProgram, AcademicYear currentAcademicYear, Semester currentSemester);
     List<StudentCourseRegistration> findAllByCourseAndCurrentAcademicYearAndCurrentSemester(Course course, AcademicYear currentAcademicYear, Semester currentSemester);
     List<StudentCourseRegistration> findAllByOpenElectiveAndCurrentAcademicYearAndCurrentSemester(OpenElective openElective, AcademicYear currentAcademicYear, Semester currentSemester);
+    List<StudentCourseRegistration> findAllByOpenElectiveAndCurrentAcademicYearAndCurrentSemesterAndGroupOfOpenElective(OpenElective openElective, AcademicYear currentAcademicYear, Semester currentSemester, OEGroup groupOfOpenElective);
 
     StudentCourseRegistration findByEligibleStudentAndCourse(EligibleStudent eligibleStudent, Course course);
+
+    StudentCourseRegistration findByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentProgramAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear currentAcademicYear, Program currentProgram, Semester currentSemester);
+
+    StudentCourseRegistration findByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear currentAcademicYear, Semester currentSemester);
 
     StudentCourseRegistration findByEligibleStudentAndOpenElective(EligibleStudent eligibleStudent, OpenElective openElective);
 

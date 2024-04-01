@@ -1,4 +1,4 @@
-//group - open elective groups for openelectivegroupallotment to students
+//group - open elective groups + PE also, for openelectivegroupallotment to students
 
 package com.ras.cms.domain;
 

@@ -28,8 +28,8 @@
 
 <div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
 
-    <h3>Open Elective Students List:</h3>
-
+    <h3>Open Elective Students List: <span style="background-color: #DCCA12;" th:text="' Group ' + ${groupOfOpenElective.groupNo}"></span></h3>
+<!--    <span style="background-color: #DCCA12;" th:text="${eligibleStudent.name}"></span>-->
 
 
 <!--    <form th:action="@{/hod/listOEGroupStudents}" method="post">-->
@@ -59,8 +59,8 @@
     <div>
         <p align="right">
             <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
-            <a th:if="${#request.isUserInRole('DEPT_HEAD') and openElectiveDept == loggedInDept}" href="" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-primary view">Make Groups</a>
-            <a href="/hod/selectPrerequisiteForOEGroupAllotment/" th:href="@{/hod/selectOpenElectiveCourse/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-danger view">select other elective</a>
+<!--            <a th:if="${#request.isUserInRole('DEPT_HEAD') and openElectiveDept == loggedInDept}" href="" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-primary view">Make Groups</a>-->
+<!--            <a href="/hod/selectPrerequisiteForOEGroupAllotment/" th:href="@{/hod/selectOpenElectiveCourse/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-danger view">select other elective</a>-->
         </p>
 
         <table  class="table table-bordered">
@@ -82,10 +82,14 @@
             </tr>
 
             <tr>
-                <th colspan="3" th:text="'Open Elective: ' + ${openElective.courseName} + ' (' + ${openElective.courseCode} + ')' " style=" font-size: 25px;"
-                    class="text-center">oe
-                </th>
-                <th colspan="3" th:text="'Offered By Department: ' + ${openElective.department.departmentName}" style="font-size: 20px;" class="text-center">dept offered</th>
+<!--                <th colspan="3" th:text="'Open Elective: ' + ${openElective.courseName} + ' (' + ${openElective.courseCode} + ')' " style=" font-size: 25px;"-->
+<!--                    class="text-center">oe-->
+<!--                </th>-->
+<!--                <th colspan="3" th:text="'Offered By Department: ' + ${openElective.department.departmentName}" style="font-size: 20px;" class="text-center">dept offered</th>-->
+
+                <th colspan="3" style="font-size: 20px;">Open Elective: <span style="background-color: #DCCA12; " th:text="${openElective.courseName} + ' (' + ${openElective.courseCode} + ')'" class="text-center"></span></th>
+                <th colspan="3" style="font-size: 20px;">Offered By Department: <span style="background-color: #DCCA12;" th:text="${openElective.department.departmentName}" class="text-center"></span></th>
+
 
 
             </tr>
@@ -109,8 +113,8 @@
                 <td th:text="${groupStudent.usn}" class="text-center">Test</td>
                 <td th:text="${groupStudent.name}" class="text-center">Test</td>
                 <td th:text="${openElective.courseName}" class="text-center">Test</td>
-                <td th:if="${groupStudent.groupOfOpenElective?.groupNo != null}" th:text="${groupStudent.groupOfOpenElective.groupNo}" class="text-center"></td>
-                <td th:unless="${groupStudent.groupOfOpenElective?.groupNo != null}"></td>
+                <td th:if="${groupOfOpenElective?.groupNo != null}" th:text="${groupOfOpenElective.groupNo}" class="text-center"></td>
+                <td th:unless="${groupOfOpenElective?.groupNo != null}"></td>
 
                 <!--                <td th:text="${groupStudent.groupOfOpenElective.groupNo}">Test</td>-->
 
@@ -122,10 +126,9 @@
 
     <div align="center">
         <p>
-            <a th:if="${#request.isUserInRole('DEPT_HEAD') and openElectiveDept == loggedInDept}" href="" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-primary view">Make Groups</a>
-            <a href="/hod/selectPrerequisiteForOEGroupAllotment/" th:href="@{/hod/selectOpenElectiveCourse/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-danger view">select other elective</a>
+<!--            <a th:if="${#request.isUserInRole('DEPT_HEAD') and openElectiveDept == loggedInDept}" href="" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-primary view">Make Groups</a>-->
+<!--            <a href="/hod/selectPrerequisiteForOEGroupAllotment/" th:href="@{/hod/selectOpenElectiveCourse/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-danger view">select other elective</a>-->
         </p>
-        <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
     </div>
 
 

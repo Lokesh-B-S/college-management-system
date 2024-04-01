@@ -74,160 +74,158 @@ public class OpenElectiveGroupAllotmentController {
     @Autowired
     private GroupConfigurationRepository groupConfigurationRepository;
 
-//    private int noOfSections = 3; // Default value, you can adjust it as needed
 
-
-    @GetMapping({"/hod/selectPrerequisiteForOEGroupAllotment"})
-    public String selectbasicFieldsbeforeOEGroupAllotment(Model model, HttpServletRequest request) {
-
-        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
-        Department dep = departmentAndProgramFetch.getDepartment();
-
-        List<Batch> batches = batchService.findAll();
-        List<Department> departments = departmentService.findAll();
-        List<AcademicYear> academicYears = academicYearService.findAll();
-        List<Semester> semesters = semesterService.findAll();
-        List<Program> programs = programService.getProgramsByDepartment(dep);
-        List<Term> terms = termService.findAll();
-
-        model.addAttribute("batches", batches);
-        model.addAttribute("departments", departments);
-        model.addAttribute("programs", programs);
-        model.addAttribute("academicYears", academicYears);
-        model.addAttribute("semesters", semesters);
-        model.addAttribute("terms", terms);
-
-//        model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
-        return "/OEGroupAllotmenttoStudentsPrerequisite";
-    }
-
-
-    @PostMapping({"/hod/selectPrerequisiteForOEGroupAllotment"})
-    public String postselectofbatchDepProgSem(Model model, HttpServletRequest request,
-                                              @RequestParam(required = false, name = "academicYear") Long academicYearId,
-                                              @RequestParam(required = false, name = "program") Long programId,
-                                              @RequestParam(required = false, name = "semester") Long semId,
-                                              @RequestParam(required = false, name = "term") Long termId) {
-        AcademicYear academicYear = academicYearService.findOne(academicYearId);
-        Program program = programService.findOne(programId);
-        Semester semester = semesterService.findOne(semId);
-        Term term = termService.findOne(termId);
-
-        model.addAttribute("program", program);
-        model.addAttribute("academicYear", academicYear);
-        model.addAttribute("semester", semester);
-        model.addAttribute("term", term);
-
-        if (eligibleStudentService.existsEligibleStudentEntryByAcademicYearAndProgramAndSemesterAndTerm(academicYear, program, semester, term)) {
-
-            System.out.println("yes");
-
-            List<EligibleStudent> students = eligibleStudentService.getStudentsByAcademicYearAndProgramAndSemesterAndTerm(academicYear, program, semester, term);
-            System.out.println(students);
-//                return "redirect:/hod/updateStudentOEGroupDetails/" + academicYearId  + "/" + programId + "/" + semId + "/" + termId;
-            return "redirect:/hod/selectOpenElectiveCourse/" + academicYearId + "/" + programId + "/" + semId + "/" + termId;
-
-        } else {
-            return "redirect:/hod/selectPrerequisiteForOEGroupAllotment";
-
-        }
+//
+//    @GetMapping({"/hod/selectPrerequisiteForOEGroupAllotment"})
+//    public String selectbasicFieldsbeforeOEGroupAllotment(Model model, HttpServletRequest request) {
+//
+//        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+//        Department dep = departmentAndProgramFetch.getDepartment();
+//
+//        List<Batch> batches = batchService.findAll();
+//        List<Department> departments = departmentService.findAll();
+//        List<AcademicYear> academicYears = academicYearService.findAll();
+//        List<Semester> semesters = semesterService.findAll();
+//        List<Program> programs = programService.getProgramsByDepartment(dep);
+//        List<Term> terms = termService.findAll();
+//
+//        model.addAttribute("batches", batches);
+//        model.addAttribute("departments", departments);
+//        model.addAttribute("programs", programs);
+//        model.addAttribute("academicYears", academicYears);
+//        model.addAttribute("semesters", semesters);
+//        model.addAttribute("terms", terms);
+//
+////        model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
+//        return "/OEGroupAllotmenttoStudentsPrerequisite";
+//    }
+//
+//
+//    @PostMapping({"/hod/selectPrerequisiteForOEGroupAllotment"})
+//    public String postselectofbatchDepProgSem(Model model, HttpServletRequest request,
+//                                              @RequestParam(required = false, name = "academicYear") Long academicYearId,
+//                                              @RequestParam(required = false, name = "program") Long programId,
+//                                              @RequestParam(required = false, name = "semester") Long semId,
+//                                              @RequestParam(required = false, name = "term") Long termId) {
+//        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+//        Program program = programService.findOne(programId);
+//        Semester semester = semesterService.findOne(semId);
+//        Term term = termService.findOne(termId);
+//
+//        model.addAttribute("program", program);
+//        model.addAttribute("academicYear", academicYear);
+//        model.addAttribute("semester", semester);
+//        model.addAttribute("term", term);
+//
+//        if (eligibleStudentService.existsEligibleStudentEntryByAcademicYearAndProgramAndSemesterAndTerm(academicYear, program, semester, term)) {
+//
+//            System.out.println("yes");
+//
+//            List<EligibleStudent> students = eligibleStudentService.getStudentsByAcademicYearAndProgramAndSemesterAndTerm(academicYear, program, semester, term);
+//            System.out.println(students);
+////                return "redirect:/hod/updateStudentOEGroupDetails/" + academicYearId  + "/" + programId + "/" + semId + "/" + termId;
+//            return "redirect:/hod/selectOpenElectiveCourse/" + academicYearId + "/" + programId + "/" + semId + "/" + termId;
+//
+//        } else {
+//            return "redirect:/hod/selectPrerequisiteForOEGroupAllotment";
+//
+//        }
+////        return "/403";
+//    }
+//
+//
+//    @GetMapping("/hod/selectOpenElectiveCourse/{academicYearId}/{programId}/{semId}/{termId}")
+//    public String selectOpenElectiveCourseBeforeOEGroupAllotment(Model model, HttpServletRequest request,
+//                                                                 @PathVariable(required = true, name = "academicYearId") Long academicYearId,
+//                                                                 @PathVariable(required = true, name = "programId") Long programId,
+//                                                                 @PathVariable(required = true, name = "semId") Long semId,
+//                                                                 @PathVariable(required = true, name = "termId") Long termId) {
+//
+//
+//        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+//        Department dep = departmentAndProgramFetch.getDepartment();
+//
+//
+//        List<Program> programs = programService.getProgramsByDepartment(dep);
+//
+//        model.addAttribute("programs", programs);
+//
+//        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+//        Program program = programService.findOne(programId);
+//        Semester semester = semesterService.findOne(semId);
+//        Term term = termService.findOne(termId);
+//
+//        model.addAttribute("academicYear", academicYear);
+//        model.addAttribute("program", program);
+//        model.addAttribute("semester", semester);
+//        model.addAttribute("term", term);
+//
+//        BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
+//
+//        if (batchYearSemTerm != null) {
+//            Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
+//
+//            // Find courses for the current semester and academic year
+//            List<OpenElective> openElectives = openElectiveService.getOpenElectivesByBatchYearSemTermId(batchYearSemTermId);
+//
+//            List<OpenElective> sameDeptOpenElectives = new ArrayList<>();
+//            List<OpenElective> otherDeptOpenElectives = new ArrayList<>();
+//
+//            for (OpenElective openElective : openElectives) {
+//                if (openElective.getDepartment().equals(dep)) {
+//                    sameDeptOpenElectives.add(openElective);
+//                } else {
+//                    otherDeptOpenElectives.add(openElective);
+//                }
+//            }
+//
+//            model.addAttribute("sameDeptOpenElectives", sameDeptOpenElectives);
+//            model.addAttribute("otherDeptOpenElectives", otherDeptOpenElectives);
+//        } else {
+//            System.out.println("BatchYearSemTerm is null");
+//        }
+//
+////        model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
+//        return "/OEGroupAllotmentSelectOpenElectives";
+//    }
+//
+//
+//    @PostMapping("/hod/selectOpenElectiveCourse")
+//    public String postOpenElectiveSelection(Model model,
+//                                            @RequestParam("academicYear") Long academicYearId,
+//                                            @RequestParam("program") Long programId,
+//                                            @RequestParam("semester") Long semId,
+//                                            @RequestParam("term") Long termId,
+//                                            @RequestParam(name = "selectedOpenElectiveId", required = true) Long selectedOpenElectiveId) {
+//
+//        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+//        Program program = programService.findOne(programId);
+//        Semester semester = semesterService.findOne(semId);
+//        Term term = termService.findOne(termId);
+//
+//        if (selectedOpenElectiveId != null) {
+////            return "redirect:/listOEGroupStudents?academicYearId=" + academicYearId +
+////                    "&programId=" + programId +
+////                    "&semId=" + semId +
+////                    "&termId=" + termId +
+////                    "&selectedOpenElectiveId=" + selectedOpenElectiveId;
+//
+//            return "redirect:/hod/listOEGroupStudents/" + academicYearId + "/" + programId + "/" + semId + "/" + termId + "/" + selectedOpenElectiveId;
+//
+//        }
 //        return "/403";
-    }
+//    }
 
 
-    @GetMapping("/hod/selectOpenElectiveCourse/{academicYearId}/{programId}/{semId}/{termId}")
-    public String selectOpenElectiveCourseBeforeOEGroupAllotment(Model model, HttpServletRequest request,
-                                                                 @PathVariable(required = true, name = "academicYearId") Long academicYearId,
-                                                                 @PathVariable(required = true, name = "programId") Long programId,
-                                                                 @PathVariable(required = true, name = "semId") Long semId,
-                                                                 @PathVariable(required = true, name = "termId") Long termId) {
-
-
-        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
-        Department dep = departmentAndProgramFetch.getDepartment();
-
-
-        List<Program> programs = programService.getProgramsByDepartment(dep);
-
-        model.addAttribute("programs", programs);
-
-        AcademicYear academicYear = academicYearService.findOne(academicYearId);
-        Program program = programService.findOne(programId);
-        Semester semester = semesterService.findOne(semId);
-        Term term = termService.findOne(termId);
-
-        model.addAttribute("academicYear", academicYear);
-        model.addAttribute("program", program);
-        model.addAttribute("semester", semester);
-        model.addAttribute("term", term);
-
-        BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
-
-        if (batchYearSemTerm != null) {
-            Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
-
-            // Find courses for the current semester and academic year
-            List<OpenElective> openElectives = openElectiveService.getOpenElectivesByBatchYearSemTermId(batchYearSemTermId);
-
-            List<OpenElective> sameDeptOpenElectives = new ArrayList<>();
-            List<OpenElective> otherDeptOpenElectives = new ArrayList<>();
-
-            for (OpenElective openElective : openElectives) {
-                if (openElective.getDepartment().equals(dep)) {
-                    sameDeptOpenElectives.add(openElective);
-                } else {
-                    otherDeptOpenElectives.add(openElective);
-                }
-            }
-
-            model.addAttribute("sameDeptOpenElectives", sameDeptOpenElectives);
-            model.addAttribute("otherDeptOpenElectives", otherDeptOpenElectives);
-        } else {
-            System.out.println("BatchYearSemTerm is null");
-        }
-
-//        model.addAttribute("batchYearSemTerm", new BatchYearSemTerm());
-        return "/OEGroupAllotmentSelectOpenElectives";
-    }
-
-
-    @PostMapping("/hod/selectOpenElectiveCourse")
-    public String postOpenElectiveSelection(Model model,
-                                            @RequestParam("academicYear") Long academicYearId,
-                                            @RequestParam("program") Long programId,
-                                            @RequestParam("semester") Long semId,
-                                            @RequestParam("term") Long termId,
-                                            @RequestParam(name = "selectedOpenElectiveId", required = true) Long selectedOpenElectiveId) {
-
-        AcademicYear academicYear = academicYearService.findOne(academicYearId);
-        Program program = programService.findOne(programId);
-        Semester semester = semesterService.findOne(semId);
-        Term term = termService.findOne(termId);
-
-        if (selectedOpenElectiveId != null) {
-//            return "redirect:/listOEGroupStudents?academicYearId=" + academicYearId +
-//                    "&programId=" + programId +
-//                    "&semId=" + semId +
-//                    "&termId=" + termId +
-//                    "&selectedOpenElectiveId=" + selectedOpenElectiveId;
-
-            return "redirect:/hod/listOEGroupStudents/" + academicYearId + "/" + programId + "/" + semId + "/" + termId + "/" + selectedOpenElectiveId;
-
-        }
-
-
-        return "/403";
-    }
-
-
-    @GetMapping("/hod/listOEGroupStudents/{academicYearId}/{programId}/{semId}/{termId}/{openElectiveId}")
+    @GetMapping("/hod/listOEGroupStudents/{academicYearId}/{programId}/{semId}/{termId}/{openElectiveId}/{groupId}")
     public String listStudentsofOEGroupSelected(Model model,
                                                 HttpServletRequest request,
                                                 @PathVariable(name = "academicYearId") Long academicYearId,
                                                 @PathVariable(name = "programId") Long programId,
                                                 @PathVariable(name = "semId") Long semId,
                                                 @PathVariable(name = "termId") Long termId,
-                                                @PathVariable(name = "openElectiveId") Long selectedOpenElectiveId) {
+                                                @PathVariable(name = "openElectiveId") Long selectedOpenElectiveId,
+                                                @PathVariable(name = "groupId") Long groupId) {
 
         DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
         Department loggedInDept = departmentAndProgramFetch.getDepartment();
@@ -237,16 +235,18 @@ public class OpenElectiveGroupAllotmentController {
         Semester semester = semesterService.findOne(semId);
         Term term = termService.findOne(termId);
         OpenElective openElective = openElectiveService.findOne(selectedOpenElectiveId);
+        OEGroup groupOfOpenElective = groupService.findOne(groupId);
 
         model.addAttribute("academicYear", academicYear);
         model.addAttribute("program", program);
         model.addAttribute("semester", semester);
         model.addAttribute("term", term);
         model.addAttribute("openElective", openElective);
+        model.addAttribute("groupOfOpenElective", groupOfOpenElective);
 
         if (openElective != null) {
 
-            List<StudentCourseRegistration> registrations = studentCourseRegistrationService.findAllRegistrationsByOpenElective(openElective, academicYear, semester);
+            List<StudentCourseRegistration> registrations = studentCourseRegistrationService.findAllRegistrationsByOpenElectiveAndAcademicYearAndSemesterAndGroupOfOpenElective(openElective, academicYear, semester, groupOfOpenElective);
 
             List<EligibleStudent> foundOEStudents = new ArrayList<>();
             for (StudentCourseRegistration registration : registrations) {
@@ -259,6 +259,7 @@ public class OpenElectiveGroupAllotmentController {
             }
 
             model.addAttribute("foundOEStudents", foundOEStudents);
+            model.addAttribute("groupOfOpenElective", groupOfOpenElective);
             model.addAttribute("openElectiveDept", openElective.getDepartment());
             model.addAttribute("loggedInDept", loggedInDept);
 //                    List<EligibleStudent> OEGroupStudents = eligibleStudentService.getStudentsByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(academicYear, program, semester, term, group);
@@ -271,38 +272,6 @@ public class OpenElectiveGroupAllotmentController {
 
         return "OEGroupStudentsList";
     }
-
-//        @PostMapping("/hod/listOEGroupStudents")
-//        public String postListOEGroupStudents(Model model, @RequestParam Long academicYearId,
-//                                              @RequestParam Long programId,
-//                                              @RequestParam Long semId,
-//                                              @RequestParam Long termId
-////                                            @RequestParam Long groupId
-//                                            ){
-//
-//            AcademicYear academicYear = academicYearService.findOne(academicYearId);
-//            Program program = programService.findOne(programId);
-//            Semester semester = semesterService.findOne(semId);
-//            Term term = termService.findOne(termId);
-//
-//            model.addAttribute("academicYear", academicYear);
-//            model.addAttribute("program", program);
-//            model.addAttribute("semester", semester);
-//            model.addAttribute("term", term);
-//
-//            List<OEGroup> groups = groupService.findAll();
-//            model.addAttribute("groups", groups);
-//
-////            OEGroup group = groupService.findOne(groupId);
-//
-//            List<EligibleStudent> OEGroupStudents = eligibleStudentService.getStudentsByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(academicYear, program, semester, term, group);
-//
-//            Collections.sort(OEGroupStudents, Comparator.comparing(EligibleStudent::getUsn));
-//
-//            model.addAttribute("OEGroupStudents", OEGroupStudents);
-//            System.out.println(OEGroupStudents);
-//            return "OEGroupStudentsList";
-//        }
 
 
     @GetMapping("/hod/updateStudentOEGroupDetails/{academicYearId}/{programId}/{semId}/{termId}/{openElectiveId}")
@@ -359,8 +328,10 @@ public class OpenElectiveGroupAllotmentController {
 
             Map<Long, Long> currentAssignments = new HashMap<>();
             for (EligibleStudent student : students) {
-                if (student.getGroupOfOpenElective() != null) {
-                    currentAssignments.put(student.getEligibleStudentId(), student.getGroupOfOpenElective().getGroupId());
+                StudentCourseRegistration registration = studentCourseRegistrationService.findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentSemester(student, openElective, academicYear, semester);
+
+                if (registration != null && registration.getGroupOfOpenElective() != null) {
+                    currentAssignments.put(student.getEligibleStudentId(), registration.getGroupOfOpenElective().getGroupId());
                 }
             }
 
@@ -443,23 +414,33 @@ public class OpenElectiveGroupAllotmentController {
 
 
                     try {
-//            System.out.println(entry);
                         if (entry.getKey().equals("semester") || entry.getKey().equals("academicYear") || entry.getKey().equals("program") || entry.getKey().equals("term") || entry.getKey().equals("openElective") || entry.getKey().equals("noOfGroups")) {
                             // Skip entries that are not student assignments
                             continue;
                         }
-//            try{
                         Long studentId = Long.parseLong(entry.getKey());
                         Long groupId = Long.parseLong(entry.getValue());
 
+                        EligibleStudent eligibleStudent = eligibleStudentService.findOne(studentId);
+
+                        //dont include program in this line, bcz it wont save for other program students
+                        StudentCourseRegistration registration = studentCourseRegistrationService.findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentSemester(eligibleStudent, openElective, academicYear, semester);
+
+//                            studentCourseRegistrationService.assignOEGroupToStudent(registration.getId(), groupId);
+
+                        if (registration != null) {
+                            studentCourseRegistrationService.assignOEGroupToStudent(registration.getId(), groupId);
+                        } else {
+                            // Handle the scenario when registration is null (e.g., log an error or skip)
+                            System.out.println("No registration found for student ID: " + studentId);
+                        }
+
                         // Update the student's section in the database
-                        eligibleStudentService.assignOEGroupToEligibleStudent(studentId, groupId);
+                       // eligibleStudentService.assignOEGroupToEligibleStudent(studentId, groupId);
                     } catch (NumberFormatException e) {
-                        // Log the error for troubleshooting
                         System.err.println("Error processing entry: " + entry);
                         e.printStackTrace();
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        // Handle the ArrayIndexOutOfBoundsException
                         System.err.println("ArrayIndexOutOfBoundsException" + e);
                         e.printStackTrace();
                     }

@@ -21,6 +21,9 @@ public class StudentCourseRegistration {
         @ManyToOne
         private OpenElective openElective;
 
+        @ManyToOne
+        private OEGroup groupOfOpenElective;
+
 
         private String courseType;
 
@@ -87,6 +90,14 @@ public class StudentCourseRegistration {
 
     public void setOpenElective(OpenElective openElective) {
         this.openElective = openElective;
+    }
+
+    public OEGroup getGroupOfOpenElective() {
+        return groupOfOpenElective;
+    }
+
+    public void setGroupOfOpenElective(OEGroup groupOfOpenElective) {
+        this.groupOfOpenElective = groupOfOpenElective;
     }
 
     public AcademicYear getCourseYear() {

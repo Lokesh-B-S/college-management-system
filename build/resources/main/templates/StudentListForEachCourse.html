@@ -3,7 +3,7 @@
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>students List</title>
+    <title>coursewise students List</title>
 
     <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}"/>
@@ -87,18 +87,18 @@
             <thead>
 
             <tr>
-                <th colspan="5" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                <th colspan="6" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
                     class="text-center">College
                 </th>
             </tr>
 
             <tr>
                 <th colspan="3" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
-                <th colspan="2" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+                <th colspan="3" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
             </tr>
             <tr>
                 <th colspan="3" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
-                <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+                <th colspan="3" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
             </tr>
             </thead>
 
@@ -111,25 +111,55 @@
                 <th rowspan="1" class="text-center">USN</th>
                 <th rowspan="1" class="text-center">Name</th>
                 <th rowspan="1" class="text-center">Course</th>
+                <th rowspan="1" class="text-center">Group</th>
+
                 <!--            <th rowspan="1" class="text-center">Actions</th>-->
             </tr>
 
-            <tr th:each="eachStudent, rowStat : ${foundEligibleStudents}">
+            <tr th:each="registration, rowStat : ${foundRegistrations}">
                 <td th:text="${rowStat.count}" class="text-center">1</td>
-<!--                <td></td>-->
-                <td th:text="${eachStudent.section.sec}" class="text-center">Test</td>
-                <td th:text="${eachStudent.usn}" class="text-center">Test</td>
-                <td th:text="${eachStudent.name}" class="text-center">Test</td>
+                <td th:text="${registration.eligibleStudent.section.sec}" class="text-center">Test</td>
+                <td th:text="${registration.eligibleStudent.usn}" class="text-center">Test</td>
+                <td th:text="${registration.eligibleStudent.name}" class="text-center">Test</td>
                 <td th:if="${postSelectedCourse}" th:text="${postSelectedCourse.courseCode} + ' - ' + ${postSelectedCourse.courseName}" class="text-center">Test</td>
                 <td th:if="${postSelectedOpenElective}" th:text="${postSelectedOpenElective.courseCode} + ' - ' + ${postSelectedOpenElective.courseName}" class="text-center">Test</td>
+                <td th:if="${registration.groupOfOpenElective?.groupNo != null}" th:text="${registration.groupOfOpenElective.groupNo}" class="text-center"></td>
+                <td th:unless="${registration.groupOfOpenElective?.groupNo != null}"></td>
             </tr>
+
+<!--            <tr th:each="eachStudent, rowStat : ${foundEligibleStudents}">-->
+<!--                <td th:text="${rowStat.count}" class="text-center">1</td>-->
+<!--                <td th:text="${eachStudent.section.sec}" class="text-center">Test</td>-->
+<!--                <td th:text="${eachStudent.usn}" class="text-center">Test</td>-->
+<!--                <td th:text="${eachStudent.name}" class="text-center">Test</td>-->
+<!--                <td th:if="${postSelectedCourse}" th:text="${postSelectedCourse.courseCode} + ' - ' + ${postSelectedCourse.courseName}" class="text-center">Test</td>-->
+<!--                <td th:if="${postSelectedOpenElective}" th:text="${postSelectedOpenElective.courseCode} + ' - ' + ${postSelectedOpenElective.courseName}" class="text-center">Test</td>-->
+<!--                <td th:if="${eachStudent.groupOfOpenElective?.groupNo != null}" th:text="${eachStudent.groupOfOpenElective.groupNo}" class="text-center"></td>-->
+<!--                <td th:unless="${eachStudent.groupOfOpenElective?.groupNo != null}"></td>-->
+<!--            </tr>-->
+
             </tbody>
         </table>
 
     </div>
 
     <div align="center">
+
+<!--        <a th:if="${postSelectedCourse}" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedCourse.courseId}__}" class="btn btn-primary view">Edit Groups</a>-->
+
+        <div th:if="${postSelectedOpenElective}" >
+        <a th:if="${openElectiveDept != null and loggedInDept != null and openElectiveDept == loggedInDept}" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedOpenElective.openElectiveId}__}" class="btn btn-primary view">Edit Groups</a>
+        </div>
         <a href="/hod/selectPrerequisiteForPEAllotment/" th:href="@{/hod/selectPrerequisiteForPEAllotment/}" class="btn btn-primary view">Home</a>
+
+        <!-- Iterate to generate links for each group -->
+        <span th:if="${noOfGroups != null and noOfGroups > 0}">
+        <span th:each="groupNumber : ${#numbers.sequence(1, noOfGroups)}">
+                    <a th:href="@{/hod/listOEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedOpenElective.openElectiveId}__/__${groupNumber}__}" class="btn btn-primary view">Group <span th:text="${groupNumber}"></span></a>
+
+<!--            <a th:href="@{'/hod/listOEGroupStudents/' + ${academicYearId}/{programId}/{semId}/{termId}/{openElectiveId}/{groupId}'+${groupNumber}}" th:text="'Group ' + ${groupNumber}" class="btn btn-primary view">Group <span th:text="${groupNumber}"></span></a>-->
+        </span>
+    </span>
     </div>
 
 
