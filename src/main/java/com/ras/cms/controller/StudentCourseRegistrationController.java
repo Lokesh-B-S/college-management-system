@@ -589,6 +589,126 @@ public class StudentCourseRegistrationController {
                                                @RequestParam Long semId,
                                                @RequestParam Long termId) {
 
+//        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+//        Department dep = departmentAndProgramFetch.getDepartment();
+//
+//        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+//        Program program = programService.findOne(programId);
+//        Semester semester = semesterService.findOne(semId);
+//        Term term = termService.findOne(termId);
+//
+//        model.addAttribute("academicYear", academicYear);
+//        model.addAttribute("program", program);
+//        model.addAttribute("semester", semester);
+//        model.addAttribute("term", term);
+
+
+       // to work after first time submit of course selected , new method is created to add the common logic of the courses which the courses dropdown is needed for both getmapping and postmapping
+        addCoursesToModel(request, model, academicYearId, programId, semId, termId);
+
+        return "StudentListForEachCourse";
+    }
+
+
+    @PostMapping("/hod/listStudentsOfCourseSelected")
+    public String postListOfStudents(Model model,
+                                     HttpServletRequest request,
+                                     @RequestParam Long academicYearId,
+                                     @RequestParam Long programId,
+                                     @RequestParam Long semId,
+                                     @RequestParam Long termId,
+//@RequestParam(required = false, name="course")Long courseId,
+//@RequestParam(required = false, name="oe") Long openElectiveId,
+                                     @RequestParam(required = false, name="courseId") Long courseId,
+                                    @RequestParam(required = false, name="className") String className
+    ) {
+
+        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
+        Department loggedInDept = departmentAndProgramFetch.getDepartment();
+
+        AcademicYear academicYear = academicYearService.findOne(academicYearId);
+        Program program = programService.findOne(programId);
+        Semester semester = semesterService.findOne(semId);
+        Term term = termService.findOne(termId);
+
+        model.addAttribute("academicYear", academicYear);
+        model.addAttribute("program", program);
+        model.addAttribute("semester", semester);
+        model.addAttribute("term", term);
+
+        addCoursesToModel(request, model, academicYearId, programId, semId, termId);
+
+//        BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
+//        Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
+
+        System.out.println(className);
+        System.out.println(courseId);
+
+        List<StudentCourseRegistration> registrations = new ArrayList<>();
+        Integer noOfGroups = 0;
+
+        if(className.equals("Course")) {
+            Course course = courseService.findOne(courseId);
+            model.addAttribute("postSelectedCourse", course);
+            registrations = studentCourseRegistrationService.findAllRegistrationsByCourse(course, academicYear, semester);
+        }
+        else if(className.equals("OpenElective")){
+            OpenElective openElective = openElectiveService.findOne(courseId);
+            model.addAttribute("postSelectedOpenElective", openElective);
+            model.addAttribute("openElectiveDept", openElective.getDepartment());
+            registrations = studentCourseRegistrationService.findAllRegistrationsByOpenElective(openElective, academicYear, semester);
+
+
+            // group1 , group2, group3... buttons
+            //in find by here, i have removed program, to allow other departments too
+            GroupConfiguration groupConfiguration = groupConfigurationRepository.findByAcademicYearAndSemesterAndTermAndOpenElective(academicYear, semester, term, openElective)
+                    .orElse(null);
+                if(groupConfiguration!=null && groupConfiguration.getNoOfGroups() != null)
+                    noOfGroups = groupConfiguration.getNoOfGroups();
+        }
+
+
+        List<EligibleStudent> foundEligibleStudents = new ArrayList<>();
+        for(StudentCourseRegistration registration : registrations){
+
+            Long eligibleStudentId = registration.getEligibleStudent().getEligibleStudentId();
+            EligibleStudent eligibleStudent = eligibleStudentService.findOne(eligibleStudentId);
+            if(eligibleStudent!=null){
+                foundEligibleStudents.add(eligibleStudent);
+            }
+
+        }
+
+        Collections.sort(foundEligibleStudents, Comparator.comparing(EligibleStudent::getUsn));
+        model.addAttribute("foundEligibleStudents", foundEligibleStudents);
+        System.out.println(foundEligibleStudents);
+
+
+                //sorting code:- "registrations" by student USN
+                Comparator<StudentCourseRegistration> usnComparator = Comparator.comparing(
+                        registration -> registration.getEligibleStudent().getUsn()
+                );
+                Collections.sort(registrations, usnComparator);
+
+        model.addAttribute("foundRegistrations", registrations);
+        System.out.println(registrations);
+
+//        System.out.println("ill " + noOfGroups);
+        model.addAttribute("noOfGroups", noOfGroups);
+
+        model.addAttribute("loggedInDept", loggedInDept);
+
+
+        return "StudentListForEachCourse";
+//        return "redirect:/hod/listStudentsOfCourseSelected";
+//        return "redirect:/hod/listStudentsOfCourseSelected?academicYearId=" + academicYearId + "&programId=" + programId + "&semId=" + semId + "&termId=" + termId;
+    }
+
+
+    //method that adds the courses to model "allregisteredCoursesList" needed for both getmapping and postmapping for listing students based on selected course
+    private void addCoursesToModel(HttpServletRequest request, Model model, Long academicYearId, Long programId, Long semId, Long termId) {
+
+        // Logic to fetch courses for dropdown
         DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
         Department dep = departmentAndProgramFetch.getDepartment();
 
@@ -601,6 +721,7 @@ public class StudentCourseRegistrationController {
         model.addAttribute("program", program);
         model.addAttribute("semester", semester);
         model.addAttribute("term", term);
+
 
         BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
         Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
@@ -653,103 +774,8 @@ public class StudentCourseRegistrationController {
         System.out.println(openElectivesFromOtherLowerSemesters);
 
         System.out.println("list " + allRegisteredCoursesList);
+        // Add courses to model attribute
         model.addAttribute("allRegisteredCoursesList", allRegisteredCoursesList);
-
-//        model.addAttribute("PEcourses", PEcourses);
-
-        return "StudentListForEachCourse";
-    }
-
-
-    @PostMapping("/hod/listStudentsOfCourseSelected")
-    public String postListOfStudents(Model model,
-                                     HttpServletRequest request,
-                                     @RequestParam Long academicYearId,
-                                     @RequestParam Long programId,
-                                     @RequestParam Long semId,
-                                     @RequestParam Long termId,
-//@RequestParam(required = false, name="course")Long courseId,
-//@RequestParam(required = false, name="oe") Long openElectiveId,
-                                     @RequestParam(required = false, name="courseId") Long courseId,
-                                    @RequestParam(required = false, name="className") String className
-    ) {
-
-        DepartmentAndProgramFetch departmentAndProgramFetch = departmentProgramFetchService.processRequest(request);
-        Department loggedInDept = departmentAndProgramFetch.getDepartment();
-
-        AcademicYear academicYear = academicYearService.findOne(academicYearId);
-        Program program = programService.findOne(programId);
-        Semester semester = semesterService.findOne(semId);
-        Term term = termService.findOne(termId);
-
-        model.addAttribute("academicYear", academicYear);
-        model.addAttribute("program", program);
-        model.addAttribute("semester", semester);
-        model.addAttribute("term", term);
-
-
-        BatchYearSemTerm batchYearSemTerm = batchYearSemTermService.getRowByAcademicYearAndSemesterAndTerm(academicYear, semester, term);
-        Long batchYearSemTermId = batchYearSemTerm.getBatchYearSemTermId();
-
-
-        System.out.println(className);
-System.out.println(courseId);
-
-//        List<Course> courses = courseService.getAllRegularCoursesByBatchYearSemTermIdAndDepartment(batchYearSemTermId, dep);
-//        model.addAttribute("PEcourses", courses);
-
-        List<StudentCourseRegistration> registrations = new ArrayList<>();
-        Integer noOfGroups = 0;
-
-        if(className.equals("Course")) {
-            Course course = courseService.findOne(courseId);
-            model.addAttribute("postSelectedCourse", course);
-            registrations = studentCourseRegistrationService.findAllRegistrationsByCourse(course, academicYear, semester);
-        }
-        else if(className.equals("OpenElective")){
-            OpenElective openElective = openElectiveService.findOne(courseId);
-            model.addAttribute("postSelectedOpenElective", openElective);
-            model.addAttribute("openElectiveDept", openElective.getDepartment());
-            registrations = studentCourseRegistrationService.findAllRegistrationsByOpenElective(openElective, academicYear, semester);
-
-
-            // group1 , group2, group3... buttons
-            //in find by here, i have removed program, to allow other departments too
-            GroupConfiguration groupConfiguration = groupConfigurationRepository.findByAcademicYearAndSemesterAndTermAndOpenElective(academicYear, semester, term, openElective)
-                    .orElse(null);
-                if(groupConfiguration!=null && groupConfiguration.getNoOfGroups() != null)
-                    noOfGroups = groupConfiguration.getNoOfGroups();
-        }
-
-
-        List<EligibleStudent> foundEligibleStudents = new ArrayList<>();
-        for(StudentCourseRegistration registration : registrations){
-
-            Long eligibleStudentId = registration.getEligibleStudent().getEligibleStudentId();
-            EligibleStudent eligibleStudent = eligibleStudentService.findOne(eligibleStudentId);
-            if(eligibleStudent!=null){
-                foundEligibleStudents.add(eligibleStudent);
-            }
-
-        }
-
-        Collections.sort(foundEligibleStudents, Comparator.comparing(EligibleStudent::getUsn));
-        model.addAttribute("foundEligibleStudents", foundEligibleStudents);
-        System.out.println(foundEligibleStudents);
-
-        model.addAttribute("foundRegistrations", registrations);
-        System.out.println(registrations);
-
-        System.out.println("illi " + noOfGroups);
-        model.addAttribute("noOfGroups", noOfGroups);
-
-
-        model.addAttribute("loggedInDept", loggedInDept);
-
-
-        return "StudentListForEachCourse";
-//        return "redirect:/hod/listStudentsOfCourseSelected";
-//        return "redirect:/hod/listStudentsOfCourseSelected?academicYearId=" + academicYearId + "&programId=" + programId + "&semId=" + semId + "&termId=" + termId;
     }
 
 }

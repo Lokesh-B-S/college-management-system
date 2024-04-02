@@ -258,6 +258,9 @@ public class OpenElectiveGroupAllotmentController {
                 }
             }
 
+            Collections.sort(foundOEStudents, Comparator.comparing(EligibleStudent::getUsn));
+
+
             model.addAttribute("foundOEStudents", foundOEStudents);
             model.addAttribute("groupOfOpenElective", groupOfOpenElective);
             model.addAttribute("openElectiveDept", openElective.getDepartment());
@@ -335,6 +338,7 @@ public class OpenElectiveGroupAllotmentController {
                 }
             }
 
+            Collections.sort(students, Comparator.comparing(EligibleStudent::getUsn));
             model.addAttribute("students", students);
             model.addAttribute("groups", groups);
             model.addAttribute("currentAssignments", currentAssignments);

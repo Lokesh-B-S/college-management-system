@@ -20,8 +20,22 @@
 <div class="container">
 
 <div align="right">
-    <a href="" th:href="@{/hod/listOEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-danger view">View Students</a>
-    <!--    <a th:href="@{/hod/listOEGroupStudents(academicYearId=__${academicYear.id}__, programId=__${program.programId}__, semId=__${semester.semId}__, termId=__${term.id}__)}" class="btn btn-primary view">View students</a>-->
+<!--    <a href="" th:href="@{/hod/listOEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-danger view">View Students</a>-->
+
+        <!--        dont give <a></a> if you want to direct the url to postmapping-->
+        <!--        <a th:href="@{/hod/listStudentsOfCourseSelected(academicYearId=${academicYear.id}, programId=${program.programId}, semId=${semester.semId}, termId=${term.id}, courseId=${openElective.openElectiveId}, className=${openElective.class.simpleName})}" class="btn btn-danger view">Back</a>-->
+        <!--        instead use <form></form>-->
+        <form th:action="@{'/hod/listStudentsOfCourseSelected?academicYearId=' + ${academicYear.id} + '&programId=' + ${program.programId} + '&semId=' + ${semester.semId} + '&termId=' + ${term.id}}" method="post">
+            <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />
+            <input type="hidden" name="programId" th:value="${program.programId}" />
+            <input type="hidden" name="semId" th:value="${semester.semId}" />
+            <input type="hidden" name="termId" th:value="${term.id}" />
+            <input type="hidden" name="courseId" th:value="${openElective.openElectiveId}" />
+            <input type="hidden" name="className" th:value="${openElective.class.simpleName}" />
+
+            <button type="submit" class="btn btn-danger view">Back</button>
+        </form>
+
 </div>
 
 
@@ -109,12 +123,24 @@
 
 
         <div style="text-align: center;">
-            <button type="submit" class="btn btn-primary view">Assign</button>
-<!--            <a th:href="@{/hod/listOEGroupStudents(academicYearId=__${academicYear.id}__, programId=__${program.programId}__, semId=__${semester.semId}__, termId=__${term.id}__)}" class="btn btn-primary view">View students</a>-->
-            <a href="" th:href="@{/hod/listOEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-danger view">View Students</a>
-
+            <button type="submit" class="btn btn-success view">Save</button>
         </div>
     </form>
+
+
+<!--    <div style="text-align: center;">-->
+<!--    <form th:action="@{'/hod/listStudentsOfCourseSelected?academicYearId=' + ${academicYear.id} + '&programId=' + ${program.programId} + '&semId=' + ${semester.semId} + '&termId=' + ${term.id}}" method="post">-->
+<!--        <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />-->
+<!--        <input type="hidden" name="programId" th:value="${program.programId}" />-->
+<!--        <input type="hidden" name="semId" th:value="${semester.semId}" />-->
+<!--        <input type="hidden" name="termId" th:value="${term.id}" />-->
+<!--        <input type="hidden" name="courseId" th:value="${openElective.openElectiveId}" />-->
+<!--        <input type="hidden" name="className" th:value="${openElective.class.simpleName}" />-->
+
+<!--        <button type="submit" class="btn btn-danger view">Back</button>-->
+<!--    </form>-->
+<!--    </div>-->
+
 
 </div>
 <div th:replace="fragments/footer :: footer"/>

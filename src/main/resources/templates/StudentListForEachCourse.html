@@ -9,6 +9,22 @@
           th:href="@{/css/bootstrap.min.css}"/>
     <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+
+
+
+<!--    displaying the selected course after submit-->
+    <script>
+        // Function to set the selected option's text after form submission
+        function setSelectedOptionText() {
+             var selectElement = document.getElementById("allCourses");
+            var selectedValue = sessionStorage.getItem("selectedCourse");
+            if (selectedValue) {
+                selectElement.value = selectedValue;
+            }
+        }
+    </script>
+
+
 </head>
 
 <style>
@@ -21,7 +37,7 @@
         margin-right: 10px;
     }
 </style>
-<body>
+<body onload="setSelectedOptionText()">
 <div th:replace="fragments/header :: header"/>
 
 
@@ -33,7 +49,8 @@
 
 
 
-    <form th:action="@{/hod/listStudentsOfCourseSelected}" method="post">
+<!--    <form th:action="@{/hod/listStudentsOfCourseSelected}" method="post">-->
+    <form th:action="@{'/hod/listStudentsOfCourseSelected?academicYearId=' + ${academicYear.id} + '&programId=' + ${program.programId} + '&semId=' + ${semester.semId} + '&termId=' + ${term.id}}" method="post">
         <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />
         <input type="hidden" name="programId" th:value="${program.programId}" />
         <input type="hidden" name="semId" th:value="${semester.semId}" />
@@ -47,9 +64,11 @@
                 <select id="allCourses" name="courseId" class="form-control">
                     <!-- Populate options dynamically based on available sections -->
 <!--                    <option th:each="course : ${allCourses}" th:value="${course.courseId}" th:text="${course.courseCode} + ' - ' + ${course.courseName}"></option>-->
-
-
 <!--                    th:data-type="${course.class.simpleName}"-->
+
+
+                    <option value="">Select</option> <!-- Add the default "Select" option -->
+
                     <option th:each="course : ${allRegisteredCoursesList}" th:name="course" th:value="${course.courseId}"
                             th:text="${course.courseCode} + ' - ' + ${course.courseName}"
                             th:if="${course.class.simpleName == 'Course'}"
@@ -62,13 +81,13 @@
                             data-class="OpenElective"
                             ></option>
 
-
                 </select>
                 <!-- Add hidden input field to specify the class type to avoid ambiguity between Course and OpenElective -->
 <!--                <input type="hidden" name="courseType" th:value="${course.class.simpleName}" />-->
 <!--                <input type="hidden" name="courseType" th:value="${#object.getClass().getSimpleName()}" />-->
                 <input type="hidden" id="className" name="className" />
 
+<!--                <input type="hidden" id="selectedOptionText" name="selectedOptionText" />-->
                 <button type="submit" class="btn btn-primary">Show Students</button>
             </div>
         </div>
@@ -78,9 +97,9 @@
 
     <div>
 
-        <p>
+        <p align="right">
             <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
-            <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="" th:href="@{/hod/listStudentsForCoursesAllotment/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}">Back</a>
+            <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="" th:href="@{/hod/listStudentsForCoursesAllotment/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}" class="btn btn-danger view">Back</a>
         </p>
 
         <table  class="table table-bordered">
@@ -143,19 +162,19 @@
 
     </div>
 
-    <div align="center">
+<!--    <div align="center">-->
+    <div th:if="${postSelectedOpenElective}" align="center" >
 
 <!--        <a th:if="${postSelectedCourse}" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedCourse.courseId}__}" class="btn btn-primary view">Edit Groups</a>-->
 
-        <div th:if="${postSelectedOpenElective}" >
-        <a th:if="${openElectiveDept != null and loggedInDept != null and openElectiveDept == loggedInDept}" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedOpenElective.openElectiveId}__}" class="btn btn-primary view">Edit Groups</a>
-        </div>
-        <a href="/hod/selectPrerequisiteForPEAllotment/" th:href="@{/hod/selectPrerequisiteForPEAllotment/}" class="btn btn-primary view">Home</a>
+        <a th:if="${openElectiveDept != null and loggedInDept != null and openElectiveDept == loggedInDept}" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedOpenElective.openElectiveId}__}" class="btn btn-success view">Edit Groups</a>
+
+<!--  working but use when you need      <a href="/hod/selectPrerequisiteForPEAllotment/" th:href="@{/hod/selectPrerequisiteForPEAllotment/}" class="btn btn-primary view">Home</a>-->
 
         <!-- Iterate to generate links for each group -->
         <span th:if="${noOfGroups != null and noOfGroups > 0}">
         <span th:each="groupNumber : ${#numbers.sequence(1, noOfGroups)}">
-                    <a th:href="@{/hod/listOEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedOpenElective.openElectiveId}__/__${groupNumber}__}" class="btn btn-primary view">Group <span th:text="${groupNumber}"></span></a>
+                    <a th:href="@{/hod/listOEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedOpenElective.openElectiveId}__/__${groupNumber}__}" class="btn btn-primary view"> <span th:text="${postSelectedOpenElective.courseName} + '- Group ' + ${groupNumber}"></span></a>
 
 <!--            <a th:href="@{'/hod/listOEGroupStudents/' + ${academicYearId}/{programId}/{semId}/{termId}/{openElectiveId}/{groupId}'+${groupNumber}}" th:text="'Group ' + ${groupNumber}" class="btn btn-primary view">Group <span th:text="${groupNumber}"></span></a>-->
         </span>
