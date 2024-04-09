@@ -1,7 +1,6 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.*;
-import com.ras.cms.repository.OpenElectiveGroupConfigurationRepository;
 import com.ras.cms.service.academicyear.AcademicYearService;
 import com.ras.cms.service.batch.BatchService;
 import com.ras.cms.service.batchyearsemterm.BatchYearSemTermService;

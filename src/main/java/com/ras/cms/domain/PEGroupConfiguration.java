@@ -1,10 +1,10 @@
 package com.ras.cms.domain;
+//latest Professsional elective group configuration
 
 import javax.persistence.*;
 
 @Entity
-public class OpenElectiveGroupConfiguration {
-
+public class PEGroupConfiguration {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +22,12 @@ public class OpenElectiveGroupConfiguration {
         @ManyToOne
         private Term term;
 
-        private Integer noOfOpenElectiveGroups;
+        @ManyToOne
+        private Course professionalElective;
 
-        // getters and setters
 
+
+        private Integer noOfGroups;
 
         public Long getId() {
             return id;
@@ -67,13 +69,21 @@ public class OpenElectiveGroupConfiguration {
             this.term = term;
         }
 
-    public Integer getNoOfOpenElectiveGroups() {
-        return noOfOpenElectiveGroups;
+
+    public Course getProfessionalElective() {
+        return professionalElective;
     }
 
-    public void setNoOfOpenElectiveGroups(Integer noOfOpenElectiveGroups) {
-        this.noOfOpenElectiveGroups = noOfOpenElectiveGroups;
+    public void setProfessionalElective(Course professionalElective) {
+        this.professionalElective = professionalElective;
     }
 
+    public Integer getNoOfGroups() {
+            return noOfGroups;
+        }
+
+        public void setNoOfGroups(Integer noOfGroups) {
+            this.noOfGroups = noOfGroups;
+        }
 
 }

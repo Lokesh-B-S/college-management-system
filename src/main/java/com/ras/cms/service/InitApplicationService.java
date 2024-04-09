@@ -3,7 +3,8 @@ package com.ras.cms.service;
 import com.ras.cms.domain.*;
 import com.ras.cms.service.coursetype.CourseTypeService;
 import com.ras.cms.service.day.DayService;
-import com.ras.cms.service.group.GroupService;
+import com.ras.cms.service.oegroup.OEGroupService;
+import com.ras.cms.service.pegroup.PEGroupService;
 import com.ras.cms.service.role.RoleService;
 import com.ras.cms.service.section.SectionService;
 import com.ras.cms.service.semester.SemesterService;
@@ -17,9 +18,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalTime;
-import java.util.List;
 
 /** 
  * Created by Surya on 06-Jun-18.
@@ -46,7 +44,10 @@ public class InitApplicationService implements ApplicationRunner {
     private SectionService sectionService;
 
     @Autowired
-    private GroupService groupService;
+    private OEGroupService oegroupService;
+
+    @Autowired
+    private PEGroupService pegroupService;
 
     @Autowired
     private CourseTypeService courseTypeService;
@@ -179,30 +180,52 @@ public class InitApplicationService implements ApplicationRunner {
             termService.saveTerm(new Term("1-Sep-2023 to 10-Dec-2023"));
         }
 
-        if(groupService.findAll().isEmpty()){
-            groupService.saveGroup(new OEGroup(1L));
-            groupService.saveGroup(new OEGroup(2L));
-            groupService.saveGroup(new OEGroup(3L));
-            groupService.saveGroup(new OEGroup(4L));
-            groupService.saveGroup(new OEGroup(5L));
-            groupService.saveGroup(new OEGroup(6L));
-            groupService.saveGroup(new OEGroup(7L));
-            groupService.saveGroup(new OEGroup(8L));
-            groupService.saveGroup(new OEGroup(9L));
-            groupService.saveGroup(new OEGroup(10L));
-            groupService.saveGroup(new OEGroup(11L));
-            groupService.saveGroup(new OEGroup(12L));
-            groupService.saveGroup(new OEGroup(13L));
-            groupService.saveGroup(new OEGroup(14L));
-            groupService.saveGroup(new OEGroup(15L));
-            groupService.saveGroup(new OEGroup(16L));
-            groupService.saveGroup(new OEGroup(17L));
-            groupService.saveGroup(new OEGroup(18L));
-            groupService.saveGroup(new OEGroup(19L));
-            groupService.saveGroup(new OEGroup(20L));
-
+        if(oegroupService.findAll().isEmpty()){
+            oegroupService.saveGroup(new OEGroup(1L));
+            oegroupService.saveGroup(new OEGroup(2L));
+            oegroupService.saveGroup(new OEGroup(3L));
+            oegroupService.saveGroup(new OEGroup(4L));
+            oegroupService.saveGroup(new OEGroup(5L));
+            oegroupService.saveGroup(new OEGroup(6L));
+            oegroupService.saveGroup(new OEGroup(7L));
+            oegroupService.saveGroup(new OEGroup(8L));
+            oegroupService.saveGroup(new OEGroup(9L));
+            oegroupService.saveGroup(new OEGroup(10L));
+            oegroupService.saveGroup(new OEGroup(11L));
+            oegroupService.saveGroup(new OEGroup(12L));
+            oegroupService.saveGroup(new OEGroup(13L));
+            oegroupService.saveGroup(new OEGroup(14L));
+            oegroupService.saveGroup(new OEGroup(15L));
+            oegroupService.saveGroup(new OEGroup(16L));
+            oegroupService.saveGroup(new OEGroup(17L));
+            oegroupService.saveGroup(new OEGroup(18L));
+            oegroupService.saveGroup(new OEGroup(19L));
+            oegroupService.saveGroup(new OEGroup(20L));
         }
 
+
+        if(pegroupService.findAll().isEmpty()){
+            pegroupService.saveGroup(new PEGroup(1L));
+            pegroupService.saveGroup(new PEGroup(2L));
+            pegroupService.saveGroup(new PEGroup(3L));
+            pegroupService.saveGroup(new PEGroup(4L));
+            pegroupService.saveGroup(new PEGroup(5L));
+            pegroupService.saveGroup(new PEGroup(6L));
+            pegroupService.saveGroup(new PEGroup(7L));
+            pegroupService.saveGroup(new PEGroup(8L));
+            pegroupService.saveGroup(new PEGroup(9L));
+            pegroupService.saveGroup(new PEGroup(10L));
+            pegroupService.saveGroup(new PEGroup(11L));
+            pegroupService.saveGroup(new PEGroup(12L));
+            pegroupService.saveGroup(new PEGroup(13L));
+            pegroupService.saveGroup(new PEGroup(14L));
+            pegroupService.saveGroup(new PEGroup(15L));
+            pegroupService.saveGroup(new PEGroup(16L));
+            pegroupService.saveGroup(new PEGroup(17L));
+            pegroupService.saveGroup(new PEGroup(18L));
+            pegroupService.saveGroup(new PEGroup(19L));
+            pegroupService.saveGroup(new PEGroup(20L));
+        }
             // Log a message when initialization is complete
         LOGGER.info("Initialization complete.");
     }

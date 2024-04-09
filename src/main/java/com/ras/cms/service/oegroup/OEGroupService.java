@@ -1,12 +1,11 @@
-package com.ras.cms.service.group;
+package com.ras.cms.service.oegroup;
 
 //import com.ras.cms.domain.Group;
 import com.ras.cms.domain.OEGroup;
-import com.ras.cms.domain.Section;
 
 import java.util.List;
 
-public interface GroupService {
+public interface OEGroupService {
 
     OEGroup findOne(Long groupId);
 

@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface GroupConfigurationRepository extends JpaRepository<GroupConfiguration, Long> {
+public interface OEGroupConfigurationRepository extends JpaRepository<OEGroupConfiguration, Long> {
 
     //for forming same programs open elective group
-    Optional<GroupConfiguration> findByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(
+    Optional<OEGroupConfiguration> findByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(
             AcademicYear academicYear,
             Program program,
             Semester semester,
@@ -20,7 +20,7 @@ public interface GroupConfigurationRepository extends JpaRepository<GroupConfigu
 
 
     //for displaying group numbers irrespective of programs
-    Optional<GroupConfiguration> findByAcademicYearAndSemesterAndTermAndOpenElective(
+    Optional<OEGroupConfiguration> findByAcademicYearAndSemesterAndTermAndOpenElective(
             AcademicYear academicYear,
             Semester semester,
             Term term,

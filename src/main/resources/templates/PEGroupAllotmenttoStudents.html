@@ -19,8 +19,7 @@
 
 <div class="container">
 
-<div align="right">
-<!--    <a href="" th:href="@{/hod/listOEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${openElective.openElectiveId}__}" class="btn btn-danger view">View Students</a>-->
+    <div align="right">
 
         <!--        dont give <a></a> if you want to direct the url to postmapping-->
         <!--        <a th:href="@{/hod/listStudentsOfCourseSelected(academicYearId=${academicYear.id}, programId=${program.programId}, semId=${semester.semId}, termId=${term.id}, courseId=${openElective.openElectiveId}, className=${openElective.class.simpleName})}" class="btn btn-danger view">Back</a>-->
@@ -30,31 +29,26 @@
             <input type="hidden" name="programId" th:value="${program.programId}" />
             <input type="hidden" name="semId" th:value="${semester.semId}" />
             <input type="hidden" name="termId" th:value="${term.id}" />
-            <input type="hidden" name="courseId" th:value="${openElective.openElectiveId}" />
-            <input type="hidden" name="className" th:value="${openElective.class.simpleName}" />
+            <input type="hidden" name="courseId" th:value="${professionalElective.courseId}" />
+            <input type="hidden" name="className" th:value="${professionalElective.class.simpleName}" />
 
             <button type="submit" class="btn btn-danger view">Back</button>
         </form>
 
-</div>
+    </div>
 
 
     <table width="100%">
         <tr>
             <th th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 15px;">Academic Year</th>
-            <th th:text="'Program: ' + ${program.programName}" style="font-size: 15px;">
-            <th th:text="'Course: ' + ${openElective.courseName} + ' - (' + ${openElective.courseCode} + ')'" style="font-size: 15px;">openelective</th>
+            <th  style="font-size: 15px;">Course: <span style="background-color: #DCCA12;" th:text="${professionalElective.courseName} + ' - (' + ${professionalElective.courseCode} + ')'"></span></th>
+            <th style="font-size: 15px;">Course type: <span style="background-color: #DCCA12;" th:text="${professionalElective.courseType.typeOfCourse}"></span></th>
 
-                <!--            <th th:text="'Academic Year: ' + ${firstStudent.academicYear.year}" style="font-size: 15px;">Academic Year</th>-->
         </tr>
         <tr>
             <th th:text="'Semester: ' + ${semester.sem}" style="font-size: 15px;">Semester</th>
             <th th:text="'Term: ' + ${term.termDate}" style="font-size: 15px;">term</th>
-            <th th:text="' offered Dept.: ' + ${openElective.department.departmentName}" style="font-size: 15px;">
-
-
-
-            <!--        <th th:text="'Term: ' + ${student.term.termDate}" style="font-size: 15px;">Term</th>-->
+            <th th:text="'Department: ' + ${professionalElective.department.departmentName}" style="font-size: 15px;">
         </tr>
 
         <tr><td></td></tr>
@@ -63,7 +57,7 @@
 
 
 
-    <form action="#" th:action="@{/hod/updateStudentOEGroupDetails}" method="post">
+    <form action="#" th:action="@{/hod/updateStudentPEGroupDetails}" method="post">
         <div>
             <h2>Assign Group:</h2>
 
@@ -71,7 +65,7 @@
             <input type="hidden" name="program" th:value="*{program.programId}" />
             <input type="hidden" name="semester" th:value="*{semester.semId}" />
             <input type="hidden" name="term" th:value="*{term.id}" />
-            <input type="hidden" name="openElective" th:value="*{openElective.openElectiveId}" />
+            <input type="hidden" name="professionalElective" th:value="*{professionalElective.courseId}" />
 
 
             <table>
@@ -93,7 +87,6 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <!--                    <th>Select</th> &lt;!&ndash; Added for checkbox &ndash;&gt;-->
                     <th class="text-center">Sl No.</th>
                     <th class="text-center">USN</th>
                     <th class="text-center">Name</th>
@@ -127,19 +120,6 @@
         </div>
     </form>
 
-
-<!--    <div style="text-align: center;">-->
-<!--    <form th:action="@{'/hod/listStudentsOfCourseSelected?academicYearId=' + ${academicYear.id} + '&programId=' + ${program.programId} + '&semId=' + ${semester.semId} + '&termId=' + ${term.id}}" method="post">-->
-<!--        <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />-->
-<!--        <input type="hidden" name="programId" th:value="${program.programId}" />-->
-<!--        <input type="hidden" name="semId" th:value="${semester.semId}" />-->
-<!--        <input type="hidden" name="termId" th:value="${term.id}" />-->
-<!--        <input type="hidden" name="courseId" th:value="${openElective.openElectiveId}" />-->
-<!--        <input type="hidden" name="className" th:value="${openElective.class.simpleName}" />-->
-
-<!--        <button type="submit" class="btn btn-danger view">Back</button>-->
-<!--    </form>-->
-<!--    </div>-->
 
 
 </div>

@@ -1,7 +1,8 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.*;
-import com.ras.cms.repository.GroupConfigurationRepository;
+import com.ras.cms.repository.OEGroupConfigurationRepository;
+import com.ras.cms.repository.PEGroupConfigurationRepository;
 import com.ras.cms.repository.StudentCourseRegistrationRepository;
 import com.ras.cms.service.academicyear.AcademicYearService;
 import com.ras.cms.service.batch.BatchService;
@@ -18,7 +19,6 @@ import com.ras.cms.service.semester.SemesterService;
 import com.ras.cms.service.studentCourseRegistration.StudentCourseRegistrationService;
 import com.ras.cms.service.termService.TermService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +71,10 @@ public class StudentCourseRegistrationController {
     StudentCourseRegistrationService studentCourseRegistrationService;
 
     @Autowired
-    GroupConfigurationRepository groupConfigurationRepository;
+    OEGroupConfigurationRepository oeGroupConfigurationRepository;
+
+    @Autowired
+    PEGroupConfigurationRepository peGroupConfigurationRepository;
 
     @Autowired
     StudentCourseRegistrationRepository studentCourseRegistrationRepository;
@@ -649,19 +652,33 @@ public class StudentCourseRegistrationController {
 
         if(className.equals("Course")) {
             Course course = courseService.findOne(courseId);
-            model.addAttribute("postSelectedCourse", course);
+            if (course != null) {
+                if (course.getCourseType().getCourseTypeId().equals(3L) || course.getCourseType().getCourseTypeId().equals(4L)) {
+                    model.addAttribute("postSelectedProfessionalElective", course);
+
+                    // group1 , group2, group3... buttons
+                    //in find by here, i have removed program, to allow other departments too
+                    PEGroupConfiguration peGroupConfiguration = peGroupConfigurationRepository.findByAcademicYearAndSemesterAndTermAndProfessionalElective(academicYear, semester, term, course)
+                            .orElse(null);
+                    if(peGroupConfiguration!=null && peGroupConfiguration.getNoOfGroups() != null)
+                        noOfGroups = peGroupConfiguration.getNoOfGroups();
+                } else {
+                    model.addAttribute("postSelectedCourse", course);
+                }
             registrations = studentCourseRegistrationService.findAllRegistrationsByCourse(course, academicYear, semester);
+
+            }
         }
+
         else if(className.equals("OpenElective")){
             OpenElective openElective = openElectiveService.findOne(courseId);
             model.addAttribute("postSelectedOpenElective", openElective);
             model.addAttribute("openElectiveDept", openElective.getDepartment());
             registrations = studentCourseRegistrationService.findAllRegistrationsByOpenElective(openElective, academicYear, semester);
 
-
             // group1 , group2, group3... buttons
             //in find by here, i have removed program, to allow other departments too
-            GroupConfiguration groupConfiguration = groupConfigurationRepository.findByAcademicYearAndSemesterAndTermAndOpenElective(academicYear, semester, term, openElective)
+            OEGroupConfiguration groupConfiguration = oeGroupConfigurationRepository.findByAcademicYearAndSemesterAndTermAndOpenElective(academicYear, semester, term, openElective)
                     .orElse(null);
                 if(groupConfiguration!=null && groupConfiguration.getNoOfGroups() != null)
                     noOfGroups = groupConfiguration.getNoOfGroups();

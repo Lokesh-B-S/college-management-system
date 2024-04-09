@@ -1,6 +1,5 @@
 package com.ras.cms.service.eligibleStudents;
 
-import ch.qos.logback.core.layout.EchoLayout;
 import com.ras.cms.domain.*;
 import com.ras.cms.repository.*;
 import com.ras.cms.service.secbatch.SecBatchService;
@@ -8,12 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class EligibleStudentServiceImpl implements EligibleStudentService{
@@ -31,7 +27,7 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
     private SecBatchRepository secBatchRepository;
 
     @Autowired
-    private GroupRepository groupRepository;
+    private OEGroupRepository groupRepository;
 
     @Autowired
     private OpenElectiveRepository openElectiveRepository;

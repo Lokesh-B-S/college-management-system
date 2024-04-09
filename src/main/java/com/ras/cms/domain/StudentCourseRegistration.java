@@ -24,6 +24,12 @@ public class StudentCourseRegistration {
         @ManyToOne
         private OEGroup groupOfOpenElective;
 
+    @ManyToOne
+    private PEGroup groupOfProfessionalElective;
+
+//    @ManyToOne
+//    private PEGroup groupOfProfessionalElective2;
+
 
         private String courseType;
 
@@ -99,6 +105,30 @@ public class StudentCourseRegistration {
     public void setGroupOfOpenElective(OEGroup groupOfOpenElective) {
         this.groupOfOpenElective = groupOfOpenElective;
     }
+
+    public PEGroup getGroupOfProfessionalElective() {
+        return groupOfProfessionalElective;
+    }
+
+    public void setGroupOfProfessionalElective(PEGroup groupOfProfessionalElective) {
+        this.groupOfProfessionalElective = groupOfProfessionalElective;
+    }
+
+    //    public PEGroup getGroupOfProfessionalElective1() {
+//        return groupOfProfessionalElective1;
+//    }
+
+//    public void setGroupOfProfessionalElective1(PEGroup groupOfProfessionalElective1) {
+//        this.groupOfProfessionalElective1 = groupOfProfessionalElective1;
+//    }
+//
+//    public PEGroup getGroupOfProfessionalElective2() {
+//        return groupOfProfessionalElective2;
+//    }
+//
+//    public void setGroupOfProfessionalElective2(PEGroup groupOfProfessionalElective2) {
+//        this.groupOfProfessionalElective2 = groupOfProfessionalElective2;
+//    }
 
     public AcademicYear getCourseYear() {
         return courseYear;

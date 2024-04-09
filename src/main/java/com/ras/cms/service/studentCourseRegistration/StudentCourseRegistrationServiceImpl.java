@@ -2,16 +2,13 @@ package com.ras.cms.service.studentCourseRegistration;
 
 import com.ras.cms.domain.*;
 import com.ras.cms.repository.*;
-import com.ras.cms.service.academicyear.AcademicYearService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class StudentCourseRegistrationServiceImpl implements StudentCourseRegistrationService{
@@ -21,7 +18,10 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
     private EntityManager entityManager;
 
     @Autowired
-    GroupRepository groupRepository;
+    OEGroupRepository oeGroupRepository;
+
+    @Autowired
+    PEGroupRepository peGroupRepository;
     @Autowired
     StudentCourseRegistrationRepository studentCourseRegistrationRepository;
 
@@ -49,6 +49,10 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
 
 
     @Override
+    public StudentCourseRegistration findRegistrationByEligibleStudentAndProfessionalElectiveAndCurrentAcademicYearAndCurrentSemester(EligibleStudent eligibleStudent, Course professionalElective, AcademicYear academicYear, Semester semester){
+        return studentCourseRegistrationRepository.findByEligibleStudentAndCourseAndCurrentAcademicYearAndCurrentSemester(eligibleStudent, professionalElective, academicYear, semester);
+    }
+    @Override
     public List<StudentCourseRegistration> findAllRegistrationsByCourse(Course course, AcademicYear academicYear, Semester semester){
         return studentCourseRegistrationRepository.findAllByCourseAndCurrentAcademicYearAndCurrentSemester(course, academicYear, semester);
     }
@@ -60,10 +64,19 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
     }
 
     @Override
+    public List<StudentCourseRegistration> findAllRegistrationsByProfessionalElective(Course professionalElective, AcademicYear academicYear, Semester semester){
+        return studentCourseRegistrationRepository.findAllByCourseAndCurrentAcademicYearAndCurrentSemester(professionalElective, academicYear, semester);
+    }
+
+    @Override
     public List<StudentCourseRegistration> findAllRegistrationsByOpenElectiveAndAcademicYearAndSemesterAndGroupOfOpenElective(OpenElective openElective, AcademicYear academicYear, Semester semester, OEGroup groupOfOpenElective){
         return studentCourseRegistrationRepository.findAllByOpenElectiveAndCurrentAcademicYearAndCurrentSemesterAndGroupOfOpenElective(openElective, academicYear, semester, groupOfOpenElective);
     }
 
+    @Override
+    public List<StudentCourseRegistration> findAllRegistrationsByProfessionalElectiveAndAcademicYearAndSemesterAndGroupOfProfessionalElective(Course professionalElective, AcademicYear academicYear, Semester semester, PEGroup groupOfProfessionalElective){
+        return studentCourseRegistrationRepository.findAllByCourseAndCurrentAcademicYearAndCurrentSemesterAndGroupOfProfessionalElective(professionalElective, academicYear, semester, groupOfProfessionalElective);
+    }
     @Override
     public List<StudentCourseRegistration> findAllRegistrationsByProgramAndAcademicYearAndSemester(Program program, AcademicYear academicYear, Semester semester){
         return studentCourseRegistrationRepository.findAllByCurrentProgramAndCurrentAcademicYearAndCurrentSemester(program, academicYear, semester);
@@ -208,20 +221,53 @@ public class StudentCourseRegistrationServiceImpl implements StudentCourseRegist
 
 
     //earlier was in eligiblestudent, but since subjectwise the group id should be alloted , it must be here
-    public void assignOEGroupToStudent(Long studentCourseRegistrationId, Long groupId) {
+    public void assignOEGroupToStudent(Long studentCourseRegistrationId, Long oegroupId) {
         // Fetch the student and section from the database
         StudentCourseRegistration studentCourseRegistration = studentCourseRegistrationRepository.findById(studentCourseRegistrationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid registration ID: " + studentCourseRegistrationId));
-        OEGroup group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + groupId));
+        OEGroup oegroup = oeGroupRepository.findById(oegroupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + oegroupId));
 
 //        if (studentCourseRegistration.getGroupOfOpenElective() == null) {
 //            studentCourseRegistration.setGroupOfOpenElective(new OEGroup());
 //        }
-        // Assign the section to the student
-        studentCourseRegistration.setGroupOfOpenElective(group);
+        // Assign the oegroup to the student
+        studentCourseRegistration.setGroupOfOpenElective(oegroup);
         studentCourseRegistrationRepository.save(studentCourseRegistration);
     }
 
+    public void assignPEGroupToStudent(Long studentCourseRegistrationId, Long pegroupId) {
+        // Fetch the student and section from the database
+        StudentCourseRegistration studentCourseRegistration = studentCourseRegistrationRepository.findById(studentCourseRegistrationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid registration ID: " + studentCourseRegistrationId));
+        PEGroup pegroup = peGroupRepository.findById(pegroupId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + pegroupId));
+
+        studentCourseRegistration.setGroupOfProfessionalElective(pegroup);
+        studentCourseRegistrationRepository.save(studentCourseRegistration);
+    }
+
+//    public void assignPE1GroupToStudent(Long studentCourseRegistrationId, Long pegroupId) {
+//        // Fetch the student and section from the database
+//        StudentCourseRegistration studentCourseRegistration = studentCourseRegistrationRepository.findById(studentCourseRegistrationId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid registration ID: " + studentCourseRegistrationId));
+//        PEGroup pe1group = peGroupRepository.findById(pegroupId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + pegroupId));
+//
+//
+//        studentCourseRegistration.setGroupOfProfessionalElective1(pe1group);
+//        studentCourseRegistrationRepository.save(studentCourseRegistration);
+//    }
+//
+//    public void assignPE2GroupToStudent(Long studentCourseRegistrationId, Long pegroupId) {
+//        // Fetch the student and section from the database
+//        StudentCourseRegistration studentCourseRegistration = studentCourseRegistrationRepository.findById(studentCourseRegistrationId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid registration ID: " + studentCourseRegistrationId));
+//        PEGroup pe2group = peGroupRepository.findById(pegroupId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid group ID: " + pegroupId));
+//
+//        studentCourseRegistration.setGroupOfProfessionalElective2(pe2group);
+//        studentCourseRegistrationRepository.save(studentCourseRegistration);
+//    }
 
 }

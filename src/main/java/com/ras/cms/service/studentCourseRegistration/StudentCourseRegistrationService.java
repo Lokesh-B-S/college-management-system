@@ -23,6 +23,8 @@ public interface StudentCourseRegistrationService {
     StudentCourseRegistration findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentProgramAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear academicYear, Program program, Semester semester);
     StudentCourseRegistration findRegistrationByEligibleStudentAndOpenElectiveAndCurrentAcademicYearAndCurrentSemester(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear academicYear, Semester semester);
 
+    StudentCourseRegistration findRegistrationByEligibleStudentAndProfessionalElectiveAndCurrentAcademicYearAndCurrentSemester(EligibleStudent eligibleStudent, Course professionalElective, AcademicYear academicYear, Semester semester);
+
 
     void removeCourseFromStudent(EligibleStudent eligibleStudent, Course course);
 
@@ -31,8 +33,10 @@ public interface StudentCourseRegistrationService {
     List<StudentCourseRegistration> findAllRegistrationsByCourse(Course course, AcademicYear academicYear, Semester semester);
 
     List<StudentCourseRegistration> findAllRegistrationsByOpenElective(OpenElective openElective, AcademicYear academicYear, Semester semester);
-
+    List<StudentCourseRegistration> findAllRegistrationsByProfessionalElective(Course professionalElective, AcademicYear academicYear, Semester semester);
     List<StudentCourseRegistration> findAllRegistrationsByOpenElectiveAndAcademicYearAndSemesterAndGroupOfOpenElective(OpenElective openElective, AcademicYear academicYear, Semester semester, OEGroup groupOfOpenElective);
+
+    List<StudentCourseRegistration> findAllRegistrationsByProfessionalElectiveAndAcademicYearAndSemesterAndGroupOfProfessionalElective(Course professionalElective, AcademicYear academicYear, Semester semester, PEGroup groupOfProfessionalElective);
 
     List<StudentCourseRegistration> findAllRegistrationsByProgramAndAcademicYearAndSemester(Program program, AcademicYear academicYear, Semester semester);
 
@@ -48,5 +52,11 @@ public interface StudentCourseRegistrationService {
 
     void assignOpenElectiveToEligibleStudent(EligibleStudent eligibleStudent, OpenElective openElective, AcademicYear courseYear, Semester courseSemester, Program currentProgram, AcademicYear currentAcademicYear, Semester currentSemester, Term currentTerm);
 
-    public void assignOEGroupToStudent(Long studentCourseRegistrationId, Long groupId);
+    public void assignOEGroupToStudent(Long studentCourseRegistrationId, Long oegroupId);
+
+    public void assignPEGroupToStudent(Long studentCourseRegistrationId, Long pegroupId);
+
+//    public void assignPE1GroupToStudent(Long studentCourseRegistrationId, Long pegroupId);
+//    public void assignPE2GroupToStudent(Long studentCourseRegistrationId, Long pegroupId);
+
 }

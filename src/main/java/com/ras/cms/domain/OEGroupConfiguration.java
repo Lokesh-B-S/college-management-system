@@ -1,9 +1,11 @@
+//latest Open elective group configuration
+
 package com.ras.cms.domain;
 
 import javax.persistence.*;
 
 @Entity
-public class GroupConfiguration {
+public class OEGroupConfiguration {
 
 
     @Id

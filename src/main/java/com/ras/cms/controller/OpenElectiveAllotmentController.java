@@ -1,7 +1,6 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.*;
-import com.ras.cms.repository.OpenElectiveGroupConfigurationRepository;
 import com.ras.cms.repository.SecBatchConfigurationRepository;
 import com.ras.cms.service.academicyear.AcademicYearService;
 import com.ras.cms.service.batch.BatchService;
@@ -57,9 +56,6 @@ public class OpenElectiveAllotmentController {
 
         @Autowired
     OpenElectiveService openElectiveService;
-
-        @Autowired
-    OpenElectiveGroupConfigurationRepository openElectiveGroupConfigurationRepository;
 
         @Autowired
     BatchYearSemTermService batchYearSemTermService;

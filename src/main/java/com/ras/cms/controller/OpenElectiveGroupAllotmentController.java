@@ -1,23 +1,20 @@
 package com.ras.cms.controller;
 
 import com.ras.cms.domain.*;
-import com.ras.cms.repository.GroupConfigurationRepository;
-import com.ras.cms.repository.SectionConfigurationRepository;
+import com.ras.cms.repository.OEGroupConfigurationRepository;
 import com.ras.cms.service.academicyear.AcademicYearService;
 import com.ras.cms.service.batch.BatchService;
 import com.ras.cms.service.batchyearsemterm.BatchYearSemTermService;
 import com.ras.cms.service.department.DepartmentService;
 import com.ras.cms.service.departmentProgramFetch.DepartmentProgramFetchService;
 import com.ras.cms.service.eligibleStudents.EligibleStudentService;
-import com.ras.cms.service.group.GroupService;
+import com.ras.cms.service.oegroup.OEGroupService;
 import com.ras.cms.service.openElectiveService.OpenElectiveService;
 import com.ras.cms.service.program.ProgramService;
-import com.ras.cms.service.section.SectionService;
 import com.ras.cms.service.semester.SemesterService;
 import com.ras.cms.service.studentCourseRegistration.StudentCourseRegistrationService;
 import com.ras.cms.service.termService.TermService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +45,7 @@ public class OpenElectiveGroupAllotmentController {
 //        SectionService sectionService;
 
     @Autowired
-    GroupService groupService;
+    OEGroupService groupService;
 
     @Autowired
     TermService termService;
@@ -72,7 +69,7 @@ public class OpenElectiveGroupAllotmentController {
 //        private SectionConfigurationRepository sectionConfigurationRepository;
 
     @Autowired
-    private GroupConfigurationRepository groupConfigurationRepository;
+    private OEGroupConfigurationRepository groupConfigurationRepository;
 
 
 //
@@ -307,7 +304,7 @@ public class OpenElectiveGroupAllotmentController {
             // Retrieve or set the default value for noOfSections
             Integer noOfGroups = groupConfigurationRepository
                     .findByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(academicYear, program, semester, term, openElective)
-                    .map(GroupConfiguration::getNoOfGroups)
+                    .map(OEGroupConfiguration::getNoOfGroups)
                     .orElse(5); // Set a default value (you can change it as needed)
 
             model.addAttribute("noOfGroups", noOfGroups);
@@ -373,14 +370,14 @@ public class OpenElectiveGroupAllotmentController {
 
 
                 // Save or update the noOfSections value in the database for the selected academicYear, program, sem, term
-                GroupConfiguration groupConfiguration = groupConfigurationRepository
+                OEGroupConfiguration groupConfiguration = groupConfigurationRepository
                         .findByAcademicYearAndProgramAndSemesterAndTermAndOpenElective(academicYear, program, semester, term, openElective)
                         .orElse(null);
 
                 // Check if sectionConfiguration is null
                 if (groupConfiguration == null) {
                     // If it's null, create a new SectionConfiguration with the default value of 5
-                    groupConfiguration = new GroupConfiguration();
+                    groupConfiguration = new OEGroupConfiguration();
                     groupConfiguration.setNoOfGroups(5);  // Set a default value (you can change it as needed)
                 }
 

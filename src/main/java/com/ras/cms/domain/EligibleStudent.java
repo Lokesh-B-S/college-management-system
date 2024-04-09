@@ -40,6 +40,8 @@ public class EligibleStudent {
     @ManyToOne
     private OEGroup groupOfOpenElective;
 
+
+
     @ManyToOne
     private Course regularCourse;
 

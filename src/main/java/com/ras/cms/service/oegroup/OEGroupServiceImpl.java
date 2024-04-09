@@ -1,19 +1,18 @@
-package com.ras.cms.service.group;
+package com.ras.cms.service.oegroup;
 
 //import com.ras.cms.domain.Group;
 import com.ras.cms.domain.OEGroup;
-import com.ras.cms.domain.Section;
-import com.ras.cms.repository.GroupRepository;
+import com.ras.cms.repository.OEGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GroupServiceImpl implements GroupService{
+public class OEGroupServiceImpl implements OEGroupService {
 
     @Autowired
-    GroupRepository groupRepository;
+    OEGroupRepository groupRepository;
 
     public OEGroup findOne(Long groupId){return groupRepository.findById(groupId).get();}
     public List<OEGroup> findAll(){return groupRepository.findAll();}

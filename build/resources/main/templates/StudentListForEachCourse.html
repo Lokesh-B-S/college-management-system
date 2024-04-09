@@ -141,9 +141,20 @@
                 <td th:text="${registration.eligibleStudent.usn}" class="text-center">Test</td>
                 <td th:text="${registration.eligibleStudent.name}" class="text-center">Test</td>
                 <td th:if="${postSelectedCourse}" th:text="${postSelectedCourse.courseCode} + ' - ' + ${postSelectedCourse.courseName}" class="text-center">Test</td>
+                <td th:if="${postSelectedProfessionalElective}" th:text="${postSelectedProfessionalElective.courseCode} + ' - ' + ${postSelectedProfessionalElective.courseName}" class="text-center">Test</td>
                 <td th:if="${postSelectedOpenElective}" th:text="${postSelectedOpenElective.courseCode} + ' - ' + ${postSelectedOpenElective.courseName}" class="text-center">Test</td>
-                <td th:if="${registration.groupOfOpenElective?.groupNo != null}" th:text="${registration.groupOfOpenElective.groupNo}" class="text-center"></td>
-                <td th:unless="${registration.groupOfOpenElective?.groupNo != null}"></td>
+
+                <td class="text-center">
+                    <span th:if="${postSelectedOpenElective != null and registration.groupOfOpenElective != null and registration.groupOfOpenElective.groupNo != null}" th:text="${registration.groupOfOpenElective.groupNo}"></span>
+                    <span th:if="${postSelectedProfessionalElective != null and registration.groupOfProfessionalElective != null and registration.groupOfProfessionalElective.groupNo != null}" th:text="${registration.groupOfProfessionalElective.groupNo}"></span>
+                    <span th:unless="${postSelectedOpenElective != null and registration.groupOfOpenElective != null and registration.groupOfOpenElective.groupNo != null or postSelectedProfessionalElective != null and registration.groupOfProfessionalElective != null and registration.groupOfProfessionalElective.groupNo != null}"></span>
+                </td>
+
+                <!--                <td th:if="${postSelectedOpenElective != null and registration.groupOfOpenElective != null and registration.groupOfOpenElective.groupNo != null}" th:text="${registration.groupOfOpenElective.groupNo}" class="text-center"></td>-->
+<!--                <td th:unless="${postSelectedOpenElective != null and registration.groupOfOpenElective != null and registration.groupOfOpenElective.groupNo != null}"></td>-->
+
+<!--                <td th:if="${postSelectedProfessionalElective != null and registration.groupOfProfessionalElective != null and registration.groupOfProfessionalElective.groupNo != null}" th:text="${registration.groupOfProfessionalElective.groupNo}" class="text-center"></td>-->
+<!--                <td th:unless="${postSelectedProfessionalElective != null and registration.groupOfProfessionalElective != null and registration.groupOfProfessionalElective.groupNo != null}"></td>-->
             </tr>
 
 <!--            <tr th:each="eachStudent, rowStat : ${foundEligibleStudents}">-->
@@ -169,8 +180,6 @@
 
         <a th:if="${openElectiveDept != null and loggedInDept != null and openElectiveDept == loggedInDept}" th:href="@{/hod/updateStudentOEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedOpenElective.openElectiveId}__}" class="btn btn-success view">Edit Groups</a>
 
-<!--  working but use when you need      <a href="/hod/selectPrerequisiteForPEAllotment/" th:href="@{/hod/selectPrerequisiteForPEAllotment/}" class="btn btn-primary view">Home</a>-->
-
         <!-- Iterate to generate links for each group -->
         <span th:if="${noOfGroups != null and noOfGroups > 0}">
         <span th:each="groupNumber : ${#numbers.sequence(1, noOfGroups)}">
@@ -181,6 +190,19 @@
     </span>
     </div>
 
+
+    <div th:if="${postSelectedProfessionalElective}" align="center" >
+
+        <a th:href="@{/hod/updateStudentPEGroupDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedProfessionalElective.courseId}__}" class="btn btn-success view">Edit Groups</a>
+        <!--  working but use when you need      <a href="/hod/selectPrerequisiteForPEAllotment/" th:href="@{/hod/selectPrerequisiteForPEAllotment/}" class="btn btn-primary view">Home</a>-->
+
+        <!-- Iterate to generate links for each group -->
+        <span th:if="${noOfGroups != null and noOfGroups > 0}">
+        <span th:each="groupNumber : ${#numbers.sequence(1, noOfGroups)}">
+                    <a th:href="@{/hod/listPEGroupStudents/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__/__${postSelectedProfessionalElective.courseId}__/__${groupNumber}__}" class="btn btn-primary view"> <span th:text="${postSelectedProfessionalElective.courseName} + '- Group ' + ${groupNumber}"></span></a>
+        </span>
+    </span>
+    </div>
 
 </div>
 

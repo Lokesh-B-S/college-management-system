@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>PE group student List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+
+<style>
+    .flex-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group {
+        margin-right: 10px;
+    }
+</style>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+    <h3>Professional Elective Students List: <span style="background-color: #DCCA12;" th:text="${professionalElective.courseName} + ' (' + ${professionalElective.courseCode} + ')' + ' -  Group ' + ${groupOfProfessionalElective.groupNo}"></span></h3>
+
+    <!--    back to the course selected-->
+    <div align="right">
+        <!--        dont give <a></a> if you want to direct the url to postmapping-->
+        <!--        <a th:href="@{/hod/listStudentsOfCourseSelected(academicYearId=${academicYear.id}, programId=${program.programId}, semId=${semester.semId}, termId=${term.id}, courseId=${openElective.openElectiveId}, className=${openElective.class.simpleName})}" class="btn btn-danger view">Back</a>-->
+        <!--        instead use <form></form>-->
+        <form th:action="@{'/hod/listStudentsOfCourseSelected?academicYearId=' + ${academicYear.id} + '&programId=' + ${program.programId} + '&semId=' + ${semester.semId} + '&termId=' + ${term.id}}" method="post">
+            <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />
+            <input type="hidden" name="programId" th:value="${program.programId}" />
+            <input type="hidden" name="semId" th:value="${semester.semId}" />
+            <input type="hidden" name="termId" th:value="${term.id}" />
+            <input type="hidden" name="courseId" th:value="${professionalElective.courseId}" />
+            <input type="hidden" name="className" th:value="${professionalElective.class.simpleName}" />
+
+            <button type="submit" class="btn btn-danger view">Back</button>
+        </form>
+    </div>
+
+
+
+    <form th:action="@{/hod/listPEGroupStudents}" method="get">
+
+    </form>
+
+
+
+
+    <div>
+        <p align="right">
+        </p>
+
+        <table  class="table table-bordered">
+            <thead>
+
+            <tr>
+                <th colspan="4" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                    class="text-center">College
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="2" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+                <th colspan="3" style="font-size: 20px;" class="text-center">Department: <span style="background-color: #DCCA12;" th:text="${professionalElective.department.departmentName}"></span></th>
+            </tr>
+            <tr>
+                <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+                <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+            </tr>
+
+            </thead>
+
+
+
+            <tbody>
+            <tr style="text-align:center">
+                <th rowspan="1" class="text-center">Sl no.</th>
+                <th rowspan="1" class="text-center">USN</th>
+                <th rowspan="1" class="text-center">Name</th>
+                <th rowspan="1" class="text-center">Section</th>
+            </tr>
+
+            <tr th:each="groupStudent, rowStat : ${foundPEStudents}">
+                <td th:text="${rowStat.count}" class="text-center">1</td>
+                <td th:text="${groupStudent.usn}" class="text-center">Test</td>
+                <td th:text="${groupStudent.name}" class="text-center">Test</td>
+                <td th:text="${groupStudent.section.sec}" class="text-center">Test</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div align="center">
+        <!--        dont give <a></a> if you want to direct the url to postmapping-->
+        <!--        <a th:href="@{/hod/listStudentsOfCourseSelected(academicYearId=${academicYear.id}, programId=${program.programId}, semId=${semester.semId}, termId=${term.id}, courseId=${openElective.openElectiveId}, className=${openElective.class.simpleName})}" class="btn btn-danger view">Back</a>-->
+        <!--        instead use <form></form>-->
+        <form th:action="@{'/hod/listStudentsOfCourseSelected?academicYearId=' + ${academicYear.id} + '&programId=' + ${program.programId} + '&semId=' + ${semester.semId} + '&termId=' + ${term.id}}" method="post">
+            <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />
+            <input type="hidden" name="programId" th:value="${program.programId}" />
+            <input type="hidden" name="semId" th:value="${semester.semId}" />
+            <input type="hidden" name="termId" th:value="${term.id}" />
+            <input type="hidden" name="courseId" th:value="${professionalElective.courseId}" />
+            <input type="hidden" name="className" th:value="${professionalElective.class.simpleName}" />
+
+            <button type="submit" class="btn btn-danger view">Back</button>
+        </form>
+    </div>
+
+
+</div>
+
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+
