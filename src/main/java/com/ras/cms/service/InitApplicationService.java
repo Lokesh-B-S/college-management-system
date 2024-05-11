@@ -5,6 +5,7 @@ import com.ras.cms.service.coursetype.CourseTypeService;
 import com.ras.cms.service.day.DayService;
 import com.ras.cms.service.oegroup.OEGroupService;
 import com.ras.cms.service.pegroup.PEGroupService;
+import com.ras.cms.service.projectTeam.ProjectTeamService;
 import com.ras.cms.service.role.RoleService;
 import com.ras.cms.service.section.SectionService;
 import com.ras.cms.service.semester.SemesterService;
@@ -48,6 +49,9 @@ public class InitApplicationService implements ApplicationRunner {
 
     @Autowired
     private PEGroupService pegroupService;
+
+    @Autowired
+    private ProjectTeamService projectTeamService;
 
     @Autowired
     private CourseTypeService courseTypeService;
@@ -226,6 +230,15 @@ public class InitApplicationService implements ApplicationRunner {
             pegroupService.saveGroup(new PEGroup(19L));
             pegroupService.saveGroup(new PEGroup(20L));
         }
+
+
+        if(projectTeamService.findAll().isEmpty()){
+            for (Long i = 1L; i <= 100L; i++) {
+                projectTeamService.saveGroup(new ProjectTeam(i));
+            }
+        }
+
+
             // Log a message when initialization is complete
         LOGGER.info("Initialization complete.");
     }

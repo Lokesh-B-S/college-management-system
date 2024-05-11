@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Allotment</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+    <h1>Allot PROJECT Teams: </h1>
+
+    <!--    th:action="@{/admin/selectOpenElective}"-->
+    <form th:action="@{${#request.isUserInRole('DEPT_HEAD')} ? '/hod/selectPrerequisiteForProjectTeamAllotment' : '/hod/selectPrerequisiteForProjectTeamAllotment'}" th:object="${projectConfiguration}" method="post">
+
+        <table border="0" width="80%">
+            <tr>
+
+                <td>
+                    <div class="form-group">
+                        <label for="academicYear.id"> Academic Year: </label> <br>
+                        <select class="form-control" id="academicYear" name="academicYear">
+                            <option th:each="academicYear : ${academicYears}" th:value="${academicYear.id}" th:text="${academicYear.year}"
+                                    id="academicYear.id"> academic Year </option>
+                        </select>
+                    </div>
+                </td>
+
+
+                <td> &nbsp</td>
+
+                <td>
+                    <div class="form-group">
+                        <label for="program.programId"> Program: </label> <br>
+                        <select class="form-control" id="program" name="program">
+                            <option th:each="program : ${programs}" th:value="${program.programId}" th:text="${program.programName}"
+                                    id="program.programId"> program </option>
+                        </select>
+                    </div>
+                </td>
+
+                <td> &nbsp</td>
+
+            </tr>
+            <tr>
+
+                <td>
+                    <div class="form-group">
+                        <label for="semester.semId"> Semester: </label> <br>
+                        <select class="form-control" id="semester" name="semester">
+                            <option th:each="semester : ${semesters}" th:value="${semester.semId}" th:text="${semester.sem}"
+                                    id="semester.semId"> semester </option>
+                        </select>
+                    </div>
+                </td>
+                <td> &nbsp</td>
+
+                <td>
+                    <div class="form-group">
+                        <label for="term.id">Select Term: </label> <br>
+                        <select class="form-control" id="term" name="term">
+                            <option th:each="term : ${terms}" th:value="${term.id}" th:text="${term.termDate}"
+                                    id="term.id"> term </option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+
+
+        <table width="100%">
+            <tr>
+                <td align="center">
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div th:if="${message}" class="alert alert-warning">
+        <p th:text="${message}"></p>
+    </div>
+
+</div>
+
+</body>
+</html>

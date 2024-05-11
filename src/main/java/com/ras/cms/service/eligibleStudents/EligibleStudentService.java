@@ -27,6 +27,8 @@ public interface EligibleStudentService{
 
     List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndSection(AcademicYear academicYear, Program program, Semester semester, Term term, Section section);
 
+    List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndProjectTeam(AcademicYear academicYear, Program program, Semester semester, Term term, ProjectTeam projectTeam);
+
     List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndAndSectionAndSecBatch(AcademicYear academicYear, Program program, Semester semester, Term term, Section section, SecBatch secBatch);
 
     List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OEGroup groupOfOpenElective);
@@ -46,6 +48,8 @@ public interface EligibleStudentService{
     void assignProfessionalElective1ToEligibleStudent(Long studentId, Long courseId);
 
     void assignProfessionalElective2ToEligibleStudent(Long studentId, Long courseId);
+
+    void assignProjectTeamToEligibleStudent(Long studentId, Long teamId);
 
    List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndProfessionalElective(AcademicYear academicYear, Program program, Semester semester, Term term, Course PEcourse);
 

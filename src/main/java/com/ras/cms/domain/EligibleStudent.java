@@ -38,6 +38,8 @@ public class EligibleStudent {
     private SecBatch secBatch;
 
     @ManyToOne
+    private ProjectTeam projectTeam;
+    @ManyToOne
     private OEGroup groupOfOpenElective;
 
 
@@ -131,6 +133,14 @@ public class EligibleStudent {
 
     public void setSecBatch(SecBatch secBatch) {
         this.secBatch = secBatch;
+    }
+
+    public ProjectTeam getProjectTeam() {
+        return projectTeam;
+    }
+
+    public void setProjectTeam(ProjectTeam projectTeam) {
+        this.projectTeam = projectTeam;
     }
 
     public OEGroup getGroupOfOpenElective() {

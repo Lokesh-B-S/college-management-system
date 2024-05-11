@@ -36,6 +36,9 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
     private CourseRepository courseRepository;
 
     @Autowired
+    private ProjectTeamRepository projectTeamRepository;
+
+    @Autowired
     private SecBatchService secBatchService;
 
     @Override
@@ -80,6 +83,11 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
     @Override
     public List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndSection(AcademicYear academicYear, Program program, Semester semester, Term term, Section section){
         return eligibleStudentRepository.findAllByAcademicYearAndProgramAndSemesterAndTermAndSection(academicYear, program, semester, term, section);
+    }
+
+    @Override
+    public List<EligibleStudent> getStudentsByAcademicYearAndProgramAndSemesterAndTermAndProjectTeam(AcademicYear academicYear, Program program, Semester semester, Term term, ProjectTeam projectTeam){
+        return eligibleStudentRepository.findAllByAcademicYearAndProgramAndSemesterAndTermAndProjectTeam(academicYear, program, semester, term, projectTeam);
     }
 
     @Override
@@ -134,6 +142,18 @@ public class EligibleStudentServiceImpl implements EligibleStudentService{
 
         // Assign the section to the student
         student.setSection(section);
+        eligibleStudentRepository.save(student);
+    }
+
+    public void assignProjectTeamToEligibleStudent(Long studentId, Long teamId) {
+        // Fetch the student and team from the database
+        EligibleStudent student = eligibleStudentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + studentId));
+        ProjectTeam projectTeam = projectTeamRepository.findById(teamId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid project team ID: " + teamId));
+
+        // Assign the section to the student
+        student.setProjectTeam(projectTeam);
         eligibleStudentRepository.save(student);
     }
 

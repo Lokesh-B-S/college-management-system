@@ -20,6 +20,9 @@ public interface EligibleStudentRepository extends JpaRepository<EligibleStudent
 
     List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndSection(AcademicYear academicYear, Program program, Semester semester, Term term, Section section);
 
+    List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndProjectTeam(AcademicYear academicYear, Program program, Semester semester, Term term, ProjectTeam projectTeam);
+
+
     List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndSectionAndSecBatch(AcademicYear academicYear, Program program, Semester semester, Term term, Section section, SecBatch secBatch);
 
      List<EligibleStudent> findAllByAcademicYearAndProgramAndSemesterAndTermAndGroupOfOpenElective(AcademicYear academicYear, Program program, Semester semester, Term term, OEGroup GroupOfOpenElective);

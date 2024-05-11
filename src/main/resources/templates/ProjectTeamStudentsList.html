@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Project Team students List</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../../js/bootstrap.min.js"></script>
+</head>
+
+<style>
+    .flex-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group {
+        margin-right: 10px;
+    }
+</style>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container" th:if="${#request.isUserInRole('PRINCIPAL')}">
+
+    <h3>Project Team Students</h3>
+
+    <table  class="table table-bordered">
+        <thead>
+        <tr>
+            <th colspan="4" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                class="text-center">College
+            </th>
+        </tr>
+
+        <tr>
+            <th colspan="2" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+            <th colspan="2" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+        </tr>
+        <tr>
+            <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+            <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+        </tr>
+        </thead>
+
+
+
+        <tbody>
+        <tr style="text-align:center">
+            <th rowspan="1" class="text-center">Sl no.</th>
+            <th rowspan="1" class="text-center">USN</th>
+            <th rowspan="1" class="text-center">Name</th>
+            <!--                    <th rowspan="1" class="text-center">Actions</th>-->
+        </tr>
+
+        <tr th:each="eligibleStudent, rowStat : ${eligibleStudentList}">
+            <td th:text="${rowStat.count}" class="text-center">1</td>
+            <!--            <td th:text="${eligibleStudent.regNumber}" class="text-center">Test</td>-->
+            <td th:text="${eligibleStudent.usn}" class="text-center">Test</td>
+            <td th:text="${eligibleStudent.name}" class="text-center">Test</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--            <td>-->
+    <!--                <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/deleteCourse/1" th:href="@{/hod/deleteCourse/__${courseList.courseId}__}">Delete</a>-->
+    <!--            </td>-->
+
+
+
+
+    <div align="center">
+        <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
+        <a href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="container" th:if="${#request.isUserInRole('DEPT_HEAD')}">
+
+    <h3>Project Team Students:</h3>
+
+
+
+    <form th:action="@{/hod/listProjectTeamStudents}" method="post">
+        <input type="hidden" name="academicYearId" th:value="${academicYear.id}" />
+        <input type="hidden" name="programId" th:value="${program.programId}" />
+        <input type="hidden" name="semId" th:value="${semester.semId}" />
+        <input type="hidden" name="termId" th:value="${term.id}" />
+
+        <div style="display: inline-block; margin-right: 10px;">
+            <div class="form-group">
+                <label for="projectTeam">Select Project Team:</label>
+                <select id="projectTeam" name="teamId" class="form-control">
+
+                    <option value="">Select</option> <!-- Add the default "Select" option -->
+                    <!-- Populate options dynamically based on available teams -->
+                    <option th:each="projectTeam : ${projectTeams}" th:value="${projectTeam.teamId}" th:text="${projectTeam.teamNo}"></option>
+                </select>
+                <button type="submit" class="btn btn-primary">Show Students</button>
+            </div>
+        </div>
+
+    </form>
+
+    <div>
+
+        <p>
+            <!--        <a href="javascript:void(0);" onclick="goBack()">Go Back</a>-->
+            <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="" th:href="@{/hod/updateStudentProjectTeamDetails/__${academicYear.id}__/__${program.programId}__/__${semester.semId}__/__${term.id}__}">Back</a>
+            <!--        <a th:if="${#request.isUserInRole('DEPT_HEAD')}" href="/hod/openElectiveEdit/${batchYearSemTermView.batchYearSemTermId}}" th:href="@{/hod/openElectiveEdit/__${batchYearSemTermView.batchYearSemTermId}__}">Add more</a>-->
+
+        </p>
+
+        <table  class="table table-bordered">
+            <thead>
+
+            <tr>
+                <th colspan="4" th:text="'New Horizon College of Engineering'" style=" font-size: 35px;"
+                    class="text-center">College
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="2" th:text="'Academic Year: ' + ${academicYear.year}" style="font-size: 20px;"  class="text-center">Academic Year</th>
+                <th colspan="2" th:text="'Program: ' + ${program.programName}" style="font-size: 20px;"  class="text-center">Program</th>
+            </tr>
+            <tr>
+                <th colspan="2" th:text="'Semester: ' + ${semester.sem}" style="font-size: 20px;" class="text-center">Semester</th>
+                <th colspan="2" th:text="'Term: ' + ${term.termDate}" style="font-size: 20px;" class="text-center">Term</th>
+            </tr>
+            </thead>
+
+
+
+            <tbody>
+            <tr style="text-align:center">
+                <th rowspan="1" class="text-center">Sl no.</th>
+                <th rowspan="1" class="text-center">Team</th>
+                <th rowspan="1" class="text-center">USN</th>
+                <th rowspan="1" class="text-center">Name</th>
+                <!--            <th rowspan="1" class="text-center">Actions</th>-->
+            </tr>
+
+            <tr th:each="projectTeamStudent, rowStat : ${projectTeamStudents}">
+                <td th:text="${rowStat.count}" class="text-center">1</td>
+                <td th:text="${projectTeamStudent.projectTeam.teamNo}" class="text-center">Test</td>
+                <td th:text="${projectTeamStudent.usn}" class="text-center">Test</td>
+                <td th:text="${projectTeamStudent.name}" class="text-center">Test</td>
+
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div align="center">
+        <!--        <a th:if="${#request.isUserInRole('PRINCIPAL')}" href="/admin/selectPrerequisitesForEligibleStudents/" th:href="@{/admin/selectPrerequisitesForEligibleStudents/}" class="btn btn-primary view">Select again</a>-->
+        <a href="/hod/selectPrerequisiteForProjectTeamAllotment/" th:href="@{/hod/selectPrerequisiteForProjectAllotment/}" class="btn btn-primary view">Home</a>
+    </div>
+
+
+</div>
+
+
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>
+
