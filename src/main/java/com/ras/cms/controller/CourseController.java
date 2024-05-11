@@ -115,7 +115,7 @@ public class CourseController {
             }
 
         }
-        return "/courseList";
+        return "/courseList";   //filename in html
 
     }
 
